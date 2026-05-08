@@ -349,8 +349,17 @@ class Profile(CacheableModel):
             ("user", "Normal User"),
             ("setter", "Problem Setter"),
             ("admin", "Admin"),
+            ("parent", "Parent"),
         ),
         db_index=True,
+    )
+    children = SortedManyToManyField(
+        "self",
+        symmetrical=False,
+        blank=True,
+        related_name="parents",
+        verbose_name=_("children"),
+        help_text=_("Students this profile (a parent) is allowed to monitor."),
     )
     mute = models.BooleanField(
         verbose_name=_("comment mute"),
@@ -478,6 +487,10 @@ class Profile(CacheableModel):
 
     def get_display_rank(self):
         return self.get_cached_value("display_rank")
+
+    @cached_property
+    def is_parent(self):
+        return self.get_display_rank() == "parent"
 
     def get_rating(self):
         return self.get_cached_value("rating")

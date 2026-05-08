@@ -1,0 +1,49 @@
+{% extends "parent/base.html" %}
+
+{% block parent_body %}
+  {% with active = "ai" %}
+    {% include "parent/_child_tabs.html" %}
+  {% endwith %}
+
+  {% if assessment %}
+    <div class="parent-card">
+      <div style="display:flex; justify-content:space-between; align-items:center;
+                  margin-bottom:0.75rem;">
+        <h2 style="margin:0;">Đánh giá AI · Tuần bắt đầu {{ assessment.week_start.strftime("%d/%m/%Y") }}</h2>
+        <small style="color:#888;">
+          Cập nhật {{ assessment.generated_at.strftime("%d/%m/%Y %H:%M") }}
+        </small>
+      </div>
+      <div class="parent-md">
+        {{ assessment.markdown|markdown|safe }}
+      </div>
+    </div>
+
+    {% if suggested_problems %}
+      <div class="parent-card">
+        <h2>Bài đề xuất tuần này</h2>
+        <div class="parent-grid">
+          {% for p in suggested_problems %}
+            <a href="{{ url('problem_detail', p.code) }}"
+               class="parent-suggested-card"
+               style="display:block; text-decoration:none; color:inherit;">
+              <div style="font-weight:600; margin-bottom:0.25rem;">{{ p.name }}</div>
+              <div style="font-size:0.85rem; color:#888;">
+                Mã: {{ p.code }}
+                {% if p.get_types_name() %} · {{ p.get_types_name() }}{% endif %}
+              </div>
+            </a>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+  {% else %}
+    <div class="parent-empty">
+      <p style="font-size:1.1rem;">Chưa có báo cáo AI cho học sinh này.</p>
+      <p>Báo cáo được tự động tạo vào trưa Chủ Nhật mỗi tuần.</p>
+      <p style="color:#999; font-size:0.85rem; margin-top:1rem;">
+        Tuần hiện tại bắt đầu: {{ next_run_week_start.strftime("%d/%m/%Y") }}
+      </p>
+    </div>
+  {% endif %}
+{% endblock %}

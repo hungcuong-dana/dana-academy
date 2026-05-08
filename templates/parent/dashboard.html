@@ -1,0 +1,55 @@
+{% extends "parent/base.html" %}
+
+{% block parent_body %}
+  <h1>Xin chào, {{ request.user.username }}</h1>
+  <p style="color:#666;">Theo dõi tình hình học tập của con bạn tại Dana Academy.</p>
+
+  {% if not children %}
+    <div class="parent-empty">
+      <p style="font-size:1.1rem;">Tài khoản của bạn chưa được liên kết với học sinh nào.</p>
+      <p>Vui lòng liên hệ giáo viên/quản trị để được gán học sinh.</p>
+    </div>
+  {% else %}
+    <div class="parent-grid">
+      {% for s in children_summaries %}
+        <a href="{{ url('parent_child_overview', s.id) }}"
+           class="parent-card" style="display:block; text-decoration:none; color:inherit;">
+          <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:0.75rem;">
+            {% if s.image_url %}
+              <img src="{{ s.image_url }}" alt=""
+                   style="width:48px; height:48px; border-radius:50%; object-fit:cover;">
+            {% endif %}
+            <div>
+              <div style="font-weight:600; font-size:1.05rem;">{{ s.username }}</div>
+              <div style="font-size:0.85rem; color:#888;">
+                {% if s.last_submitted %}
+                  Hoạt động gần nhất: {{ s.last_submitted.strftime("%d/%m/%Y") }}
+                {% else %}
+                  Chưa nộp bài nào
+                {% endif %}
+              </div>
+            </div>
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem;">
+            <div>
+              <div class="parent-stat-num">{{ s.problems_solved }}</div>
+              <div class="parent-stat-label">Bài đã giải</div>
+            </div>
+            <div>
+              <div class="parent-stat-num">{{ s.points|round(1) }}</div>
+              <div class="parent-stat-label">Điểm</div>
+            </div>
+            <div>
+              <div class="parent-stat-num">{{ s.submission_count_30d }}</div>
+              <div class="parent-stat-label">Bài nộp (30 ngày)</div>
+            </div>
+            <div>
+              <div class="parent-stat-num">{{ s.ac_rate_30d }}%</div>
+              <div class="parent-stat-label">Tỉ lệ AC (30 ngày)</div>
+            </div>
+          </div>
+        </a>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endblock %}

@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block media %}
+  <style>
+    .parent-shell {
+      max-width: 1100px;
+      margin: 1.5rem auto;
+      padding: 0 1rem;
+    }
+    .parent-card {
+      background: var(--md-bg-color, #fff);
+      border: 1px solid var(--md-border-color, #e2e2e2);
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+    .parent-card h2 { margin: 0 0 0.75rem; font-size: 1.15rem; }
+    .parent-grid {
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+    .parent-stat-num {
+      font-size: 1.75rem; font-weight: 700; color: #1958c1;
+      line-height: 1.1;
+    }
+    .parent-stat-label {
+      font-size: 0.85rem; color: #666; margin-top: 0.25rem;
+    }
+    .parent-tabs {
+      display: flex; gap: 0.5rem; flex-wrap: wrap;
+      margin-bottom: 1rem; border-bottom: 1px solid #ddd;
+    }
+    .parent-tabs a {
+      padding: 0.5rem 1rem; border-radius: 8px 8px 0 0;
+      text-decoration: none; color: #555;
+    }
+    .parent-tabs a.active {
+      background: #1958c1; color: #fff; font-weight: 600;
+    }
+    .parent-tabs a:hover:not(.active) { background: #f0f0f0; }
+    .compare-bar {
+      background: #eee; border-radius: 4px; height: 12px;
+      overflow: hidden; margin: 4px 0 8px;
+    }
+    .compare-bar > div { height: 100%; background: #1958c1; }
+    .parent-suggested-card {
+      border: 1px solid #ddd; border-radius: 10px; padding: 1rem;
+      transition: box-shadow 0.15s ease;
+    }
+    .parent-suggested-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .parent-empty {
+      text-align: center; padding: 3rem 1rem;
+      color: #888; background: #fafafa; border-radius: 12px;
+    }
+    .parent-md h2 { margin-top: 1.5rem; font-size: 1.1rem; }
+    .parent-md ul { padding-left: 1.5rem; }
+  </style>
+  {% block parent_media %}{% endblock %}
+{% endblock %}
+
+{% block body %}
+  <div class="parent-shell">
+    {% block parent_body %}{% endblock %}
+  </div>
+{% endblock %}

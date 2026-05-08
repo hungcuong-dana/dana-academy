@@ -1,0 +1,24 @@
+{# Reusable tab strip for the child detail pages. Active tab is set via {{ active }} #}
+<div style="margin-bottom:1rem;">
+  <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:0.5rem;">
+    {% if child.get_profile_image_url() %}
+      <img src="{{ child.get_profile_image_url() }}" alt=""
+           style="width:36px; height:36px; border-radius:50%; object-fit:cover;">
+    {% endif %}
+    <strong style="font-size:1.1rem;">{{ child.user.username }}</strong>
+    <a href="{{ url('parent_home') }}"
+       style="margin-left:auto; font-size:0.9rem; text-decoration:none;">
+      ← Tất cả con
+    </a>
+  </div>
+  <div class="parent-tabs">
+    <a href="{{ url('parent_child_overview', child.id) }}"
+       class="{% if active == 'overview' %}active{% endif %}">Tổng quan</a>
+    <a href="{{ url('parent_child_submissions', child.id) }}"
+       class="{% if active == 'submissions' %}active{% endif %}">Bài nộp</a>
+    <a href="{{ url('parent_child_contests', child.id) }}"
+       class="{% if active == 'contests' %}active{% endif %}">Contest</a>
+    <a href="{{ url('parent_child_ai', child.id) }}"
+       class="{% if active == 'ai' %}active{% endif %}">Đánh giá AI</a>
+  </div>
+</div>

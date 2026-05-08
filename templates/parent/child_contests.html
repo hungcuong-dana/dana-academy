@@ -1,0 +1,39 @@
+{% extends "parent/base.html" %}
+
+{% block parent_body %}
+  {% with active = "contests" %}
+    {% include "parent/_child_tabs.html" %}
+  {% endwith %}
+
+  <div class="parent-card">
+    <h2>Lịch sử Contest</h2>
+    {% if contest_ratings %}
+      <table style="width:100%; border-collapse:collapse;">
+        <thead>
+          <tr style="text-align:left; border-bottom:1px solid #ddd;">
+            <th style="padding:0.5rem 0;">Contest</th>
+            <th style="padding:0.5rem 0;">Hạng</th>
+            <th style="padding:0.5rem 0;">Rating</th>
+            <th style="padding:0.5rem 0;">Ngày</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for c in contest_ratings %}
+            <tr style="border-bottom:1px solid #f0f0f0;">
+              <td style="padding:0.5rem 0;">{{ c.contest_name or c.contest_key }}</td>
+              <td>{{ c.rank or "—" }}</td>
+              <td><strong>{{ c.rating or "—" }}</strong></td>
+              <td>
+                <small style="color:#888;">
+                  {% if c.end_time %}{{ c.end_time.strftime("%d/%m/%Y") }}{% endif %}
+                </small>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p style="color:#888;">Học sinh chưa tham gia contest nào có rating.</p>
+    {% endif %}
+  </div>
+{% endblock %}

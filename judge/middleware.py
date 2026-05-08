@@ -77,6 +77,19 @@ class DMOJLoginMiddleware(object):
                 return HttpResponseRedirect(
                     login_2fa_path + "?next=" + quote(request.get_full_path())
                 )
+
+            # Parent users: lock to /parent/* portal (admins still pass through).
+            if profile.is_parent and not request.user.is_staff:
+                allowed_prefixes = (
+                    "/parent/",
+                    "/accounts/",
+                    "/static/",
+                    "/media/",
+                    "/profile_images/",
+                    "/socket.io/",
+                )
+                if not request.path.startswith(allowed_prefixes):
+                    return HttpResponseRedirect(reverse("parent_home"))
         else:
             request.profile = None
         return self.get_response(request)

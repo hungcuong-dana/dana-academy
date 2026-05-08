@@ -1,0 +1,116 @@
+{% extends "parent/base.html" %}
+
+{% block parent_body %}
+  {% with active = "overview" %}
+    {% include "parent/_child_tabs.html" %}
+  {% endwith %}
+
+  {# Stat cards #}
+  <div class="parent-grid">
+    <div class="parent-card">
+      <div class="parent-stat-num">{{ child_summary.problems_solved }}</div>
+      <div class="parent-stat-label">Bài đã giải (tổng)</div>
+    </div>
+    <div class="parent-card">
+      <div class="parent-stat-num">{{ child_summary.points|round(1) }}</div>
+      <div class="parent-stat-label">Điểm tích lũy</div>
+    </div>
+    <div class="parent-card">
+      <div class="parent-stat-num">
+        {{ child_summary.rating if child_summary.rating else "—" }}
+      </div>
+      <div class="parent-stat-label">Rating contest</div>
+    </div>
+    <div class="parent-card">
+      <div class="parent-stat-num">{{ child_summary.ac_rate_30d }}%</div>
+      <div class="parent-stat-label">Tỉ lệ AC (30 ngày qua)</div>
+    </div>
+  </div>
+
+  {# Class compare #}
+  {% if class_compare %}
+    <div class="parent-card">
+      <h2>So sánh với lớp {{ class_compare.organization_name }}</h2>
+      {% set metrics = [
+        ("Bài đã giải", class_compare.child_problems_solved, class_compare.avg_problems_solved),
+        ("Điểm tích lũy", class_compare.child_points, class_compare.avg_points),
+        ("Performance points", class_compare.child_performance_points, class_compare.avg_performance_points)
+      ] %}
+      {% for label, child_val, avg_val in metrics %}
+        {% set max_v = [child_val, avg_val, 1]|max %}
+        <div style="margin-bottom:0.75rem;">
+          <div style="display:flex; justify-content:space-between; font-size:0.9rem;">
+            <span>{{ label }}</span>
+            <span>Con: <strong>{{ child_val|round(1) }}</strong> ·
+              TB lớp: {{ avg_val|round(1) }}</span>
+          </div>
+          <div class="compare-bar">
+            <div style="width: {{ (child_val * 100 / max_v)|round(1) }}%;"></div>
+          </div>
+          <div class="compare-bar" style="background:#f5e9e9;">
+            <div style="width: {{ (avg_val * 100 / max_v)|round(1) }}%;
+                        background:#aaa;"></div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  {# Topic breakdown #}
+  {% if topic_breakdown %}
+    <div class="parent-card">
+      <h2>Hiệu suất theo chủ đề</h2>
+      <table style="width:100%; border-collapse:collapse;">
+        <thead>
+          <tr style="text-align:left; border-bottom:1px solid #ddd;">
+            <th style="padding:0.5rem 0;">Chủ đề</th>
+            <th style="padding:0.5rem 0;">Đã làm</th>
+            <th style="padding:0.5rem 0;">AC</th>
+            <th style="padding:0.5rem 0;">Tỉ lệ AC</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for t in topic_breakdown[:10] %}
+            <tr style="border-bottom:1px solid #f0f0f0;">
+              <td style="padding:0.4rem 0;">{{ t.type_name }}</td>
+              <td>{{ t.attempted }}</td>
+              <td>{{ t.ac }}</td>
+              <td>
+                <span style="color: {% if t.ac_rate >= 70 %}#28a745
+                              {% elif t.ac_rate >= 40 %}#f0ad4e
+                              {% else %}#d9534f{% endif %};">
+                  {{ t.ac_rate }}%
+                </span>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% endif %}
+
+  {# Recent submissions snapshot #}
+  <div class="parent-card">
+    <h2>Bài nộp gần nhất</h2>
+    {% if recent_submissions %}
+      <ul style="list-style:none; padding:0; margin:0;">
+        {% for s in recent_submissions %}
+          <li style="display:flex; justify-content:space-between;
+                     padding:0.4rem 0; border-bottom:1px solid #f0f0f0;">
+            <span>{{ s.problem.name }} <small style="color:#888;">({{ s.language.short_name or s.language.key }})</small></span>
+            <span>
+              <span style="color: {% if s.result == 'AC' %}#28a745{% else %}#d9534f{% endif %};">
+                {{ s.result or s.status }}
+              </span>
+              · <small style="color:#888;">{{ s.date.strftime("%d/%m %H:%M") }}</small>
+            </span>
+          </li>
+        {% endfor %}
+      </ul>
+      <a href="{{ url('parent_child_submissions', child.id) }}"
+         style="display:inline-block; margin-top:0.75rem;">Xem tất cả →</a>
+    {% else %}
+      <p style="color:#888; margin:0;">Chưa có bài nộp nào.</p>
+    {% endif %}
+  </div>
+{% endblock %}

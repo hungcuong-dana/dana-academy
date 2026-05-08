@@ -70,6 +70,7 @@ class ProfileAdmin(VersionAdmin):
     fields = (
         "user",
         "display_rank",
+        "children",
         "about",
         "organizations",
         "timezone",
@@ -87,6 +88,7 @@ class ProfileAdmin(VersionAdmin):
     list_display = (
         "admin_user_admin",
         "email",
+        "display_rank",
         "is_totp_enabled",
         "timezone_full",
         "date_joined",
@@ -96,7 +98,8 @@ class ProfileAdmin(VersionAdmin):
     )
     ordering = ("user__username",)
     search_fields = ("user__username", "ip", "user__email")
-    list_filter = ("language", TimezoneFilter)
+    list_filter = ("language", "display_rank", TimezoneFilter)
+    filter_horizontal = ("children",)
     actions = ("recalculate_points",)
     actions_on_top = True
     actions_on_bottom = True

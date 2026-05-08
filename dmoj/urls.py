@@ -64,6 +64,7 @@ from judge.views import (
     direct_upload,
 )
 from judge.views import package_import
+from judge.views import parent as parent_views
 from judge.views import quiz_import
 from judge.views.problem_attachment import (
     attachment_delete,
@@ -247,6 +248,21 @@ urlpatterns = [
     re_path(r"^500/$", exception),
     re_path(r"^toggle_darkmode/$", user.toggle_darkmode, name="toggle_darkmode"),
     re_path(r"^admin/", admin.site.urls),
+    re_path(r"^parent/", include([
+        re_path(r"^$", parent_views.ParentDashboard.as_view(), name="parent_home"),
+        re_path(r"^child/(?P<child_id>\d+)/$",
+                parent_views.ChildOverview.as_view(),
+                name="parent_child_overview"),
+        re_path(r"^child/(?P<child_id>\d+)/submissions/$",
+                parent_views.ChildSubmissions.as_view(),
+                name="parent_child_submissions"),
+        re_path(r"^child/(?P<child_id>\d+)/contests/$",
+                parent_views.ChildContests.as_view(),
+                name="parent_child_contests"),
+        re_path(r"^child/(?P<child_id>\d+)/ai/$",
+                parent_views.ChildAIAssessmentView.as_view(),
+                name="parent_child_ai"),
+    ])),
     re_path(r"^i18n/", include("django.conf.urls.i18n")),
     re_path(r"^accounts/", include(register_patterns)),
     re_path(r"^", include("social_django.urls")),
