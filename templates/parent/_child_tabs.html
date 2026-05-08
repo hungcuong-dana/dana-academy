@@ -19,6 +19,8 @@
   <div class="parent-tabs">
     <a href="{{ url('parent_child_overview', child.id) }}"
        class="{% if active == 'overview' %}active{% endif %}">📊 Tổng quan</a>
+    <a href="{{ url('parent_child_schedule', child.id) }}"
+       class="{% if active == 'schedule' %}active{% endif %}">📅 Lịch học</a>
     <a href="{{ url('parent_child_submissions', child.id) }}"
        class="{% if active == 'submissions' %}active{% endif %}">📝 Bài làm</a>
     <a href="{{ url('parent_child_contests', child.id) }}"

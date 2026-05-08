@@ -23,9 +23,11 @@ from judge.utils.parent import (
     current_week_start,
     get_child_class_compare,
     get_child_contest_history,
+    get_child_schedule,
     get_child_summary,
     get_display_name,
     get_heatmap,
+    get_next_lesson,
     get_topic_breakdown,
     get_upcoming_contests,
 )
@@ -75,6 +77,7 @@ class ParentDashboard(ParentRequiredMixin, TemplateView):
         children = list(self.request.profile.children.select_related("user"))
         ctx["children"] = children
         ctx["children_summaries"] = [get_child_summary(c.id) for c in children]
+        ctx["children_next_lessons"] = {c.id: get_next_lesson(c.id) for c in children}
         ctx["upcoming_contests"] = get_upcoming_contests(limit=3)
         ctx["parent_display_name"] = get_display_name(self.request.user)
         ctx["title"] = "Trang phụ huynh"
@@ -97,6 +100,18 @@ class ChildOverview(ChildAccessMixin, TemplateView):
         )
         ctx["upcoming_contests"] = get_upcoming_contests(limit=3)
         ctx["recent_contest_participations"] = get_child_contest_history(child.id, limit=3)
+        ctx["next_lesson"] = get_next_lesson(child.id)
+        return ctx
+
+
+class ChildSchedule(ChildAccessMixin, TemplateView):
+    template_name = "parent/child_schedule.html"
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        child = ctx["child"]
+        ctx["weekly_schedule"] = get_child_schedule(child.id)
+        ctx["next_lesson"] = get_next_lesson(child.id)
         return ctx
 
 

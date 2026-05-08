@@ -163,6 +163,85 @@ def get_upcoming_contests(limit: int = 3):
     )
 
 
+# --------------------------------------------------------------------------
+# Class schedule helpers
+# --------------------------------------------------------------------------
+DAY_NAMES_VN = ["Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy", "Chủ Nhật"]
+
+
+def get_child_schedule(child_id: int) -> list[dict]:
+    """Return weekly schedule grouped by day for the child's organization(s).
+
+    Output: [{day_index, day_name, lessons: [ClassSchedule, ...]}] for all 7 days
+    (empty list when no lesson). If the child has no organization or no
+    schedule entries at all, returns [].
+    """
+    from judge.models import ClassSchedule
+
+    profile = Profile.objects.prefetch_related("organizations").get(id=child_id)
+    org_ids = list(profile.organizations.values_list("id", flat=True))
+    if not org_ids:
+        return []
+
+    rows = list(
+        ClassSchedule.objects
+        .filter(organization_id__in=org_ids, is_active=True)
+        .select_related("organization")
+        .order_by("day_of_week", "start_time")
+    )
+    if not rows:
+        return []
+
+    by_day = {i: [] for i in range(7)}
+    for r in rows:
+        by_day[r.day_of_week].append(r)
+    return [
+        {"day_index": i, "day_name": DAY_NAMES_VN[i], "lessons": by_day[i]}
+        for i in range(7)
+    ]
+
+
+def get_next_lesson(child_id: int):
+    """Find the upcoming lesson within the next 7 days (or None)."""
+    from datetime import datetime
+    from judge.models import ClassSchedule
+
+    profile = Profile.objects.prefetch_related("organizations").get(id=child_id)
+    org_ids = list(profile.organizations.values_list("id", flat=True))
+    if not org_ids:
+        return None
+
+    rows = list(
+        ClassSchedule.objects
+        .filter(organization_id__in=org_ids, is_active=True)
+        .order_by("day_of_week", "start_time")
+    )
+    if not rows:
+        return None
+
+    now = datetime.now()
+    today_dow = now.weekday()                  # Mon=0..Sun=6
+    now_t = now.time()
+
+    # Next lesson today (later than now), then forward through the week.
+    for offset in range(7):
+        dow = (today_dow + offset) % 7
+        for r in rows:
+            if r.day_of_week != dow:
+                continue
+            if offset == 0 and r.start_time <= now_t:
+                continue
+            days_ahead = offset
+            return {
+                "lesson": r,
+                "day_name": DAY_NAMES_VN[dow],
+                "is_today": offset == 0,
+                "is_tomorrow": offset == 1,
+                "days_ahead": days_ahead,
+            }
+    return None
+
+
 def get_child_contest_history(child_id: int, limit: int = 5):
     """Recent ContestParticipation for the child (visible contests only)."""
     from judge.models import ContestParticipation

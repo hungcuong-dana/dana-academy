@@ -23,6 +23,7 @@
       </p>
       <div class="parent-grid">
         {% for s in children_summaries %}
+          {% set next_lesson = children_next_lessons.get(s.id) %}
           <a href="{{ url('parent_child_overview', s.id) }}" class="child-card">
             <div style="display:flex; align-items:center; gap:0.85rem; margin-bottom:1rem;">
               {% if s.image_url %}
@@ -63,6 +64,27 @@
                 <div class="parent-stat-label">Tỉ lệ giải đúng</div>
               </div>
             </div>
+            {% if next_lesson %}
+              <div style="margin-top:1rem; padding:0.65rem 0.85rem;
+                          background:#f0f7ff; border-left:3px solid #1958c1;
+                          border-radius:6px;">
+                <div style="font-size:0.78rem; color:#1958c1;
+                            font-weight:600; text-transform:uppercase;
+                            letter-spacing:0.05em;">
+                  📅 Buổi học tiếp theo
+                </div>
+                <div style="font-size:0.95rem; margin-top:0.25rem;">
+                  <strong>{{ next_lesson.lesson.subject }}</strong>
+                </div>
+                <div style="font-size:0.83rem; color:#555;">
+                  {% if next_lesson.is_today %}Hôm nay
+                  {% elif next_lesson.is_tomorrow %}Ngày mai
+                  {% else %}{{ next_lesson.day_name }}{% endif %}
+                  · {{ next_lesson.lesson.start_time.strftime("%H:%M") }}–{{ next_lesson.lesson.end_time.strftime("%H:%M") }}
+                  {% if next_lesson.lesson.location %} · {{ next_lesson.lesson.location }}{% endif %}
+                </div>
+              </div>
+            {% endif %}
             <div class="arrow">Xem chi tiết tình hình học tập →</div>
           </a>
         {% endfor %}

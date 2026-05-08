@@ -2,6 +2,23 @@ from django.contrib import admin, messages
 from django.utils.translation import gettext_lazy as _, ngettext
 
 
+class ClassScheduleAdmin(admin.ModelAdmin):
+    list_display = (
+        "organization",
+        "day_of_week",
+        "start_time",
+        "end_time",
+        "subject",
+        "teacher",
+        "location",
+        "is_active",
+    )
+    list_filter = ("organization", "day_of_week", "is_active")
+    search_fields = ("organization__name", "subject", "teacher")
+    autocomplete_fields = ("organization",)
+    ordering = ("organization", "day_of_week", "start_time")
+
+
 class ChildAIAssessmentAdmin(admin.ModelAdmin):
     list_display = (
         "child",

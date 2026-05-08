@@ -1,10 +1,21 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-from judge.models.profile import Profile
+from judge.models.profile import Organization, Profile
 
 
-__all__ = ["ChildAIAssessment"]
+__all__ = ["ChildAIAssessment", "ClassSchedule"]
+
+
+DAY_OF_WEEK_CHOICES = (
+    (0, _("Thứ Hai")),
+    (1, _("Thứ Ba")),
+    (2, _("Thứ Tư")),
+    (3, _("Thứ Năm")),
+    (4, _("Thứ Sáu")),
+    (5, _("Thứ Bảy")),
+    (6, _("Chủ Nhật")),
+)
 
 
 class ChildAIAssessment(models.Model):
@@ -55,3 +66,52 @@ class ChildAIAssessment(models.Model):
 
     def __str__(self):
         return f"{self.child.username} – week of {self.week_start}"
+
+
+class ClassSchedule(models.Model):
+    """Lịch học hàng tuần của một lớp (Organization).
+
+    Mỗi học sinh thuộc một (hoặc nhiều) Organization sẽ kế thừa lịch học
+    của lớp đó. Lịch lặp lại hàng tuần — mỗi entry mô tả 1 buổi học cố định
+    (vd: "Thứ Hai 19:00-21:00 - Cấu trúc dữ liệu - thầy Hùng - phòng A101").
+    """
+
+    organization = models.ForeignKey(
+        Organization,
+        on_delete=models.CASCADE,
+        related_name="class_schedules",
+        verbose_name=_("Lớp / Tổ chức"),
+    )
+    day_of_week = models.IntegerField(
+        choices=DAY_OF_WEEK_CHOICES,
+        verbose_name=_("Thứ"),
+    )
+    start_time = models.TimeField(verbose_name=_("Giờ bắt đầu"))
+    end_time = models.TimeField(verbose_name=_("Giờ kết thúc"))
+    subject = models.CharField(
+        max_length=200,
+        verbose_name=_("Môn / Buổi học"),
+        help_text=_("VD: Tin học - Cấu trúc dữ liệu"),
+    )
+    teacher = models.CharField(
+        max_length=200, blank=True, verbose_name=_("Giáo viên")
+    )
+    location = models.CharField(
+        max_length=200, blank=True, verbose_name=_("Phòng / Địa điểm")
+    )
+    notes = models.TextField(blank=True, verbose_name=_("Ghi chú"))
+    is_active = models.BooleanField(default=True, verbose_name=_("Đang áp dụng"))
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ("day_of_week", "start_time")
+        verbose_name = _("Lịch học")
+        verbose_name_plural = _("Lịch học")
+
+    def __str__(self):
+        return (
+            f"{self.organization.name}: "
+            f"{self.get_day_of_week_display()} "
+            f"{self.start_time.strftime('%H:%M')}–"
+            f"{self.end_time.strftime('%H:%M')} {self.subject}"
+        )

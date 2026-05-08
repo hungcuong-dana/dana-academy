@@ -1,0 +1,90 @@
+{% extends "parent/base.html" %}
+
+{% block parent_body %}
+  {% with active = "schedule" %}
+    {% include "parent/_child_tabs.html" %}
+  {% endwith %}
+
+  {% if next_lesson %}
+    <div class="parent-card" style="border-left:4px solid #1958c1;">
+      <div style="font-size:0.78rem; color:#1958c1; font-weight:600;
+                  text-transform:uppercase; letter-spacing:0.05em;">
+        📅 Buổi học tiếp theo
+      </div>
+      <div style="margin-top:0.4rem; font-size:1.2rem; font-weight:700;">
+        {{ next_lesson.lesson.subject }}
+      </div>
+      <div style="margin-top:0.3rem; color:#555;">
+        {% if next_lesson.is_today %}<strong style="color:#1958c1;">Hôm nay</strong>
+        {% elif next_lesson.is_tomorrow %}<strong>Ngày mai</strong>
+        {% else %}<strong>{{ next_lesson.day_name }}</strong>{% endif %}
+        · {{ next_lesson.lesson.start_time.strftime("%H:%M") }} – {{ next_lesson.lesson.end_time.strftime("%H:%M") }}
+        {% if next_lesson.lesson.teacher %} · GV {{ next_lesson.lesson.teacher }}{% endif %}
+        {% if next_lesson.lesson.location %} · 📍 {{ next_lesson.lesson.location }}{% endif %}
+      </div>
+    </div>
+  {% endif %}
+
+  <div class="parent-card">
+    <h2>📅 Lịch học hàng tuần</h2>
+    <p class="section-hint">
+      Lịch học cố định trong tuần của lớp con đang theo. Nếu thiếu hoặc cần
+      điều chỉnh, vui lòng báo giáo viên/quản trị Dana Academy.
+    </p>
+
+    {% if not weekly_schedule %}
+      <div class="parent-empty" style="padding:2rem 1rem;">
+        <p style="margin:0;">
+          Chưa có lịch học nào được thiết lập cho lớp của con.
+        </p>
+        <p style="font-size:0.9rem; color:#aaa; margin-top:0.5rem;">
+          Lịch học do giáo viên quản trị nhập trong trang quản lý.
+        </p>
+      </div>
+    {% else %}
+      {% for day in weekly_schedule %}
+        <div style="margin-bottom:1.1rem;">
+          <div style="display:flex; align-items:center; gap:0.5rem;
+                      margin-bottom:0.4rem;">
+            <span style="display:inline-flex; align-items:center;
+                         justify-content:center; width:32px; height:32px;
+                         border-radius:50%;
+                         background: {% if day.lessons %}#1958c1{% else %}#e6e9ef{% endif %};
+                         color: {% if day.lessons %}#fff{% else %}#999{% endif %};
+                         font-weight:600; font-size:0.85rem;">
+              {{ day.day_name[3:] if day.day_name.startswith('Thứ') else day.day_name[0] }}
+            </span>
+            <strong style="font-size:0.95rem; color:#333;">{{ day.day_name }}</strong>
+          </div>
+          {% if day.lessons %}
+            <div style="margin-left:42px;">
+              {% for lesson in day.lessons %}
+                <div style="display:flex; gap:1rem; padding:0.55rem 0.85rem;
+                            background:#fafbfd; border-radius:8px;
+                            margin-bottom:0.35rem; align-items:center;">
+                  <div style="font-family:monospace; color:#1958c1;
+                              font-weight:600; min-width:110px;">
+                    {{ lesson.start_time.strftime("%H:%M") }}–{{ lesson.end_time.strftime("%H:%M") }}
+                  </div>
+                  <div style="flex:1;">
+                    <div style="font-weight:600;">{{ lesson.subject }}</div>
+                    <div style="font-size:0.83rem; color:#777;">
+                      {% if lesson.teacher %}GV {{ lesson.teacher }}{% endif %}
+                      {% if lesson.location %}{% if lesson.teacher %} · {% endif %}📍 {{ lesson.location }}{% endif %}
+                      {% if lesson.notes %}<br><em>{{ lesson.notes }}</em>{% endif %}
+                    </div>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          {% else %}
+            <div style="margin-left:42px; color:#aaa;
+                        font-size:0.88rem; font-style:italic;">
+              Không có buổi học
+            </div>
+          {% endif %}
+        </div>
+      {% endfor %}
+    {% endif %}
+  </div>
+{% endblock %}

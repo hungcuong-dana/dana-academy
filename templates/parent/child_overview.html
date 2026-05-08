@@ -5,6 +5,36 @@
     {% include "parent/_child_tabs.html" %}
   {% endwith %}
 
+  {% if next_lesson %}
+    <a href="{{ url('parent_child_schedule', child.id) }}"
+       class="parent-card"
+       style="display:block; text-decoration:none; color:inherit;
+              border-left:4px solid #1958c1;">
+      <div style="display:flex; justify-content:space-between; align-items:center;
+                  gap:1rem;">
+        <div>
+          <div style="font-size:0.78rem; color:#1958c1; font-weight:600;
+                      text-transform:uppercase; letter-spacing:0.05em;">
+            📅 Buổi học tiếp theo
+          </div>
+          <div style="margin-top:0.3rem; font-size:1.05rem; font-weight:700;">
+            {{ next_lesson.lesson.subject }}
+          </div>
+          <div style="margin-top:0.2rem; color:#555; font-size:0.9rem;">
+            {% if next_lesson.is_today %}<strong style="color:#1958c1;">Hôm nay</strong>
+            {% elif next_lesson.is_tomorrow %}<strong>Ngày mai</strong>
+            {% else %}<strong>{{ next_lesson.day_name }}</strong>{% endif %}
+            · {{ next_lesson.lesson.start_time.strftime("%H:%M") }}–{{ next_lesson.lesson.end_time.strftime("%H:%M") }}
+            {% if next_lesson.lesson.location %} · 📍 {{ next_lesson.lesson.location }}{% endif %}
+          </div>
+        </div>
+        <div style="color:#1958c1; font-weight:600; font-size:0.85rem;">
+          Xem cả tuần →
+        </div>
+      </div>
+    </a>
+  {% endif %}
+
   <div class="parent-grid">
     <div class="parent-card">
       <div class="parent-stat-num">{{ child_summary.problems_solved }}</div>
