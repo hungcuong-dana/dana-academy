@@ -7,11 +7,18 @@
 
   {% if assessment %}
     <div class="parent-card">
-      <div style="display:flex; justify-content:space-between; align-items:center;
-                  margin-bottom:0.75rem;">
-        <h2 style="margin:0;">Đánh giá AI · Tuần bắt đầu {{ assessment.week_start.strftime("%d/%m/%Y") }}</h2>
-        <small style="color:#888;">
-          Cập nhật {{ assessment.generated_at.strftime("%d/%m/%Y %H:%M") }}
+      <div style="display:flex; justify-content:space-between; align-items:flex-start;
+                  gap:1rem; flex-wrap:wrap; margin-bottom:0.85rem;">
+        <div>
+          <h2 style="margin:0;">💬 Nhận xét từ giáo viên</h2>
+          <p class="section-hint" style="margin:0.25rem 0 0;">
+            Tổng kết hoạt động học tập của con trong tuần — gồm điểm mạnh,
+            điều cần cải thiện và bài đề xuất luyện tập.
+          </p>
+        </div>
+        <small style="color:#888; white-space:nowrap;">
+          Tuần {{ assessment.week_start.strftime("%d/%m/%Y") }}
+          · cập nhật {{ assessment.generated_at.strftime("%d/%m %H:%M") }}
         </small>
       </div>
       <div class="parent-md">
@@ -21,15 +28,21 @@
 
     {% if suggested_problems %}
       <div class="parent-card">
-        <h2>Bài đề xuất tuần này</h2>
+        <h2>🎯 Bài giáo viên gợi ý cho tuần này</h2>
+        <p class="section-hint">
+          Những bài này được chọn để bù vào những phần con đang còn yếu.
+          Bấm vào để xem đề và làm bài.
+        </p>
         <div class="parent-grid">
           {% for p in suggested_problems %}
             <a href="{{ url('problem_detail', p.code) }}"
                class="parent-suggested-card"
                style="display:block; text-decoration:none; color:inherit;">
-              <div style="font-weight:600; margin-bottom:0.25rem;">{{ p.name }}</div>
-              <div style="font-size:0.85rem; color:#888;">
-                Mã: {{ p.code }}
+              <div style="font-weight:600; margin-bottom:0.3rem; color:#1958c1;">
+                {{ p.name }}
+              </div>
+              <div style="font-size:0.83rem; color:#888;">
+                Mã bài: {{ p.code }}
                 {% if p.get_types_name() %} · {{ p.get_types_name() }}{% endif %}
               </div>
             </a>
@@ -39,9 +52,11 @@
     {% endif %}
   {% else %}
     <div class="parent-empty">
-      <p style="font-size:1.1rem;">Chưa có báo cáo AI cho học sinh này.</p>
-      <p>Báo cáo được tự động tạo vào trưa Chủ Nhật mỗi tuần.</p>
-      <p style="color:#999; font-size:0.85rem; margin-top:1rem;">
+      <p style="font-size:1.15rem; margin-bottom:0.5rem;">
+        💬 Chưa có nhận xét nào cho học sinh này
+      </p>
+      <p>Nhận xét sẽ được giáo viên cập nhật mỗi tuần (vào trưa Chủ nhật).</p>
+      <p style="color:#999; font-size:0.85rem; margin-top:1.25rem;">
         Tuần hiện tại bắt đầu: {{ next_run_week_start.strftime("%d/%m/%Y") }}
       </p>
     </div>

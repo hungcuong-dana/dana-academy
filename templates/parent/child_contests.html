@@ -5,22 +5,96 @@
     {% include "parent/_child_tabs.html" %}
   {% endwith %}
 
+  {% if upcoming_contests %}
+    <div class="parent-card">
+      <h2>📝 Kì thi sắp diễn ra</h2>
+      <p class="section-hint">
+        Các kì thi sắp tới mà con có thể đăng ký tham gia.
+      </p>
+      {% for c in upcoming_contests %}
+        <div class="upcoming-contest">
+          <div>
+            <div style="font-weight:600;">{{ c.name }}</div>
+            <div class="meta">
+              {% if c.start_time %}Bắt đầu: {{ c.start_time.strftime("%H:%M %d/%m/%Y") }}{% endif %}
+              {% if c.time_limit %} · {{ (c.time_limit.total_seconds() // 60)|int }} phút{% endif %}
+            </div>
+          </div>
+          <a href="{{ url('contest_view', c.key) }}"
+             style="text-decoration:none; padding:0.4rem 0.9rem;
+                    background:#1958c1; color:#fff; border-radius:8px;
+                    font-size:0.85rem; font-weight:600;">Chi tiết</a>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
   <div class="parent-card">
-    <h2>Lịch sử Contest</h2>
-    {% if contest_ratings %}
+    <h2>🏆 Kì thi con đã tham gia</h2>
+    <p class="section-hint">
+      Tổng kết kết quả của con qua từng kì thi đã hoàn thành.
+    </p>
+    {% if recent_contest_participations %}
       <table style="width:100%; border-collapse:collapse;">
         <thead>
-          <tr style="text-align:left; border-bottom:1px solid #ddd;">
-            <th style="padding:0.5rem 0;">Contest</th>
-            <th style="padding:0.5rem 0;">Hạng</th>
-            <th style="padding:0.5rem 0;">Rating</th>
-            <th style="padding:0.5rem 0;">Ngày</th>
+          <tr style="text-align:left; border-bottom:2px solid #e6e9ef;">
+            <th style="padding:0.55rem 0;">Kì thi</th>
+            <th style="padding:0.55rem 0;">Điểm số</th>
+            <th style="padding:0.55rem 0;">Hạng</th>
+            <th style="padding:0.55rem 0;">Ngày</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for p in recent_contest_participations %}
+            <tr style="border-bottom:1px solid #f0f0f0;">
+              <td style="padding:0.55rem 0;">{{ p.contest.name }}</td>
+              <td><strong>{{ p.score|round(1) if p.score is not none else "—" }}</strong></td>
+              <td>
+                {% if p.rating %}
+                  <span class="badge badge-info">Hạng {{ p.rating.rank }}</span>
+                {% else %}—{% endif %}
+              </td>
+              <td>
+                <small style="color:#888;">
+                  {% if p.real_start %}{{ p.real_start.strftime("%d/%m/%Y") }}{% endif %}
+                </small>
+              </td>
+              <td>
+                <a href="{{ url('contest_view', p.contest.key) }}"
+                   style="text-decoration:none; color:#1958c1; font-size:0.85rem;">
+                  Xem →
+                </a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p style="color:#888; margin:0;">Con chưa tham gia kì thi nào.</p>
+    {% endif %}
+  </div>
+
+  {% if contest_ratings %}
+    <div class="parent-card">
+      <h2>📈 Diễn biến rating</h2>
+      <p class="section-hint">
+        Rating phản ánh trình độ tổng hợp của con qua các kì thi có xếp hạng.
+        Chỉ số càng cao thể hiện kết quả càng ổn định.
+      </p>
+      <table style="width:100%; border-collapse:collapse;">
+        <thead>
+          <tr style="text-align:left; border-bottom:2px solid #e6e9ef;">
+            <th style="padding:0.55rem 0;">Kì thi</th>
+            <th style="padding:0.55rem 0;">Hạng</th>
+            <th style="padding:0.55rem 0;">Rating</th>
+            <th style="padding:0.55rem 0;">Ngày</th>
           </tr>
         </thead>
         <tbody>
           {% for c in contest_ratings %}
             <tr style="border-bottom:1px solid #f0f0f0;">
-              <td style="padding:0.5rem 0;">{{ c.contest_name or c.contest_key }}</td>
+              <td style="padding:0.55rem 0;">{{ c.contest_name or c.contest_key }}</td>
               <td>{{ c.rank or "—" }}</td>
               <td><strong>{{ c.rating or "—" }}</strong></td>
               <td>
@@ -32,8 +106,6 @@
           {% endfor %}
         </tbody>
       </table>
-    {% else %}
-      <p style="color:#888;">Học sinh chưa tham gia contest nào có rating.</p>
-    {% endif %}
-  </div>
+    </div>
+  {% endif %}
 {% endblock %}

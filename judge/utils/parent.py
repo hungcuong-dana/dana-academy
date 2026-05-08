@@ -46,7 +46,13 @@ def current_week_start() -> date:
 # --------------------------------------------------------------------------
 # Per-child summary stats (cached, used on dashboard cards + overview)
 # --------------------------------------------------------------------------
-@cache_wrapper(prefix="psum", timeout=600)
+def get_display_name(user) -> str:
+    """Họ và tên (first + last) if set, else fall back to username."""
+    full = f"{user.first_name} {user.last_name}".strip()
+    return full or user.username
+
+
+@cache_wrapper(prefix="psum_v2", timeout=600)
 def get_child_summary(child_id: int) -> dict:
     profile = Profile.objects.select_related("user").get(id=child_id)
     thirty_days_ago = date.today() - timedelta(days=30)
@@ -64,14 +70,15 @@ def get_child_summary(child_id: int) -> dict:
     return {
         "id": profile.id,
         "username": profile.user.username,
+        "display_name": get_display_name(profile.user),
         "image_url": profile.get_profile_image_url(),
         "problems_solved": profile.get_problem_count(),
         "points": profile.get_points(),
         "performance_points": profile.get_performance_points(),
         "rating": profile.get_rating(),
         "submission_count_30d": total_30d,
-        "ac_count_30d": ac_30d,
-        "ac_rate_30d": round(ac_30d * 100.0 / total_30d, 1) if total_30d else 0.0,
+        "correct_count_30d": ac_30d,
+        "correct_rate_30d": round(ac_30d * 100.0 / total_30d, 1) if total_30d else 0.0,
         "last_submitted": last_sub,
     }
 
@@ -138,6 +145,34 @@ def get_child_class_compare(child_id: int) -> dict | None:
         "child_performance_points": summary["performance_points"],
         "avg_performance_points": avgs["avg_performance_points"],
     }
+
+
+# --------------------------------------------------------------------------
+# Contest helpers
+# --------------------------------------------------------------------------
+def get_upcoming_contests(limit: int = 3):
+    """Visible, public contests that haven't started yet (Vietnam time)."""
+    from django.utils import timezone
+    from judge.models import Contest
+
+    now = timezone.now()
+    return list(
+        Contest.objects
+        .filter(is_visible=True, start_time__gt=now)
+        .order_by("start_time")[:limit]
+    )
+
+
+def get_child_contest_history(child_id: int, limit: int = 5):
+    """Recent ContestParticipation for the child (visible contests only)."""
+    from judge.models import ContestParticipation
+
+    return list(
+        ContestParticipation.objects
+        .filter(user_id=child_id, virtual=0, contest__is_visible=True)
+        .select_related("contest", "rating")
+        .order_by("-real_start")[:limit]
+    )
 
 
 # --------------------------------------------------------------------------

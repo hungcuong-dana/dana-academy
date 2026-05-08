@@ -2,60 +2,186 @@
 
 {% block media %}
   <style>
+    /* Parent portal: warmer, more reassuring palette than the judge default. */
     .parent-shell {
       max-width: 1100px;
-      margin: 1.5rem auto;
+      margin: 1.5rem auto 4rem;
       padding: 0 1rem;
     }
+    .parent-hero {
+      background: linear-gradient(135deg, #1958c1 0%, #2e83f1 100%);
+      color: #fff;
+      padding: 1.5rem 1.75rem;
+      border-radius: 14px;
+      margin-bottom: 1.25rem;
+      box-shadow: 0 4px 14px rgba(25, 88, 193, 0.18);
+    }
+    .parent-hero h1 { margin: 0 0 0.4rem; font-size: 1.4rem; }
+    .parent-hero p { margin: 0; opacity: 0.92; font-size: 0.95rem; }
+
     .parent-card {
-      background: var(--md-bg-color, #fff);
-      border: 1px solid var(--md-border-color, #e2e2e2);
+      background: #fff;
+      border: 1px solid #e6e9ef;
       border-radius: 12px;
       padding: 1.25rem 1.5rem;
       margin-bottom: 1rem;
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
     }
-    .parent-card h2 { margin: 0 0 0.75rem; font-size: 1.15rem; }
+    .parent-card h2 {
+      margin: 0 0 0.75rem;
+      font-size: 1.05rem;
+      color: #1958c1;
+    }
+    .parent-card .section-hint {
+      margin: -0.4rem 0 0.9rem;
+      font-size: 0.85rem;
+      color: #777;
+    }
+
     .parent-grid {
       display: grid;
       gap: 1rem;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
     }
+
     .parent-stat-num {
-      font-size: 1.75rem; font-weight: 700; color: #1958c1;
+      font-size: 1.85rem;
+      font-weight: 700;
+      color: #1958c1;
       line-height: 1.1;
     }
     .parent-stat-label {
-      font-size: 0.85rem; color: #666; margin-top: 0.25rem;
+      font-size: 0.85rem;
+      color: #666;
+      margin-top: 0.25rem;
     }
+
+    .child-card {
+      display: flex;
+      flex-direction: column;
+      background: #fff;
+      border: 1px solid #e6e9ef;
+      border-radius: 14px;
+      padding: 1.25rem;
+      text-decoration: none;
+      color: inherit;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+    }
+    .child-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(25, 88, 193, 0.15);
+      border-color: #b9d2f7;
+      text-decoration: none;
+    }
+    .child-card .arrow {
+      margin-top: auto;
+      padding-top: 0.85rem;
+      color: #1958c1;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
     .parent-tabs {
-      display: flex; gap: 0.5rem; flex-wrap: wrap;
-      margin-bottom: 1rem; border-bottom: 1px solid #ddd;
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid #ddd;
     }
     .parent-tabs a {
-      padding: 0.5rem 1rem; border-radius: 8px 8px 0 0;
-      text-decoration: none; color: #555;
+      padding: 0.6rem 1.1rem;
+      border-radius: 10px 10px 0 0;
+      text-decoration: none;
+      color: #555;
+      font-size: 0.95rem;
     }
     .parent-tabs a.active {
-      background: #1958c1; color: #fff; font-weight: 600;
+      background: #1958c1;
+      color: #fff;
+      font-weight: 600;
     }
-    .parent-tabs a:hover:not(.active) { background: #f0f0f0; }
+    .parent-tabs a:hover:not(.active) {
+      background: #f0f3fa;
+      color: #1958c1;
+    }
+
     .compare-bar {
-      background: #eee; border-radius: 4px; height: 12px;
-      overflow: hidden; margin: 4px 0 8px;
+      background: #eef1f7;
+      border-radius: 4px;
+      height: 14px;
+      overflow: hidden;
+      margin: 4px 0 8px;
     }
-    .compare-bar > div { height: 100%; background: #1958c1; }
+    .compare-bar > div { height: 100%; }
+    .compare-child > div { background: #1958c1; }
+    .compare-class > div { background: #ffa726; }
+
+    .legend {
+      display: inline-flex;
+      gap: 0.35rem;
+      align-items: center;
+      font-size: 0.8rem;
+      color: #555;
+    }
+    .legend .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.15rem 0.55rem;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 600;
+    }
+    .badge-correct { background: #dcf2e1; color: #1f7a3a; }
+    .badge-wrong   { background: #fde2e2; color: #a02525; }
+    .badge-pending { background: #fff4d6; color: #8a6d00; }
+    .badge-info    { background: #e2ecf9; color: #1958c1; }
+
     .parent-suggested-card {
-      border: 1px solid #ddd; border-radius: 10px; padding: 1rem;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      padding: 1rem;
       transition: box-shadow 0.15s ease;
+      background: #fafbfd;
     }
     .parent-suggested-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+
     .parent-empty {
-      text-align: center; padding: 3rem 1rem;
-      color: #888; background: #fafafa; border-radius: 12px;
+      text-align: center;
+      padding: 3rem 1rem;
+      color: #888;
+      background: #fafbfd;
+      border-radius: 12px;
+      border: 1px dashed #d8dde7;
     }
-    .parent-md h2 { margin-top: 1.5rem; font-size: 1.1rem; }
+
+    .parent-md h2 { margin-top: 1.5rem; font-size: 1.1rem; color: #1958c1; }
     .parent-md ul { padding-left: 1.5rem; }
+    .parent-md p  { line-height: 1.6; }
+
+    .upcoming-contest {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .upcoming-contest:last-child { border-bottom: none; }
+    .upcoming-contest .meta {
+      font-size: 0.85rem;
+      color: #777;
+    }
+
+    @media (max-width: 600px) {
+      .parent-hero { padding: 1.1rem 1.2rem; }
+      .parent-hero h1 { font-size: 1.2rem; }
+    }
   </style>
   {% block parent_media %}{% endblock %}
 {% endblock %}

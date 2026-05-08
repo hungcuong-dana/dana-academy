@@ -1,54 +1,98 @@
 {% extends "parent/base.html" %}
 
 {% block parent_body %}
-  <h1>Xin chào, {{ request.user.username }}</h1>
-  <p style="color:#666;">Theo dõi tình hình học tập của con bạn tại Dana Academy.</p>
+  <div class="parent-hero">
+    <h1>Xin chào{% if parent_display_name %}, {{ parent_display_name }}{% endif %} 👋</h1>
+    <p>
+      Đây là khu vực dành riêng cho phụ huynh để theo dõi quá trình học tập
+      của con em tại Dana Academy. Bấm vào học sinh bên dưới để xem chi tiết.
+    </p>
+  </div>
 
   {% if not children %}
     <div class="parent-empty">
       <p style="font-size:1.1rem;">Tài khoản của bạn chưa được liên kết với học sinh nào.</p>
-      <p>Vui lòng liên hệ giáo viên/quản trị để được gán học sinh.</p>
+      <p>Vui lòng liên hệ giáo viên hoặc quản trị để được gán học sinh.</p>
     </div>
   {% else %}
-    <div class="parent-grid">
-      {% for s in children_summaries %}
-        <a href="{{ url('parent_child_overview', s.id) }}"
-           class="parent-card" style="display:block; text-decoration:none; color:inherit;">
-          <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:0.75rem;">
-            {% if s.image_url %}
-              <img src="{{ s.image_url }}" alt=""
-                   style="width:48px; height:48px; border-radius:50%; object-fit:cover;">
-            {% endif %}
-            <div>
-              <div style="font-weight:600; font-size:1.05rem;">{{ s.username }}</div>
-              <div style="font-size:0.85rem; color:#888;">
-                {% if s.last_submitted %}
-                  Hoạt động gần nhất: {{ s.last_submitted.strftime("%d/%m/%Y") }}
-                {% else %}
-                  Chưa nộp bài nào
-                {% endif %}
+    <div class="parent-card">
+      <h2>Học sinh của bạn</h2>
+      <p class="section-hint">
+        Bấm vào từng học sinh để xem chi tiết tình hình học tập, các bài đã giải,
+        kết quả kì thi và đánh giá tuần từ giáo viên.
+      </p>
+      <div class="parent-grid">
+        {% for s in children_summaries %}
+          <a href="{{ url('parent_child_overview', s.id) }}" class="child-card">
+            <div style="display:flex; align-items:center; gap:0.85rem; margin-bottom:1rem;">
+              {% if s.image_url %}
+                <img src="{{ s.image_url }}" alt=""
+                     style="width:54px; height:54px; border-radius:50%;
+                            object-fit:cover; flex-shrink:0;">
+              {% endif %}
+              <div style="min-width:0;">
+                <div style="font-weight:600; font-size:1.1rem;
+                            white-space:nowrap; overflow:hidden;
+                            text-overflow:ellipsis;">{{ s.display_name }}</div>
+                <div style="font-size:0.83rem; color:#888;">
+                  {% if s.last_submitted %}
+                    Hoạt động gần nhất:
+                    {{ s.last_submitted.strftime("%d/%m/%Y") }}
+                  {% else %}
+                    Chưa nộp bài nào
+                  {% endif %}
+                </div>
               </div>
             </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem;">
+              <div>
+                <div class="parent-stat-num">{{ s.problems_solved }}</div>
+                <div class="parent-stat-label">Bài đã giải đúng</div>
+              </div>
+              <div>
+                <div class="parent-stat-num">{{ s.points|round(1) }}</div>
+                <div class="parent-stat-label">Điểm tích lũy</div>
+              </div>
+              <div>
+                <div class="parent-stat-num">{{ s.submission_count_30d }}</div>
+                <div class="parent-stat-label">Bài làm 30 ngày</div>
+              </div>
+              <div>
+                <div class="parent-stat-num">{{ s.correct_rate_30d }}%</div>
+                <div class="parent-stat-label">Tỉ lệ giải đúng</div>
+              </div>
+            </div>
+            <div class="arrow">Xem chi tiết tình hình học tập →</div>
+          </a>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+
+  {% if upcoming_contests %}
+    <div class="parent-card">
+      <h2>📝 Kì thi sắp diễn ra</h2>
+      <p class="section-hint">
+        Các kì thi sắp tới mà các con có thể đăng ký tham gia.
+      </p>
+      {% for c in upcoming_contests %}
+        <div class="upcoming-contest">
+          <div>
+            <div style="font-weight:600;">{{ c.name }}</div>
+            <div class="meta">
+              {% if c.start_time %}Bắt đầu:
+                {{ c.start_time.strftime("%H:%M %d/%m/%Y") }}{% endif %}
+              {% if c.time_limit %}
+                · Thời lượng: {{ (c.time_limit.total_seconds() // 60)|int }} phút
+              {% endif %}
+            </div>
           </div>
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem;">
-            <div>
-              <div class="parent-stat-num">{{ s.problems_solved }}</div>
-              <div class="parent-stat-label">Bài đã giải</div>
-            </div>
-            <div>
-              <div class="parent-stat-num">{{ s.points|round(1) }}</div>
-              <div class="parent-stat-label">Điểm</div>
-            </div>
-            <div>
-              <div class="parent-stat-num">{{ s.submission_count_30d }}</div>
-              <div class="parent-stat-label">Bài nộp (30 ngày)</div>
-            </div>
-            <div>
-              <div class="parent-stat-num">{{ s.ac_rate_30d }}%</div>
-              <div class="parent-stat-label">Tỉ lệ AC (30 ngày)</div>
-            </div>
-          </div>
-        </a>
+          <a href="{{ url('contest_view', c.key) }}"
+             style="text-decoration:none; padding:0.4rem 0.9rem;
+                    background:#1958c1; color:#fff; border-radius:8px;
+                    font-size:0.85rem;">Chi tiết</a>
+        </div>
       {% endfor %}
     </div>
   {% endif %}

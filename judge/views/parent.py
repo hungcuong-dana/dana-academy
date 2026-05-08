@@ -22,9 +22,12 @@ from judge.models import (
 from judge.utils.parent import (
     current_week_start,
     get_child_class_compare,
+    get_child_contest_history,
     get_child_summary,
+    get_display_name,
     get_heatmap,
     get_topic_breakdown,
+    get_upcoming_contests,
 )
 from judge.utils.users import get_contest_ratings
 
@@ -55,8 +58,9 @@ class ChildAccessMixin(ParentRequiredMixin):
         ctx = super().get_context_data(**kwargs)
         child = self.get_child()
         ctx["child"] = child
+        ctx["child_display_name"] = get_display_name(child.user)
         ctx["child_summary"] = get_child_summary(child.id)
-        ctx["title"] = f"{child.user.username} – Theo dõi"
+        ctx["title"] = f"{get_display_name(child.user)} – Theo dõi"
         return ctx
 
 
@@ -71,7 +75,9 @@ class ParentDashboard(ParentRequiredMixin, TemplateView):
         children = list(self.request.profile.children.select_related("user"))
         ctx["children"] = children
         ctx["children_summaries"] = [get_child_summary(c.id) for c in children]
-        ctx["title"] = "Bảng điều khiển phụ huynh"
+        ctx["upcoming_contests"] = get_upcoming_contests(limit=3)
+        ctx["parent_display_name"] = get_display_name(self.request.user)
+        ctx["title"] = "Trang phụ huynh"
         return ctx
 
 
@@ -89,6 +95,8 @@ class ChildOverview(ChildAccessMixin, TemplateView):
             .select_related("problem", "language")
             .order_by("-date")[:10]
         )
+        ctx["upcoming_contests"] = get_upcoming_contests(limit=3)
+        ctx["recent_contest_participations"] = get_child_contest_history(child.id, limit=3)
         return ctx
 
 
@@ -121,6 +129,8 @@ class ChildContests(ChildAccessMixin, TemplateView):
         ctx = super().get_context_data(**kwargs)
         child = ctx["child"]
         ctx["contest_ratings"] = get_contest_ratings(child.id)
+        ctx["upcoming_contests"] = get_upcoming_contests(limit=10)
+        ctx["recent_contest_participations"] = get_child_contest_history(child.id, limit=20)
         return ctx
 
 

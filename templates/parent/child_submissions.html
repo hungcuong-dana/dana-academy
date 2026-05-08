@@ -6,26 +6,41 @@
   {% endwith %}
 
   <div class="parent-card">
-    <h2>Tất cả bài nộp</h2>
+    <h2>📝 Tất cả bài làm</h2>
+    <p class="section-hint">
+      Lịch sử các bài con đã nộp, cùng kết quả và ngôn ngữ lập trình sử dụng.
+    </p>
     {% if submissions %}
       <table style="width:100%; border-collapse:collapse;">
         <thead>
-          <tr style="text-align:left; border-bottom:1px solid #ddd;">
-            <th style="padding:0.5rem 0;">Bài</th>
-            <th style="padding:0.5rem 0;">Kết quả</th>
-            <th style="padding:0.5rem 0;">Điểm</th>
-            <th style="padding:0.5rem 0;">Ngôn ngữ</th>
-            <th style="padding:0.5rem 0;">Thời gian</th>
+          <tr style="text-align:left; border-bottom:2px solid #e6e9ef;">
+            <th style="padding:0.55rem 0;">Bài</th>
+            <th style="padding:0.55rem 0;">Kết quả</th>
+            <th style="padding:0.55rem 0;">Điểm</th>
+            <th style="padding:0.55rem 0;">Ngôn ngữ</th>
+            <th style="padding:0.55rem 0;">Thời gian</th>
           </tr>
         </thead>
         <tbody>
           {% for s in submissions %}
             <tr style="border-bottom:1px solid #f0f0f0;">
-              <td style="padding:0.5rem 0;">{{ s.problem.name }}</td>
+              <td style="padding:0.55rem 0;">{{ s.problem.name }}</td>
               <td>
-                <span style="color: {% if s.result == 'AC' %}#28a745{% else %}#d9534f{% endif %};">
-                  {{ s.result or s.status }}
-                </span>
+                {% if s.result == 'AC' %}
+                  <span class="badge badge-correct">Đúng</span>
+                {% elif s.result == 'WA' %}
+                  <span class="badge badge-wrong">Sai đáp án</span>
+                {% elif s.result == 'TLE' %}
+                  <span class="badge badge-wrong">Quá thời gian</span>
+                {% elif s.result == 'MLE' %}
+                  <span class="badge badge-wrong">Quá bộ nhớ</span>
+                {% elif s.result == 'CE' %}
+                  <span class="badge badge-wrong">Lỗi biên dịch</span>
+                {% elif s.result %}
+                  <span class="badge badge-wrong">Chưa đúng</span>
+                {% else %}
+                  <span class="badge badge-pending">Đang chấm</span>
+                {% endif %}
               </td>
               <td>{{ s.points|round(1) if s.points is not none else "—" }}</td>
               <td><small>{{ s.language.short_name or s.language.key }}</small></td>
@@ -36,15 +51,19 @@
       </table>
       <div style="margin-top:1rem; display:flex; gap:0.5rem; justify-content:center;">
         {% if has_prev %}
-          <a href="?page={{ page - 1 }}" style="padding:0.4rem 1rem; border:1px solid #ddd; border-radius:6px; text-decoration:none;">← Trước</a>
+          <a href="?page={{ page - 1 }}"
+             style="padding:0.4rem 1rem; border:1px solid #ddd;
+                    border-radius:6px; text-decoration:none;">← Trang trước</a>
         {% endif %}
         <span style="padding:0.4rem 1rem; color:#666;">Trang {{ page }}</span>
         {% if has_next %}
-          <a href="?page={{ page + 1 }}" style="padding:0.4rem 1rem; border:1px solid #ddd; border-radius:6px; text-decoration:none;">Sau →</a>
+          <a href="?page={{ page + 1 }}"
+             style="padding:0.4rem 1rem; border:1px solid #ddd;
+                    border-radius:6px; text-decoration:none;">Trang sau →</a>
         {% endif %}
       </div>
     {% else %}
-      <p style="color:#888;">Chưa có bài nộp nào.</p>
+      <p style="color:#888;">Con chưa nộp bài nào.</p>
     {% endif %}
   </div>
 {% endblock %}
