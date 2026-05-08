@@ -20,6 +20,15 @@ package.json
 websocket/config.js
 
 .DS_Store
+
+# Runtime data — not source code
+problems/
+static_root/
+media/
+profile_images/
+pdfcache/
+problem_data/
+*.zip
 # AI tools (synced from separate private repo via .claude-config/sync.sh)
 CLAUDE.md
 **/CLAUDE.md
