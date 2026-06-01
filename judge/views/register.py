@@ -109,14 +109,23 @@ class RegistrationView(OldRegistrationView):
         profile.language = cleaned_data["language"]
         profile.save()
 
-        self.send_activation_email(user.id)
+        # Auto-activate the account — email verification is currently disabled
+        # because SMTP quota is exhausted. The user's email is still stored
+        # for password reset / future re-enable.
+        user.is_active = True
+        user.save()
+        try:
+            rp = RegistrationProfile.objects.get(user=user)
+            rp.activated = True
+            rp.save()
+        except RegistrationProfile.DoesNotExist:
+            pass
+
         return user
 
     def send_activation_email(self, user_id):
-        site = get_current_site(self.request)
-        RegistrationProfile.objects.get(user_id=user_id).send_activation_email(
-            site, self.request
-        )
+        # Intentionally a no-op while email verification is disabled.
+        return
 
     def get_initial(self, *args, **kwargs):
         initial = super(RegistrationView, self).get_initial(*args, **kwargs)

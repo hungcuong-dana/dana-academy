@@ -55,6 +55,7 @@ from judge.models.profile import (
     DYNAMIC_EFFECT_CHOICES,
 )
 from judge.models.parent import ChildAIAssessment, ClassSchedule
+from judge.models.teacher import TeacherClass, Student, ParentContact, SessionNote, Attendance, TuitionRecord, AcademicLevel, ClassAISummary
 from judge.models.runtime import Judge, Language, RuntimeVersion
 from judge.models.submission import (
     SUBMISSION_RESULT,
@@ -92,6 +93,7 @@ from judge.models.block import Block
 from judge.models.email_change import EmailChangeRequest
 from judge.models.problem_attachment import ProblemAttachment
 from judge.models.public_request import PublicRequest
+from judge.models.ai_score import SubmissionAIScore
 
 revisions.register(Profile, exclude=["points", "last_access", "ip", "rating"])
 revisions.register(Problem, follow=["language_limits"])

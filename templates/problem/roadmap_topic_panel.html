@@ -1,0 +1,53 @@
+{# Roadmap topic nav panel shown at the top of a problem page when the
+   user came from /roadmap (carried via ?rm=level/topic). Lets them see
+   the topic's full problem list and jump to the next one. #}
+<button type="button" class="rtp-toggle-btn" id="rtpToggleBtn" aria-label="Đóng/mở thanh điều hướng"
+        style="--rm-color: {{ roadmap_nav.level.color }}; --rm-color2: {{ roadmap_nav.level.color2 }};">
+  <i class="fa fa-chevron-left"></i>
+</button>
+<div class="roadmap-topic-panel" id="roadmapTopicPanel"
+     style="--rm-color: {{ roadmap_nav.level.color }}; --rm-color2: {{ roadmap_nav.level.color2 }};">
+  <div class="rtp-head">
+    <div class="rtp-crumbs">
+      <a href="{{ url('roadmap_index') }}">{{ _('Lộ trình') }}</a>
+      <span class="sep">/</span>
+      <a href="{{ url('roadmap_level', roadmap_nav.level_key) }}">{{ roadmap_nav.level.title }}: {{ roadmap_nav.level.subtitle }}</a>
+      <span class="sep">/</span>
+      <a href="{{ url('roadmap_type', roadmap_nav.level_key, roadmap_nav.topic_slug) }}">{{ roadmap_nav.topic_label }}</a>
+    </div>
+    <div class="rtp-progress">
+      <span class="rtp-count">{{ roadmap_nav.solved }} / {{ roadmap_nav.total }}</span>
+      <div class="rtp-bar"><div class="rtp-bar-fill" style="width: {{ roadmap_nav.percent }}%;"></div></div>
+    </div>
+  </div>
+  <div class="rtp-list">
+    {% for row in roadmap_nav.rows %}
+      <a class="rtp-pill {{ row.status }}{% if row.is_current %} current{% endif %}"
+         href="{{ url('problem_detail', row.problem.code) }}?rm={{ roadmap_nav.rm_param }}"
+         title="{{ row.problem.name }}">
+        <span class="rtp-icon">
+          {% if row.status == 'solved' %}<i class="fa fa-check-circle"></i>
+          {% elif row.status == 'attempted' %}<i class="fa fa-minus-circle"></i>
+          {% else %}<i class="far fa-circle"></i>{% endif %}
+        </span>
+        <span class="rtp-code">{{ row.problem.code }}</span>
+        <span class="rtp-name">{{ row.problem.name }}</span>
+      </a>
+    {% endfor %}
+  </div>
+</div>
+<script>
+(function() {
+  var panel = document.getElementById('roadmapTopicPanel');
+  var btn = document.getElementById('rtpToggleBtn');
+  if (!panel || !btn) return;
+  // Restore state from localStorage
+  if (localStorage.getItem('rtpCollapsed') === '1') {
+    document.body.classList.add('rtp-collapsed');
+  }
+  btn.addEventListener('click', function() {
+    var collapsed = document.body.classList.toggle('rtp-collapsed');
+    localStorage.setItem('rtpCollapsed', collapsed ? '1' : '0');
+  });
+})();
+</script>

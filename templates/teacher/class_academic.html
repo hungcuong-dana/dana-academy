@@ -1,0 +1,61 @@
+{% extends "teacher/base.html" %}
+
+{% block teacher_body %}
+  {% include "teacher/_class_tabs.html" %}
+
+  <div class="tc-card">
+    <h2>Đánh giá học lực</h2>
+    <p class="hint">Mỗi lần lưu sẽ tạo một bản ghi đánh giá mới (giữ lịch sử). Bảng dưới hiển thị đánh giá mới nhất.</p>
+
+    <form method="post" action="{{ url('teacher_save_academic', cls.id) }}">
+      {% csrf_token %}
+      {% if rows %}
+        <div style="overflow-x:auto;">
+        <table class="tc-table">
+          <thead>
+            <tr>
+              <th>Họ tên</th>
+              <th>Lớp / Trường</th>
+              <th style="width:160px;">Học lực</th>
+              <th>Đánh giá lần cuối</th>
+              <th>Ghi chú</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for r in rows %}
+            <tr>
+              <td>{{ r.student.display_name }}</td>
+              <td style="font-size:0.85rem; color:var(--tc-muted);">
+                {% if r.student.grade %}{{ r.student.grade }}{% endif %}
+                {% if r.student.grade and r.student.school %} · {% endif %}
+                {% if r.student.school %}{{ r.student.school }}{% endif %}
+              </td>
+              <td>
+                <select name="level_{{ r.student.id }}">
+                  <option value="">-- chưa đánh giá --</option>
+                  {% for code, label in level_choices %}
+                    <option value="{{ code }}" {% if r.level == code %}selected{% endif %}>{{ label }}</option>
+                  {% endfor %}
+                </select>
+              </td>
+              <td>
+                {% if r.level %}
+                  <span class="tc-pill lv-{{ r.level }}">{{ r.level_display }}</span>
+                  <span style="color:var(--tc-muted); font-size:0.8rem;">{{ r.evaluated_at.strftime('%d/%m/%Y') }}</span>
+                {% else %}—{% endif %}
+              </td>
+              <td><input type="text" name="note_{{ r.student.id }}" value="{{ r.note }}" placeholder="Nhận xét..."></td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+        </div>
+        <div style="margin-top:1rem; display:flex; justify-content:flex-end;">
+          <button type="submit" class="tc-btn">💾 Lưu đánh giá</button>
+        </div>
+      {% else %}
+        <div class="tc-empty">Chưa có học sinh trong lớp.</div>
+      {% endif %}
+    </form>
+  </div>
+{% endblock %}

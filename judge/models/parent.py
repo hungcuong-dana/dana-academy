@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-from judge.models.profile import Organization, Profile
+from judge.models.profile import Profile
 
 
 __all__ = ["ChildAIAssessment", "ClassSchedule"]
@@ -69,18 +69,18 @@ class ChildAIAssessment(models.Model):
 
 
 class ClassSchedule(models.Model):
-    """Lịch học hàng tuần của một lớp (Organization).
+    """Lịch học hàng tuần của một TeacherClass.
 
-    Mỗi học sinh thuộc một (hoặc nhiều) Organization sẽ kế thừa lịch học
+    Mỗi học sinh thuộc một (hoặc nhiều) TeacherClass sẽ kế thừa lịch học
     của lớp đó. Lịch lặp lại hàng tuần — mỗi entry mô tả 1 buổi học cố định
     (vd: "Thứ Hai 19:00-21:00 - Cấu trúc dữ liệu - thầy Hùng - phòng A101").
     """
 
-    organization = models.ForeignKey(
-        Organization,
+    teacher_class = models.ForeignKey(
+        "judge.TeacherClass",
         on_delete=models.CASCADE,
         related_name="class_schedules",
-        verbose_name=_("Lớp / Tổ chức"),
+        verbose_name=_("Lớp"),
     )
     day_of_week = models.IntegerField(
         choices=DAY_OF_WEEK_CHOICES,
@@ -110,7 +110,7 @@ class ClassSchedule(models.Model):
 
     def __str__(self):
         return (
-            f"{self.organization.name}: "
+            f"{self.teacher_class.name}: "
             f"{self.get_day_of_week_display()} "
             f"{self.start_time.strftime('%H:%M')}–"
             f"{self.end_time.strftime('%H:%M')} {self.subject}"

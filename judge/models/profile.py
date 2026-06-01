@@ -350,6 +350,7 @@ class Profile(CacheableModel):
             ("setter", "Problem Setter"),
             ("admin", "Admin"),
             ("parent", "Parent"),
+            ("teacher", "Teacher"),
         ),
         db_index=True,
     )
@@ -360,6 +361,21 @@ class Profile(CacheableModel):
         related_name="parents",
         verbose_name=_("children"),
         help_text=_("Students this profile (a parent) is allowed to monitor."),
+    )
+    phone = models.CharField(
+        max_length=30, blank=True, default="", verbose_name=_("Số điện thoại"),
+    )
+    zalo = models.CharField(
+        max_length=50, blank=True, default="", verbose_name=_("Zalo"),
+    )
+    facebook = models.CharField(
+        max_length=255, blank=True, default="", verbose_name=_("Facebook"),
+    )
+    school = models.CharField(
+        max_length=255, blank=True, default="", verbose_name=_("Trường"),
+    )
+    occupation = models.CharField(
+        max_length=255, blank=True, default="", verbose_name=_("Nghề nghiệp"),
     )
     mute = models.BooleanField(
         verbose_name=_("comment mute"),
@@ -491,6 +507,10 @@ class Profile(CacheableModel):
     @cached_property
     def is_parent(self):
         return self.get_display_rank() == "parent"
+
+    @cached_property
+    def is_teacher(self):
+        return self.get_display_rank() == "teacher"
 
     def get_rating(self):
         return self.get_cached_value("rating")

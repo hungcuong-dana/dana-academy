@@ -12,6 +12,7 @@ from django.core.files.storage import FileSystemStorage
 from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.core.cache import cache
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
@@ -389,21 +390,41 @@ def get_problem_case(problem, files):
     if not uncached_files:
         return result
 
-    archive_path = os.path.join(
-        settings.DMOJ_PROBLEM_DATA_ROOT, str(problem.data_files.zipfile)
-    )
-    if not os.path.exists(archive_path):
-        log_exception('archive file "%s" does not exist' % archive_path)
-        return {}
     try:
-        archive = zipfile.ZipFile(archive_path, "r")
-    except zipfile.BadZipfile:
-        log_exception('bad archive: "%s"' % archive_path)
-        return {}
+        has_zip = bool(problem.data_files.zipfile)
+    except ObjectDoesNotExist:
+        has_zip = False
+
+    if has_zip:
+        archive_path = os.path.join(
+            settings.DMOJ_PROBLEM_DATA_ROOT, str(problem.data_files.zipfile)
+        )
+        if not os.path.exists(archive_path):
+            log_exception('archive file "%s" does not exist' % archive_path)
+            return {}
+        try:
+            archive = zipfile.ZipFile(archive_path, "r")
+        except zipfile.BadZipfile:
+            log_exception('bad archive: "%s"' % archive_path)
+            return {}
+
+        def open_case(name):
+            return archive.open(name)
+    else:
+        # No archive uploaded: serve the loose data files laid out under
+        # DMOJ_PROBLEM_DATA_ROOT/<problem code>/ (init.yml-style data).
+        base_dir = os.path.join(settings.DMOJ_PROBLEM_DATA_ROOT, problem.code)
+
+        def open_case(name):
+            return open(os.path.join(base_dir, name), "rb")
 
     to_set = {}
     for file in uncached_files:
-        with archive.open(file) as f:
+        try:
+            case_file = open_case(file)
+        except (KeyError, OSError):
+            continue
+        with case_file as f:
             s = f.read(settings.TESTCASE_VISIBLE_LENGTH + 3)
             # add this so there are no characters left behind (ex, 'á' = 2 utf-8 chars)
             while True:

@@ -1622,6 +1622,7 @@ input::placeholder {
                 flex: 1;
                 display: flex;
                 justify-content: center;
+                align-items: center !important;
             }
 
             &:not(:hover)>ul {
@@ -1668,9 +1669,9 @@ input::placeholder {
             // Icon-only navigation styles for desktop
             .nav-icon-link {
                 display: flex;
-                height: 100%;
                 align-items: center;
                 justify-content: center;
+                align-self: center;
                 text-decoration: none;
                 color: #666;
                 font-weight: normal;

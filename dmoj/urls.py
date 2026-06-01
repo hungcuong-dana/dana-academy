@@ -65,6 +65,8 @@ from judge.views import (
 )
 from judge.views import package_import
 from judge.views import parent as parent_views
+from judge.views import roadmap as roadmap_views
+from judge.views import teacher as teacher_views
 from judge.views import quiz_import
 from judge.views.problem_attachment import (
     attachment_delete,
@@ -248,6 +250,53 @@ urlpatterns = [
     re_path(r"^500/$", exception),
     re_path(r"^toggle_darkmode/$", user.toggle_darkmode, name="toggle_darkmode"),
     re_path(r"^admin/", admin.site.urls),
+    re_path(r"^teacher/", include([
+        re_path(r"^$", teacher_views.TeacherDashboard.as_view(), name="teacher_home"),
+        re_path(r"^session-note/save/$", teacher_views.save_session_note, name="teacher_save_session_note"),
+        re_path(r"^class/create/$", teacher_views.create_class, name="teacher_class_create"),
+        re_path(r"^class/(?P<cls_id>\d+)/$",
+                teacher_views.ClassStudents.as_view(), name="teacher_class_students"),
+        re_path(r"^class/(?P<cls_id>\d+)/parents/$",
+                teacher_views.ClassParents.as_view(), name="teacher_class_parents"),
+        re_path(r"^class/(?P<cls_id>\d+)/attendance/$",
+                teacher_views.ClassAttendance.as_view(), name="teacher_class_attendance"),
+        re_path(r"^class/(?P<cls_id>\d+)/tuition/$",
+                teacher_views.ClassTuition.as_view(), name="teacher_class_tuition"),
+        re_path(r"^class/(?P<cls_id>\d+)/academic/$",
+                teacher_views.ClassAcademic.as_view(), name="teacher_class_academic"),
+        re_path(r"^class/(?P<cls_id>\d+)/schedule/$",
+                teacher_views.ClassScheduleView.as_view(), name="teacher_class_schedule"),
+        re_path(r"^class/(?P<cls_id>\d+)/ranking/$",
+                teacher_views.ClassRanking.as_view(), name="teacher_class_ranking"),
+        re_path(r"^class/(?P<cls_id>\d+)/ranking/regenerate/$",
+                teacher_views.regenerate_class_summary, name="teacher_regenerate_class_summary"),
+        # Class CRUD
+        re_path(r"^class/(?P<cls_id>\d+)/edit/$",
+                teacher_views.edit_class, name="teacher_class_edit"),
+        re_path(r"^class/(?P<cls_id>\d+)/delete/$",
+                teacher_views.delete_class, name="teacher_class_delete"),
+        # Per-tab save endpoints
+        re_path(r"^class/(?P<cls_id>\d+)/attendance/save/$",
+                teacher_views.save_attendance, name="teacher_save_attendance"),
+        re_path(r"^class/(?P<cls_id>\d+)/tuition/save/$",
+                teacher_views.save_tuition, name="teacher_save_tuition"),
+        re_path(r"^class/(?P<cls_id>\d+)/academic/save/$",
+                teacher_views.save_academic, name="teacher_save_academic"),
+        re_path(r"^class/(?P<cls_id>\d+)/student/save/$",
+                teacher_views.save_student_info, name="teacher_save_student"),
+        re_path(r"^class/(?P<cls_id>\d+)/student/add/$",
+                teacher_views.add_student, name="teacher_add_student"),
+        re_path(r"^class/(?P<cls_id>\d+)/student/remove/$",
+                teacher_views.remove_student, name="teacher_remove_student"),
+        re_path(r"^class/(?P<cls_id>\d+)/parent/save/$",
+                teacher_views.save_parent_info, name="teacher_save_parent"),
+        re_path(r"^class/(?P<cls_id>\d+)/parent/add/$",
+                teacher_views.add_parent, name="teacher_add_parent"),
+        re_path(r"^class/(?P<cls_id>\d+)/parent/remove/$",
+                teacher_views.remove_parent, name="teacher_remove_parent"),
+        re_path(r"^class/(?P<cls_id>\d+)/schedule/save/$",
+                teacher_views.save_schedule, name="teacher_save_schedule"),
+    ])),
     re_path(r"^parent/", include([
         re_path(r"^$", parent_views.ParentDashboard.as_view(), name="parent_home"),
         re_path(r"^child/(?P<child_id>\d+)/$",
@@ -265,6 +314,15 @@ urlpatterns = [
         re_path(r"^child/(?P<child_id>\d+)/ai/$",
                 parent_views.ChildAIAssessmentView.as_view(),
                 name="parent_child_ai"),
+    ])),
+    re_path(r"^roadmap/", include([
+        re_path(r"^$", roadmap_views.RoadmapIndex.as_view(), name="roadmap_index"),
+        re_path(r"^(?P<level>lv[0-6])/$",
+                roadmap_views.RoadmapLevel.as_view(),
+                name="roadmap_level"),
+        re_path(r"^(?P<level>lv[0-6])/(?P<type>[\w-]+)/$",
+                roadmap_views.RoadmapLevelType.as_view(),
+                name="roadmap_type"),
     ])),
     re_path(r"^i18n/", include("django.conf.urls.i18n")),
     re_path(r"^accounts/", include(register_patterns)),

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Xếp hạng — DANA·OJ</title>
+<link rel="stylesheet" href="oj.css" />
+</head>
+<body>
+
+<header class="topnav">
+  <a class="brand" href="Problems.html"><span class="logo-mark">&gt;_</span><span class="wm">DANA<b>·OJ</b></span></a>
+  <nav class="nav-center">
+    <a class="nav-ic" href="Problems.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 7h5a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-1a2 2 0 0 0 0 4v1a2 2 0 0 1-2 2h-3a2 2 0 0 1-2-2 2 2 0 0 0-4 0 2 2 0 0 1-2 2H4a1 1 0 0 1-1-1v-3a2 2 0 0 1 2-2 2 2 0 0 0 0-4 2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h3"/><path d="M7 4a2 2 0 0 1 4 0v3h3"/></svg><span class="tip">Bài tập</span></a>
+    <a class="nav-ic" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg><span class="tip">Bài nộp</span></a>
+    <a class="nav-ic" href="Groups.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V10l7-5 7 5v11M9 21v-6h6v6"/></svg><span class="tip">Nhóm</span></a>
+    <a class="nav-ic" href="Contests.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20h4V10H4zM10 20h4V4h-4zM16 20h4v-7h-4z"/><path d="M12 4l1 2 2 .3-1.4 1.4.3 2L12 8.8 10.1 9.7l.3-2L9 6.3 11 6z" fill="currentColor" stroke="none"/></svg><span class="tip">Kỳ thi</span></a>
+    <a class="nav-ic" href="About.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg><span class="tip">Giới thiệu</span></a>
+    <a class="nav-ic" data-active href="Ranking.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="19" cy="12" r="1.4"/></svg><span class="tip">Thêm</span></a>
+  </nav>
+  <div class="nav-right">
+    <button class="nav-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-9 8.5 8.5 8.5 0 0 1-3.8-.9L3 20l1.9-4.2A8.38 8.38 0 0 1 4 11.5a8.5 8.5 0 0 1 17 0z"/></svg></button>
+    <button class="nav-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="dot">2</span></button>
+    <span class="lang">VI</span>
+    <button class="nav-btn" onclick="toggleTheme()"><svg data-theme-moon viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><svg data-theme-sun style="display:none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>
+    <a class="nav-av" href="Profile.html">A</a>
+  </div>
+</header>
+
+<div class="shell s-2l">
+  <aside class="subnav">
+    <a class="si" data-active href="Ranking.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM7 4H4v2a3 3 0 0 0 3 3M17 4h3v2a3 3 0 0 1-3 3"/></svg>Xếp hạng</a>
+    <a class="si" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 7a4 4 0 1 0 0 0M23 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></svg>Bạn bè</a>
+    <a class="si" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>Nhập</a>
+  </aside>
+
+  <main>
+    <div class="page-head">
+      <div>
+        <div class="eyebrow">Leaderboard</div>
+        <h1>Bảng xếp hạng</h1>
+        <div class="sub">Toàn hệ thống · sắp theo điểm</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <input class="inp" style="width:240px" placeholder="Tìm kiếm theo tên..." />
+      </div>
+    </div>
+
+    <div class="pager">
+      <a href="#">«</a>
+      <a data-active href="#">1</a>
+      <a href="#">2</a>
+      <a href="#">»</a>
+    </div>
+
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th class="c" style="width:64px">#</th>
+            <th>Tên đăng nhập</th>
+            <th class="r" style="width:110px">Điểm ▾</th>
+            <th class="r" style="width:100px">Bài tập</th>
+            <th class="r" style="width:110px">Đóng góp</th>
+            <th style="width:30%">Giới thiệu</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><span class="rk-pos g">1</span></td><td><div style="display:flex;align-items:center;gap:12px"><span class="rk-av" style="background:linear-gradient(150deg,var(--amber),var(--amber-deep))">P</span><a class="rk-user t-gm" href="Profile.html">phuloii</a></div></td><td class="r"><span class="num" style="color:var(--green)">2760</span></td><td class="r"><span class="num">48</span></td><td class="r"><span class="num" style="color:var(--muted)">0</span></td><td><span style="color:var(--muted);font-size:13px">—</span></td></tr>
+          <tr><td><span class="rk-pos s">2</span></td><td><div style="display:flex;align-items:center;gap:12px"><span class="rk-av" style="background:linear-gradient(150deg,var(--green),#11823f)">N</span><a class="rk-user t-gm" href="#">nichratvip212</a></div></td><td class="r"><span class="num" style="color:var(--green)">2581</span></td><td class="r"><span class="num">32</span></td><td class="r"><span class="num" style="color:var(--muted)">0</span></td><td><span style="color:var(--muted);font-size:13px">—</span></td></tr>
+          <tr><td><span class="rk-pos b">3</span></td><td><div style="display:flex;align-items:center;gap:12px"><span class="rk-av" style="background:linear-gradient(150deg,var(--red),#9c2a2f)">K</span><a class="rk-user t-cm" href="#">kingnguyen1309</a></div></td><td class="r"><span class="num" style="color:var(--green)">2055</span></td><td class="r"><span class="num">94</span></td><td class="r"><span class="num" style="color:var(--muted)">0</span></td><td><span style="color:var(--muted);font-size:13px">—</span></td></tr>
+          <tr><td><span class="rk-pos">4</span></td><td><div style="display:flex;align-items:center;gap:12px"><span class="rk-av" style="background:linear-gradient(150deg,var(--green),#11823f)">T</span><a class="rk-user t-cm" href="#">Thien_Nguyen</a></div></td><td class="r"><span class="num" style="color:var(--green)">2038</span></td><td class="r"><span class="num">83</span></td><td class="r"><span class="num" style="color:var(--muted)">0</span></td><td><span style="color:var(--muted);font-size:13px">—</span></td></tr>
+          <tr><td><span class="rk-pos">5</span></td><td><div style="display:flex;align-items:center;gap:12px"><span class="rk-av" style="background:linear-gradient(150deg,var(--amber),var(--amber-deep))">N</span><a class="rk-user t-cm" href="#">N_P_H_Long</a></div></td><td class="r"><span class="num" style="color:var(--green)">2015</span></td><td class="r"><span class="num">75</span></td><td class="r"><span class="num" style="color:var(--muted)">0</span></td><td><span style="color:var(--muted);font-size:13px">—</span></td></tr>
+          <tr><td><span class="rk-pos">6</span></td><td><div style="display:flex;align-items:center;gap:12px"><span class="rk-av" style="background:linear-gradient(150deg,var(--red),#9c2a2f)">V</span><a class="rk-user t-master" href="#">vunhat</a></div></td><td class="r"><span class="num" style="color:var(--green)">2006</span></td><td class="r"><span class="num">73</span></td><td class="r"><span class="num" style="color:var(--muted)">0</span></td><td><span style="color:var(--muted);font-size:13px">—</span></td></tr>
+          <tr><td><span class="rk-pos">7</span></td><td><div style="display:flex;align-items:center;gap:12px"><span class="rk-av" style="background:linear-gradient(150deg,var(--red),#9c2a2f)">P</span><a class="rk-user t-master" href="#">phongvpsoc08</a></div></td><td class="r"><span class="num" style="color:var(--green)">1998</span></td><td class="r"><span class="num">69</span></td><td class="r"><span class="num" style="color:var(--muted)">0</span></td><td><span style="color:var(--muted);font-size:13px">—</span></td></tr>
+          <tr><td><span class="rk-pos">8</span></td><td><div style="display:flex;align-items:center;gap:12px"><span class="rk-av" style="background:linear-gradient(150deg,#a8c43a,#7a9326)">M</span><a class="rk-user t-master" href="#">minhthuw780</a></div></td><td class="r"><span class="num" style="color:var(--green)">1898</span></td><td class="r"><span class="num">52</span></td><td class="r"><span class="num" style="color:var(--muted)">0</span></td><td><span style="color:var(--muted);font-size:13px">—</span></td></tr>
+          <tr><td><span class="rk-pos">9</span></td><td><div style="display:flex;align-items:center;gap:12px"><span class="rk-av" style="background:linear-gradient(150deg,var(--blue),#1f5bb0)">L</span><a class="rk-user t-expert" href="#">leminhhungg</a></div></td><td class="r"><span class="num" style="color:var(--green)">1781</span></td><td class="r"><span class="num">41</span></td><td class="r"><span class="num" style="color:var(--muted)">0</span></td><td><span style="color:var(--muted);font-size:13px">—</span></td></tr>
+          <tr><td><span class="rk-pos">10</span></td><td><div style="display:flex;align-items:center;gap:12px"><span class="rk-av" style="background:linear-gradient(150deg,var(--purple),#6a32c4)">N</span><a class="rk-user t-expert" href="#">ntnam09</a></div></td><td class="r"><span class="num" style="color:var(--green)">1667</span></td><td class="r"><span class="num">33</span></td><td class="r"><span class="num" style="color:var(--muted)">0</span></td><td><span style="color:var(--muted);font-size:13px">—</span></td></tr>
+          <tr style="background:var(--amber-bg)"><td><span class="rk-pos" style="color:var(--amber)">11</span></td><td><div style="display:flex;align-items:center;gap:12px"><span class="rk-av">A</span><a class="rk-user t-expert" href="Profile.html">admin</a><span class="tag amber">bạn</span></div></td><td class="r"><span class="num" style="color:var(--green)">1487</span></td><td class="r"><span class="num">24</span></td><td class="r"><span class="num" style="color:var(--amber)">1</span></td><td><span style="color:var(--muted);font-size:13px">—</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+
+<script src="oj.js"></script>
+</body>
+</html>

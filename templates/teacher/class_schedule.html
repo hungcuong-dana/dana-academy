@@ -1,0 +1,98 @@
+{% extends "teacher/base.html" %}
+
+{% block teacher_body %}
+  {% include "teacher/_class_tabs.html" %}
+
+  <div class="tc-card">
+    <h2>Lịch học hàng tuần</h2>
+    <p class="hint">
+      Mỗi dòng là 1 buổi học cố định trong tuần. Để xóa, click nút <b>x</b> rồi Lưu.
+      {% if not schedules %}<br><b>Lớp này chưa có lịch học</b> — fill row dưới rồi Lưu.{% endif %}
+    </p>
+
+    <form method="post" action="{{ url('teacher_save_schedule', cls.id) }}">
+      {% csrf_token %}
+      <div style="overflow-x:auto;">
+      <table class="tc-table" id="scheduleTable">
+        <thead>
+          <tr>
+            <th style="width:120px;">Thứ</th>
+            <th style="width:110px;">Giờ bắt đầu</th>
+            <th style="width:110px;">Giờ kết thúc</th>
+            <th>Môn / Buổi học</th>
+            <th>Giáo viên</th>
+            <th>Phòng</th>
+            <th style="width:50px;"></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for s in schedules %}
+            <tr>
+              <td>
+                <select name="day">
+                  <option value="0" {% if s.day_of_week == 0 %}selected{% endif %}>Thứ Hai</option>
+                  <option value="1" {% if s.day_of_week == 1 %}selected{% endif %}>Thứ Ba</option>
+                  <option value="2" {% if s.day_of_week == 2 %}selected{% endif %}>Thứ Tư</option>
+                  <option value="3" {% if s.day_of_week == 3 %}selected{% endif %}>Thứ Năm</option>
+                  <option value="4" {% if s.day_of_week == 4 %}selected{% endif %}>Thứ Sáu</option>
+                  <option value="5" {% if s.day_of_week == 5 %}selected{% endif %}>Thứ Bảy</option>
+                  <option value="6" {% if s.day_of_week == 6 %}selected{% endif %}>Chủ Nhật</option>
+                </select>
+              </td>
+              <td><input type="time" name="start" value="{{ s.start_time.strftime('%H:%M') }}"></td>
+              <td><input type="time" name="end" value="{{ s.end_time.strftime('%H:%M') }}"></td>
+              <td><input type="text" name="subject" value="{{ s.subject }}"></td>
+              <td><input type="text" name="teacher" value="{{ s.teacher }}"></td>
+              <td><input type="text" name="location" value="{{ s.location }}"></td>
+              <td><button type="button" class="tc-btn danger small" onclick="this.closest('tr').remove()">x</button></td>
+            </tr>
+          {% else %}
+            {# No saved schedules — show 1 default empty row #}
+            <tr>
+              <td>
+                <select name="day">
+                  <option value="0">Thứ Hai</option><option value="1">Thứ Ba</option>
+                  <option value="2">Thứ Tư</option><option value="3">Thứ Năm</option>
+                  <option value="4">Thứ Sáu</option><option value="5">Thứ Bảy</option>
+                  <option value="6">Chủ Nhật</option>
+                </select>
+              </td>
+              <td><input type="time" name="start" value="19:00"></td>
+              <td><input type="time" name="end" value="21:00"></td>
+              <td><input type="text" name="subject" placeholder="VD: Tin học - CTDL"></td>
+              <td><input type="text" name="teacher"></td>
+              <td><input type="text" name="location"></td>
+              <td><button type="button" class="tc-btn danger small" onclick="this.closest('tr').remove()">x</button></td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      </div>
+      <div style="margin-top:0.7rem; display:flex; gap:0.5rem; justify-content:space-between;">
+        <button type="button" class="tc-btn outline small" onclick="addRow()">+ Thêm buổi</button>
+        <button type="submit" class="tc-btn">💾 Lưu lịch học</button>
+      </div>
+    </form>
+  </div>
+
+<script>
+function addRow() {
+  const tbody = document.querySelector("#scheduleTable tbody");
+  const tr = document.createElement("tr");
+  tr.innerHTML = `
+    <td><select name="day">
+      <option value="0">Thứ Hai</option><option value="1">Thứ Ba</option>
+      <option value="2">Thứ Tư</option><option value="3">Thứ Năm</option>
+      <option value="4">Thứ Sáu</option><option value="5">Thứ Bảy</option>
+      <option value="6">Chủ Nhật</option>
+    </select></td>
+    <td><input type="time" name="start" value="19:00"></td>
+    <td><input type="time" name="end" value="21:00"></td>
+    <td><input type="text" name="subject" placeholder="Tin học - CTDL"></td>
+    <td><input type="text" name="teacher"></td>
+    <td><input type="text" name="location"></td>
+    <td><button type="button" class="tc-btn danger small" onclick="this.closest('tr').remove()">x</button></td>`;
+  tbody.appendChild(tr);
+}
+</script>
+{% endblock %}

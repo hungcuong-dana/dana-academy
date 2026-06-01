@@ -309,6 +309,39 @@ class SubmissionStatus(SubmissionDetailBase):
             pass
         else:
             context["time_limit"] = lang_limit.time_limit
+
+        from judge.views.roadmap import parse_rm_param, build_topic_nav
+        rm = self.request.GET.get("rm", "")
+        level_key, topic_slug = parse_rm_param(rm)
+        if level_key:
+            context["roadmap_nav"] = build_topic_nav(
+                self.request, level_key, topic_slug, current_problem_id=submission.problem_id,
+            )
+            context["roadmap_rm_param"] = "{}/{}".format(level_key, topic_slug)
+
+        # AI suspicion score (admin only). Lazily compute on first view.
+        if self.request.user.is_staff or self.request.user.is_superuser:
+            from judge.models import SubmissionAIScore
+            from judge.utils.ai_detect import compute_ai_score
+            ai_obj = SubmissionAIScore.objects.filter(submission=submission).first()
+            if ai_obj is None and submission.language and submission.language.key in (
+                "C", "CPP03", "CPP11", "CPP14", "CPP17", "CPP20"
+            ):
+                try:
+                    result = compute_ai_score(submission)
+                    ai_obj = SubmissionAIScore.objects.update_or_create(
+                        submission=submission,
+                        defaults={
+                            "score": result["score"],
+                            "stylometry_score": result["stylometry"],
+                            "markers_score": result["markers_score"],
+                            "markers_found": result["markers_found"],
+                            "baseline_size": result["baseline_size"],
+                        },
+                    )[0]
+                except Exception:
+                    ai_obj = None
+            context["ai_score"] = ai_obj
         return context
 
 

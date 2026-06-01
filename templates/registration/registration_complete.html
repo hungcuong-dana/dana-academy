@@ -1,4 +1,16 @@
 {% extends "base.html" %}
 {% block body %}
-  <p>{{ _('You have successfully been registered. An email has been sent to the email address you provided to confirm your registration. If you don\'t see it, kindly check your spam folder as well.') }}</p>
+  <div style="max-width: 640px; margin: 2rem auto; padding: 2rem;
+              background: #fff; border-radius: 12px;
+              box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
+    <h2 style="margin-top:0; color: #28a745;">✅ {{ _('Đăng ký thành công!') }}</h2>
+    <p>{{ _('Tài khoản của bạn đã được tạo và kích hoạt tự động. Bạn có thể đăng nhập ngay để bắt đầu luyện tập.') }}</p>
+    <p style="margin-top: 1.5rem;">
+      <a href="{{ url('auth_login') }}"
+         style="display: inline-block; padding: 0.6rem 1.2rem; background: #1958c1;
+                color: #fff; border-radius: 8px; text-decoration: none; font-weight: 600;">
+        Đăng nhập →
+      </a>
+    </p>
+  </div>
 {% endblock %}

@@ -1,0 +1,84 @@
+{% extends "roadmap/base.html" %}
+{% block title %}{{ topic_label }} — {{ level.title }}{% endblock %}
+
+{% macro ring(percent, size, stroke, color, color2) %}
+  {% set r = (size - stroke) / 2 %}
+  {% set c = 2 * 3.14159 * r %}
+  {% set off = c * (1 - percent / 100.0) %}
+  <svg width="{{ size }}" height="{{ size }}" viewBox="0 0 {{ size }} {{ size }}">
+    <defs>
+      <linearGradient id="grad-tp-{{ color|replace('#','') }}" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="{{ color }}"/>
+        <stop offset="100%" stop-color="{{ color2 }}"/>
+      </linearGradient>
+    </defs>
+    <circle cx="{{ size/2 }}" cy="{{ size/2 }}" r="{{ r }}"
+            fill="none" stroke="var(--rm-track)" stroke-width="{{ stroke }}"/>
+    <circle cx="{{ size/2 }}" cy="{{ size/2 }}" r="{{ r }}"
+            fill="none" stroke="url(#grad-tp-{{ color|replace('#','') }})" stroke-width="{{ stroke }}"
+            stroke-dasharray="{{ c|round(2) }}" stroke-dashoffset="{{ off|round(2) }}"
+            stroke-linecap="round"/>
+  </svg>
+{% endmacro %}
+
+{% block body %}
+{% set percent = (solved * 100 / total)|round if total > 0 else 0 %}
+<div class="roadmap-page">
+  <div class="roadmap-shell"
+       style="--lvl-color: {{ level.color }}; --lvl-color2: {{ level.color2 }}; --lvl-glow: {{ level.color }}40;">
+    <div class="rm-crumbs">
+      <a href="{{ url('roadmap_index') }}">Lộ trình</a>
+      <span class="sep">/</span>
+      <a href="{{ url('roadmap_level', level_key) }}">{{ level.title }}: {{ level.subtitle }}</a>
+      <span class="sep">/</span>
+      <span>{{ topic_label }}</span>
+    </div>
+
+    <div class="rm-lvl-head">
+      <div class="lh-content">
+        {% if category_name %}
+          <span class="lh-eyebrow">{{ level.icon }} {{ category_name }} · {{ level.title }}</span>
+        {% endif %}
+        <h1>{{ topic_label }}</h1>
+        {% if total > 0 %}
+          <p class="blurb">Hoàn thành các bài tập dưới đây để nắm vững chủ đề này. Bài tập được sắp xếp từ cơ bản đến nâng cao.</p>
+        {% else %}
+          <p class="blurb">Chủ đề này đang được biên soạn. Quay lại sau bạn nhé!</p>
+        {% endif %}
+      </div>
+      {% if total > 0 %}
+        <div class="lh-ring">
+          {{ ring(percent, 130, 9, level.color, level.color2) }}
+          <div class="pct">
+            {{ percent }}%
+            <span class="sm">{{ solved }} / {{ total }}</span>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+
+    {% if rows %}
+      <div class="rm-problems">
+        {% for row in rows %}
+          <a class="rm-problem {{ row.status }}" href="{{ url('problem_detail', row.problem.code) }}?rm={{ level_key }}/{{ request.resolver_match.kwargs.type }}">
+            <span class="status-icon">
+              {% if row.status == "solved" %}<i class="fa fa-check-circle"></i>
+              {% elif row.status == "attempted" %}<i class="fa fa-minus-circle"></i>
+              {% else %}<i class="far fa-circle"></i>{% endif %}
+            </span>
+            <span class="pcode">{{ row.problem.code }}</span>
+            <span class="pname">{{ row.problem.name }}</span>
+            <span class="ppoints">{{ row.problem.points|floatformat }}đ</span>
+          </a>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="rm-empty">
+        <div class="ico"><i class="fa fa-screwdriver-wrench"></i></div>
+        <div class="em-title">Đang biên soạn nội dung</div>
+        <div>Chủ đề này sẽ sớm có bài tập. Quay lại sau bạn nhé!</div>
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

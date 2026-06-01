@@ -19,12 +19,17 @@ from judge.models import (
     Profile,
     Submission,
 )
+from datetime import date, datetime, timedelta
+
 from judge.utils.parent import (
     current_week_start,
     get_child_class_compare,
     get_child_contest_history,
+    get_child_day_activity,
+    get_child_month_calendar,
     get_child_schedule,
     get_child_summary,
+    get_child_week_activity,
     get_display_name,
     get_heatmap,
     get_next_lesson,
@@ -75,9 +80,41 @@ class ParentDashboard(ParentRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         children = list(self.request.profile.children.select_related("user"))
+
+        # Resolve selected date (?date=YYYY-MM-DD), default today, clamp to today max.
+        today = date.today()
+        raw_date = self.request.GET.get("date", "").strip()
+        try:
+            selected = datetime.strptime(raw_date, "%Y-%m-%d").date() if raw_date else today
+        except ValueError:
+            selected = today
+        if selected > today:
+            selected = today
+
         ctx["children"] = children
         ctx["children_summaries"] = [get_child_summary(c.id) for c in children]
         ctx["children_next_lessons"] = {c.id: get_next_lesson(c.id) for c in children}
+        ctx["children_day_activity"] = {
+            c.id: get_child_day_activity(c.id, selected) for c in children
+        }
+        ctx["children_week_activity"] = {
+            c.id: get_child_week_activity(c.id, selected) for c in children
+        }
+        ctx["children_month_calendar"] = {
+            c.id: get_child_month_calendar(c.id, selected.year, selected.month)
+            for c in children
+        }
+        ctx["selected_month_label"] = selected.strftime("%m/%Y")
+        ctx["selected_date"] = selected
+        ctx["selected_date_iso"] = selected.strftime("%Y-%m-%d")
+        ctx["prev_date_iso"] = (selected - timedelta(days=1)).strftime("%Y-%m-%d")
+        ctx["next_date_iso"] = (
+            (selected + timedelta(days=1)).strftime("%Y-%m-%d")
+            if selected < today
+            else None
+        )
+        ctx["today_iso"] = today.strftime("%Y-%m-%d")
+        ctx["is_today_selected"] = (selected == today)
         ctx["upcoming_contests"] = get_upcoming_contests(limit=3)
         ctx["parent_display_name"] = get_display_name(self.request.user)
         ctx["title"] = "Trang phụ huynh"
@@ -93,11 +130,18 @@ class ChildOverview(ChildAccessMixin, TemplateView):
         ctx["heatmap"] = get_heatmap(child.id)
         ctx["topic_breakdown"] = get_topic_breakdown(child.id)
         ctx["class_compare"] = get_child_class_compare(child.id)
-        ctx["recent_submissions"] = (
+        recent = list(
             Submission.objects.filter(user=child)
             .select_related("problem", "language")
             .order_by("-date")[:10]
         )
+        # Prefer the contest-scaled points when the submission is part of a contest.
+        for s in recent:
+            try:
+                s.display_points = s.contest.points
+            except Exception:
+                s.display_points = s.points
+        ctx["recent_submissions"] = recent
         ctx["upcoming_contests"] = get_upcoming_contests(limit=3)
         ctx["recent_contest_participations"] = get_child_contest_history(child.id, limit=3)
         ctx["next_lesson"] = get_next_lesson(child.id)
@@ -130,7 +174,13 @@ class ChildSubmissions(ChildAccessMixin, TemplateView):
             .select_related("problem", "language", "contest_object")
             .order_by("-date")
         )
-        ctx["submissions"] = qs[offset : offset + self.PAGE_SIZE]
+        page_subs = list(qs[offset : offset + self.PAGE_SIZE])
+        for s in page_subs:
+            try:
+                s.display_points = s.contest.points
+            except Exception:
+                s.display_points = s.points
+        ctx["submissions"] = page_subs
         ctx["page"] = page
         ctx["has_prev"] = page > 1
         ctx["has_next"] = qs.count() > offset + self.PAGE_SIZE

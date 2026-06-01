@@ -1,0 +1,128 @@
+{% extends "teacher/base.html" %}
+
+{% block teacher_body %}
+  {% include "teacher/_class_tabs.html" %}
+
+  <div class="tc-card">
+    <h2>Thêm phụ huynh</h2>
+    <p class="hint">
+      <b>Họ tên</b> bắt buộc. <b>Account OJ</b> tùy chọn — nếu phụ huynh
+      có account OJ thì họ login được vào <a href="{{ url('parent_home') }}">/parent/</a>
+      để xem tiến độ con. Nếu không, chỉ là contact info để giáo viên gọi/nhắn.
+    </p>
+
+    <form method="post" action="{{ url('teacher_add_parent', cls.id) }}">
+      {% csrf_token %}
+      <div class="tc-inline-form" style="margin-top:0;">
+        <label style="grid-column: span 2;">Học sinh *
+          <select name="student_id" required>
+            <option value="">-- Chọn học sinh --</option>
+            {% for s in roster %}
+              <option value="{{ s.id }}">{{ s.display_name }}{% if s.profile_id %} (@{{ s.profile.user.username }}){% endif %}</option>
+            {% endfor %}
+          </select>
+        </label>
+        <label style="grid-column: span 2;">Họ và tên PH *
+          <input type="text" name="name" placeholder="Nguyễn Văn B" required>
+        </label>
+        <label style="grid-column: span 2;">Account OJ (tùy chọn)
+          <input type="text" list="parentProfileList" name="profile_picker"
+                 placeholder="Gõ username/tên để autocomplete (bỏ trống nếu không có)..."
+                 onchange="document.getElementById('parent_profile_id_field').value = (this.value.match(/#(\d+)$/)||[])[1] || '';">
+          <input type="hidden" name="profile_id" id="parent_profile_id_field">
+          <datalist id="parentProfileList">
+            {% for p in available_profiles %}
+              <option value="{{ p.user.first_name|default(p.user.username) }} (@{{ p.user.username }}) #{{ p.id }}"></option>
+            {% endfor %}
+          </datalist>
+        </label>
+        <label>SĐT<input type="text" name="phone"></label>
+        <label>Zalo<input type="text" name="zalo"></label>
+        <label>Facebook<input type="text" name="facebook"></label>
+        <label>Nghề nghiệp<input type="text" name="occupation"></label>
+        <label style="align-self:end;"><button type="submit" class="tc-btn">+ Thêm PH</button></label>
+      </div>
+    </form>
+  </div>
+
+  <div class="tc-card">
+    <h2>Phụ huynh từng học sinh</h2>
+    {% if rows %}
+      {% for r in rows %}
+        <details class="tc-detail" {% if r.contacts %}open{% endif %}>
+          <summary>
+            <span>{{ r.student.display_name }}</span>
+            {% if r.student.profile_id %}
+              <span style="color:var(--tc-muted); font-weight:400; font-size:0.85rem; margin-left:0.5rem;">(@{{ r.student.profile.user.username }})</span>
+            {% endif %}
+            <span style="margin-left:0.7rem; color:var(--tc-muted); font-weight:400; font-size:0.85rem;">
+              {{ r.contacts|length }} phụ huynh
+            </span>
+          </summary>
+          {% if r.contacts %}
+            <div class="tc-tablewrap" style="margin-top:0.7rem;">
+            <table class="tc-table">
+              <thead>
+                <tr>
+                  <th>Họ tên</th>
+                  <th>Account OJ</th>
+                  <th>SĐT</th>
+                  <th>Zalo</th>
+                  <th>Facebook</th>
+                  <th>Nghề nghiệp</th>
+                  <th style="width:80px;"></th>
+                </tr>
+              </thead>
+              <tbody>
+              {% for pc in r.contacts %}
+                <tr>
+                  <td>{{ pc.display_name }}</td>
+                  <td>
+                    {% if pc.profile_id %}
+                      <a href="{{ url('user_page', pc.profile.user.username) }}" target="_blank">{{ pc.profile.user.username }}</a>
+                    {% else %}
+                      <span class="tc-pill norec">không OJ</span>
+                    {% endif %}
+                  </td>
+                  <td>{{ pc.phone|default("—") }}</td>
+                  <td>{{ pc.zalo|default("—") }}</td>
+                  <td>{% if pc.facebook %}<a href="{{ pc.facebook }}" target="_blank">{{ pc.facebook|truncatechars(25) }}</a>{% else %}—{% endif %}</td>
+                  <td>{{ pc.occupation|default("—") }}</td>
+                  <td>
+                    <details class="tc-detail" style="margin-bottom:0; padding:0.3rem 0.5rem;">
+                      <summary>Sửa</summary>
+                      <form method="post" action="{{ url('teacher_save_parent', cls.id) }}" class="tc-inline-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="parent_contact_id" value="{{ pc.id }}">
+                        <label>Họ tên<input type="text" name="name" value="{{ pc.name }}"></label>
+                        <label>SĐT<input type="text" name="phone" value="{{ pc.phone }}"></label>
+                        <label>Zalo<input type="text" name="zalo" value="{{ pc.zalo }}"></label>
+                        <label>Facebook<input type="text" name="facebook" value="{{ pc.facebook }}"></label>
+                        <label>Nghề nghiệp<input type="text" name="occupation" value="{{ pc.occupation }}"></label>
+                        <label style="grid-column: span 2;">Ghi chú<input type="text" name="note" value="{{ pc.note }}"></label>
+                        <label style="align-self:end;"><button class="tc-btn small">Lưu</button></label>
+                      </form>
+                      <form method="post" action="{{ url('teacher_remove_parent', cls.id) }}"
+                            style="margin-top:0.5rem;"
+                            onsubmit="return confirm('Gỡ {{ pc.display_name }}?');">
+                        {% csrf_token %}
+                        <input type="hidden" name="parent_contact_id" value="{{ pc.id }}">
+                        <button class="tc-btn danger small">Gỡ phụ huynh</button>
+                      </form>
+                    </details>
+                  </td>
+                </tr>
+              {% endfor %}
+              </tbody>
+            </table>
+            </div>
+          {% else %}
+            <div style="margin-top:0.5rem; color:var(--tc-muted); font-size:0.9rem;">Chưa có phụ huynh.</div>
+          {% endif %}
+        </details>
+      {% endfor %}
+    {% else %}
+      <div class="tc-empty">Lớp này chưa có học sinh.</div>
+    {% endif %}
+  </div>
+{% endblock %}

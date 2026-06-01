@@ -51,7 +51,7 @@
     {% endif %}
     <link rel="stylesheet" type="text/css" href="{{ static('markdown.css') }}">
     {% compress css %}
-      <link rel="stylesheet" href="{{ static('style.css') }}">
+      <link rel="stylesheet" href="{{ static('style.css') }}?v=8">
       {% if INLINE_FONTAWESOME %}
         <link rel="stylesheet" href="{{ static('fontawesome/css/all.min.css') }}">
       {% endif %}
@@ -150,6 +150,7 @@
                    data-tooltip="{{ user_trans(node.label) }}">
                   <span class="nav-icon-container">
                     {% if node.key == "problems" %} <i class="fa fa-puzzle-piece"></i> {% endif %}
+                    {% if node.key == "roadmap" %} <i class="fa fa-route"></i> {% endif %}
                     {% if node.key == "submit" %} <i class="fa fa-code"></i> {% endif %}
                     {% if node.key == "user" %} <i class="fa fa-user"></i> {% endif %}
                     {% if node.key == "contest" %} <i class="fa fa-ranking-star"></i> {% endif %}

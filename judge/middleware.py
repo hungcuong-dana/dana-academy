@@ -90,6 +90,19 @@ class DMOJLoginMiddleware(object):
                 )
                 if not request.path.startswith(allowed_prefixes):
                     return HttpResponseRedirect(reverse("parent_home"))
+
+            # Teacher users: lock to /teacher/* portal (admins still pass through).
+            if profile.is_teacher and not request.user.is_staff:
+                allowed_prefixes = (
+                    "/teacher/",
+                    "/accounts/",
+                    "/static/",
+                    "/media/",
+                    "/profile_images/",
+                    "/socket.io/",
+                )
+                if not request.path.startswith(allowed_prefixes):
+                    return HttpResponseRedirect(reverse("teacher_home"))
         else:
             request.profile = None
         return self.get_response(request)

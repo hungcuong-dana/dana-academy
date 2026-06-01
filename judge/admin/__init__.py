@@ -19,6 +19,7 @@ from judge.admin.organization import OrganizationAdmin, OrganizationRequestAdmin
 from judge.admin.problem import ProblemAdmin, ProblemPointsVoteAdmin
 from judge.admin.profile import ProfileAdmin, UserAdmin
 from judge.admin.parent import ChildAIAssessmentAdmin, ClassScheduleAdmin
+from judge.admin.teacher import TeacherClassAdmin, StudentAdmin, ParentContactAdmin, AttendanceAdmin, TuitionRecordAdmin, AcademicLevelAdmin
 from judge.admin.runtime import JudgeAdmin, LanguageAdmin
 from judge.admin.submission import SubmissionAdmin
 from judge.admin.taxon import (
@@ -76,6 +77,12 @@ from judge.models import (
     QuizAnswerFile,
     ChildAIAssessment,
     ClassSchedule,
+    Attendance,
+    TuitionRecord,
+    AcademicLevel,
+    TeacherClass,
+    Student,
+    ParentContact,
 )
 
 admin.site.register(BlogPost, BlogPostAdmin)
@@ -99,6 +106,12 @@ admin.site.register(ProblemType, ProblemTypeAdmin)
 admin.site.register(Profile, ProfileAdmin)
 admin.site.register(ChildAIAssessment, ChildAIAssessmentAdmin)
 admin.site.register(ClassSchedule, ClassScheduleAdmin)
+admin.site.register(Attendance, AttendanceAdmin)
+admin.site.register(TuitionRecord, TuitionRecordAdmin)
+admin.site.register(AcademicLevel, AcademicLevelAdmin)
+admin.site.register(TeacherClass, TeacherClassAdmin)
+admin.site.register(Student, StudentAdmin)
+admin.site.register(ParentContact, ParentContactAdmin)
 admin.site.register(Submission, SubmissionAdmin)
 admin.site.register(Ticket, TicketAdmin)
 admin.site.register(Course, CourseAdmin)

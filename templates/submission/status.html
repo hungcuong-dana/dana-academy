@@ -143,11 +143,28 @@
   {% endif %}
 {% endblock %}
 {% block body %}
+  {% if roadmap_nav %}
+    {% include "problem/roadmap_topic_panel.html" %}
+    {% if roadmap_nav.next_problem %}
+      <a class="roadmap-next-cta" href="{{ url('problem_detail', roadmap_nav.next_problem.problem.code) }}?rm={{ roadmap_nav.rm_param }}">
+        <span class="rn-eyebrow">{{ _('Bài tiếp theo') }} · {{ roadmap_nav.topic_label }}</span>
+        <span class="rn-title">
+          <span class="rn-code">{{ roadmap_nav.next_problem.problem.code }}</span>
+          {{ roadmap_nav.next_problem.problem.name }}
+        </span>
+        <span class="rn-arrow"><i class="fa fa-arrow-right"></i></span>
+      </a>
+    {% endif %}
+  {% endif %}
   <div style="clear: both"></div>
   <br>
   <div style="width: fit-content;">
+    {% if roadmap_rm_param %}
+      <div class="link-row"><a href="{{ url('problem_detail', submission.problem.code) }}?rm={{ roadmap_rm_param }}">
+        <i class="fa fa-arrow-left"></i>{{ _('Quay lại đề bài') }}</a></div>
+    {% endif %}
     {% if request.profile == submission.user or perms.judge.resubmit_other %}
-      <div class="link-row"><a href="{{ url('problem_submit', submission.problem.code, submission.id) }}">
+      <div class="link-row"><a href="{{ url('problem_submit', submission.problem.code, submission.id) }}{% if roadmap_rm_param %}?rm={{ roadmap_rm_param }}{% endif %}">
         <i class="fa fa-upload"></i>{{ _('Resubmit') }}</a></div>
     {% endif %}
     {% if perms.judge.rejudge_submission %}
@@ -164,6 +181,67 @@
   </div>
 
   <br>
+  {% if ai_score and (request.user.is_staff or request.user.is_superuser) %}
+    {% set ai_band = "high" if ai_score.score >= 70 else ("medium" if ai_score.score >= 40 else "low") %}
+    <div class="ai-suspicion-card ai-{{ ai_band }}">
+      <div class="ai-head">
+        <span class="ai-eyebrow"><i class="fa fa-robot"></i> AI DETECTION (chỉ admin thấy)</span>
+        <span class="ai-percent">{{ ai_score.score }}%</span>
+      </div>
+      <div class="ai-bar"><div class="ai-bar-fill" style="width: {{ ai_score.score }}%;"></div></div>
+      <div class="ai-detail">
+        <div class="ai-component">
+          <span class="lab">Markers:</span> <strong>{{ ai_score.markers_score }}</strong> /100
+        </div>
+        <div class="ai-component">
+          <span class="lab">Stylometry:</span>
+          {% if ai_score.stylometry_score is not none %}
+            <strong>{{ ai_score.stylometry_score|round(1) }}</strong> /100 (vs {{ ai_score.baseline_size }} bài AC trước)
+          {% else %}
+            <em>chưa đủ baseline (cần ≥3 AC C/C++ trước)</em>
+          {% endif %}
+        </div>
+        {% if ai_score.markers_found %}
+          <details class="ai-markers">
+            <summary>Markers phát hiện ({{ ai_score.markers_found|length }})</summary>
+            <ul>
+              {% for m in ai_score.markers_found %}
+                <li><code>{{ m.marker }}</code> · {{ m.count }} lần · +{{ m.weight }}đ</li>
+              {% endfor %}
+            </ul>
+          </details>
+        {% endif %}
+      </div>
+    </div>
+    <style>
+      .ai-suspicion-card {
+        padding: 0.9rem 1.1rem; border-radius: 10px; margin: 1rem 0 1.2rem;
+        background: #f8fafc; border: 1px solid #e2e8f0;
+      }
+      .ai-suspicion-card.ai-low { background: #f0fdf4; border-color: #bbf7d0; }
+      .ai-suspicion-card.ai-medium { background: #fffbeb; border-color: #fde68a; }
+      .ai-suspicion-card.ai-high { background: #fef2f2; border-color: #fecaca; }
+      .ai-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.5rem; }
+      .ai-eyebrow { font-size: 0.7rem; font-weight: 700; letter-spacing: 1px; color: #64748b; text-transform: uppercase; }
+      .ai-suspicion-card.ai-high .ai-eyebrow { color: #b91c1c; }
+      .ai-suspicion-card.ai-medium .ai-eyebrow { color: #c2410c; }
+      .ai-suspicion-card.ai-low .ai-eyebrow { color: #15803d; }
+      .ai-percent { font-size: 1.5rem; font-weight: 700; }
+      .ai-suspicion-card.ai-low .ai-percent { color: #15803d; }
+      .ai-suspicion-card.ai-medium .ai-percent { color: #c2410c; }
+      .ai-suspicion-card.ai-high .ai-percent { color: #b91c1c; }
+      .ai-bar { height: 6px; background: rgba(0,0,0,0.06); border-radius: 3px; overflow: hidden; margin-bottom: 0.7rem; }
+      .ai-bar-fill { height: 100%; transition: width 0.3s; background: linear-gradient(90deg, #16a34a, #ca8a04, #dc2626); }
+      .ai-detail { font-size: 0.85rem; color: #475569; }
+      .ai-component { margin-bottom: 0.2rem; }
+      .ai-component .lab { color: #64748b; }
+      .ai-markers { margin-top: 0.5rem; font-size: 0.82rem; }
+      .ai-markers summary { cursor: pointer; color: #475569; }
+      .ai-markers ul { margin: 0.4rem 0 0 1.2rem; padding: 0; }
+      .ai-markers code { background: rgba(0,0,0,0.05); padding: 0 0.3rem; border-radius: 3px; font-size: 0.8rem; }
+    </style>
+  {% endif %}
+
   <h3 id="source-header" class="toggle closed"><i class="fa fa-chevron-right fa-fw"></i>{{_('Source code')}}</h3>
   <div class="toggled" style="display: none; margin-bottom: 0;">
     {{ highlighted_source }}

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>DANA·OJ — Pages</title>
+<link rel="stylesheet" href="oj.css" />
+<style>
+  .launch{max-width:1100px;margin:0 auto;padding:50px 26px 80px}
+  .launch .hero{text-align:center;margin-bottom:42px}
+  .launch .hero .logo-mark{width:64px;height:64px;font-size:30px;border-radius:18px;margin:0 auto 18px}
+  .launch h1{font-size:38px;margin-bottom:8px}
+  .launch h1 b{color:var(--amber)}
+  .launch .hero p{color:var(--text-2);font-family:"JetBrains Mono",monospace;font-size:14px}
+  .lgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+  .lcard{border:1px solid var(--border);border-radius:16px;background:var(--panel);padding:22px;transition:.18s;display:block}
+  .lcard:hover{border-color:var(--amber);transform:translateY(-4px);box-shadow:var(--shadow)}
+  .lcard .ic{width:42px;height:42px;border-radius:11px;background:var(--amber-bg);color:var(--amber);display:grid;place-items:center;margin-bottom:14px}
+  .lcard .ic svg{width:22px;height:22px}
+  .lcard h3{font-size:17px;margin-bottom:5px}
+  .lcard p{font-size:13px;color:var(--muted)}
+  .lcard .fn{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--amber);margin-top:12px;display:block}
+</style>
+</head>
+<body>
+<div class="launch">
+  <div class="hero">
+    <div class="logo-mark">&gt;_</div>
+    <h1>DANA<b>·OJ</b> — Bộ trang</h1>
+    <p>// style "Compile" · 6 trang · dark + light</p>
+  </div>
+  <div class="lgrid">
+    <a class="lcard" href="Problems.html"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg></div><h3>Danh sách bài tập</h3><p>Bảng bài tập dày, filter, AC%, độ khó</p><span class="fn">Problems.html</span></a>
+    <a class="lcard" href="Groups.html"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V10l7-5 7 5v11"/></svg></div><h3>Nhóm</h3><p>Thẻ nhóm, thành viên, tạo nhóm</p><span class="fn">Groups.html</span></a>
+    <a class="lcard" href="Contests.html"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20h4V10H4zM10 20h4V4h-4zM16 20h4v-7h-4z"/></svg></div><h3>Kỳ thi</h3><p>Tab, đếm ngược, thể thức</p><span class="fn">Contests.html</span></a>
+    <a class="lcard" href="Ranking.html"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM7 4H4v2a3 3 0 0 0 3 3M17 4h3v2a3 3 0 0 1-3 3"/></svg></div><h3>Xếp hạng</h3><p>Leaderboard, tên tô màu theo tier</p><span class="fn">Ranking.html</span></a>
+    <a class="lcard" href="Profile.html"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 12 0v1"/></svg></div><h3>Trang cá nhân</h3><p>Stats + heatmap bài nộp</p><span class="fn">Profile.html</span></a>
+    <a class="lcard" href="About.html"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></div><h3>Giới thiệu</h3><p>About + tính năng + liên hệ</p><span class="fn">About.html</span></a>
+    <a class="lcard" href="../Style Lab.html"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="13.5" cy="6.5" r="1.5"/><circle cx="17.5" cy="10.5" r="1.5"/><circle cx="8.5" cy="7.5" r="1.5"/><circle cx="6.5" cy="12.5" r="1.5"/><path d="M12 2a10 10 0 0 0 0 20c1.1 0 2-.9 2-2 0-.5-.2-1-.5-1.3-.3-.4-.5-.8-.5-1.2 0-1.1.9-2 2-2h2.5A4.5 4.5 0 0 0 22 11c0-5-4.5-9-10-9z"/></svg></div><h3>Style Lab</h3><p>Bảng định hướng style gốc</p><span class="fn">Style Lab.html</span></a>
+  </div>
+</div>
+<script src="oj.js"></script>
+</body>
+</html>

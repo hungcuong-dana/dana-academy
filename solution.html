@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        @page {
+            size: A4;
+            margin: 20mm 15mm;
+            @bottom-right {
+                content: counter(page);
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                font-size: 9pt;
+                color: #7f8c8d;
+            }
+        }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            color: #2c3e50;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #ffffff;
+        }
+        h1 {
+            color: #1f4e79;
+            text-align: center;
+            font-size: 24pt;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+        .subtitle {
+            text-align: center;
+            font-size: 13pt;
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            font-weight: bold;
+        }
+        h2 {
+            color: #1f4e79;
+            border-left: 5px solid #1f4e79;
+            padding-left: 10px;
+            font-size: 14pt;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            page-break-after: avoid;
+        }
+        h3 {
+            color: #2e75b6;
+            font-size: 12pt;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            page-break-after: avoid;
+        }
+        .box {
+            background-color: #f2f7fa;
+            border: 1px solid #d0e1ed;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .box-title {
+            font-weight: bold;
+            color: #1f4e79;
+            margin-bottom: 8px;
+        }
+        ul {
+            margin-top: 5px;
+            padding-left: 20px;
+        }
+        li {
+            margin-bottom: 6px;
+        }
+        .math {
+            font-family: 'Times New Roman', serif;
+            font-style: italic;
+            font-weight: bold;
+            color: #c0392b;
+        }
+        pre {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 12px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 10pt;
+            overflow: visible;
+            white-space: pre-wrap;
+        }
+        .keyword { color: #0056b3; font-weight: bold; }
+        .type { color: #2e75b6; font-weight: bold; }
+        .comment { color: #28a745; font-style: italic; }
+        .number { color: #d9534f; }
+        .string { color: #a31515; }
+    </style>
+</head>
+<body>
+
+    <h1>Hướng dẫn giải chi tiết</h1>
+    <div class="subtitle">BÀI: HÀNG CÂY (TREE)</div>
+
+    <div class="box">
+        <div class="box-title">Tóm tắt đề bài</div>
+        <ul>
+            <li><strong>Dữ liệu vào:</strong> Cho dãy <span class="math">n</span> cây với độ đẹp lần lượt là dãy số <span class="math">a<sub>1</sub>, a<sub>2</sub>, ..., a<sub>n</sub></span>. Cho hai số nguyên số <span class="math">P</span> và <span class="math">w</span>.</li>
+            <li><strong>Yêu cầu:</strong> Đếm số lượng đoạn liên tục <span class="math">[l, r]</span> (<span class="math">1 &le; l &le; r &le; n</span>) thỏa mãn đồng thời hai điều kiện:
+                <ul>
+                    <li>Tổng độ đẹp của đoạn bằng chính xác <span class="math">P</span>: <span class="math">a<sub>l</sub> + a<sub>l+1</sub> + ... + a<sub>r</sub> = P</span>.</li>
+                    <li>Độ đẹp lớn nhất của một cây trong đoạn không vượt quá <span class="math">w</span>: <span class="math">max(a<sub>l</sub>, a<sub>l+1</sub>, ..., a<sub>r</sub>) &le; w</span>.</li>
+                </ul>
+            </li>
+            <li><strong>Ràng buộc dữ liệu:</strong> <span class="math">1 &le; n &le; 2 &times; 10<sup>5</sup></span>; <span class="math">|P| &le; 10<sup>15</sup></span>; <span class="math">|w| &le; 10<sup>9</sup></span>; <span class="math">|a<sub>i</sub>| &le; 10<sup>9</sup></span>.</li>
+            <li><strong>Tệp dữ liệu:</strong> Đọc từ file <code>TREE.INP</code>, ghi kết quả ra file <code>TREE.OUT</code>.</li>
+        </ul>
+    </div>
+
+    <h2>1. Phân tích bài toán & Nhận xét quan trọng</h2>
+    <p>Điều kiện <span class="math">max(a<sub>l</sub>, a<sub>l+1</sub>, ..., a<sub>r</sub>) &le; w</span> mang một tính chất cốt lõi: <strong>Tất cả các phần tử nằm trong đoạn từ <span class="math">l</span> đến <span class="math">r</span> đều phải có giá trị nhỏ hơn hoặc bằng <span class="math">w</span></strong>. Nếu tồn tại bất kỳ một cây thứ <span class="math">k</span> nào có độ đẹp lớn hơn <span class="math">w</span> (<span class="math">a<sub>k</sub> &gt; w</span>), thì cây đó chắc chắn không bao giờ được phép xuất hiện trong bất kỳ đoạn <span class="math">[l, r]</span> hợp lệ nào.</p>
+    <p>Từ nhận xét này, ta có thể <strong>chia nhỏ dãy ban đầu thành các phân đoạn độc lập</strong> bằng cách xem các phần tử có <span class="math">a<sub>k</sub> &gt; w</span> như là các "vách ngăn". Bài toán quy về: Trên từng phân đoạn chứa toàn bộ các cây có độ đẹp <span class="math">&le; w</span>, tìm số lượng đoạn con liên tục có tổng bằng <span class="math">P</span>.</p>
+
+    <h2>2. Phương pháp giải chi tiết từng Subtask</h2>
+
+    <h3>Subtask 1 & 2 (30% số điểm): <span class="math">n &le; 2000</span></h3>
+    <p>Với giới hạn nhỏ này, ta có thể dùng 2 vòng lặp lồng nhau duyệt qua mọi cặp <span class="math">(l, r)</span>. Ta duy trì biến tổng <code>current_sum</code> và giá trị lớn nhất <code>current_max</code> khi mở rộng đầu mút <span class="math">r</span> từ <span class="math">l</span> đến <span class="math">n</span> để kiểm tra điều kiện trong thời gian <span class="math">O(n<sup>2</sup>)</span>.</p>
+
+    <h3>Subtask 6 (100% số điểm - Trường hợp tổng quát): <span class="math">n &le; 2 &times; 10<sup>5</sup></span></h3>
+    <p>Để giải quyết trọn vẹn bài toán trong thời gian tối ưu, ta sử dụng kỹ thuật <strong>Mảng cộng dồn (Prefix Sum) kết hợp Cấu trúc dữ liệu Ánh xạ (std::map)</strong>:</p>
+    <ul>
+        <li>Ta duyệt qua dãy từ trái sang phải. Khi gặp một cây có <span class="math">a<sub>i</sub> &gt; w</span>, ta xóa trắng (clear) bảng băm/map tần suất cộng dồn hiện tại để bắt đầu một phân đoạn mới.</li>
+        <li>Với các cây hợp lệ (<span class="math">a<sub>i</sub> &le; w</span>), ta tính tổng cộng dồn tích lũy <code>S</code>. Để tìm số lượng vị trí <span class="math">l-1</span> phía trước thỏa mãn <span class="math">S<sub>current</sub> &minus; S<sub>l-1</sub> = P &hArr; S<sub>l-1</sub> = S<sub>current</sub> &minus; P</span>, ta chỉ cần tra cứu số lần xuất hiện của giá trị <span class="math">S<sub>current</sub> &minus; P</span> đã được lưu trong <code>std::map</code> trước đó.</li>
+    </ul>
+    <p><strong>Độ phức tạp:</strong> <span class="math">O(n log n)</span> khi dùng <code>std::map</code>, hoàn toàn tối ưu và ăn trọn vẹn điểm số.</p>
+
+    <h2>3. Mã nguồn mẫu C++ đầy đủ (Phân tách cấu trúc Subtask)</h2>
+    <pre>
+#include &lt;iostream&gt;
+#include &lt;fstream&gt;
+#include &lt;vector&gt;
+#include &lt;cmath&gt;
+#include &lt;algorithm&gt;
+#include &lt;map&gt;
+
+using namespace std;
+
+long long a[200005];
+
+// Subtask 1 & 2: Duyệt trâu hai vòng lặp lồng nhau O(n^2)
+void sub1_2(int n, long long P, long long w) {
+    long long count_valid = 0;
+    for (int l = 1; l <= n; ++l) {
+        long long current_sum = 0;
+        long long current_max = -2e18; // Khởi tạo min cực tiểu
+        for (int r = l; r <= n; ++r) {
+            current_sum += a[r];
+            current_max = max(current_max, a[r]);
+            
+            if (current_sum == P && current_max <= w) {
+                count_valid++;
+            }
+        }
+    }
+    cout << count_valid << "\n";
+}
+
+// Subtask tối ưu: Map + Mảng cộng dồn chia nhỏ phân đoạn O(n log n)
+void sub_full(int n, long long P, long long w) {
+    long long count_valid = 0;
+    map&lt;long long, int&gt; prefix_counts;
+    
+    // Khởi tạo trạng thái rỗng cho phân đoạn đầu tiên
+    prefix_counts[0] = 1;
+    long long current_prefix_sum = 0;
+    
+    for (int i = 1; i <= n; ++i) {
+        if (a[i] > w) {
+            // Gặp phần tử vi phạm -> Đóng phân đoạn cũ, làm sạch map để mở phân đoạn mới
+            prefix_counts.clear();
+            prefix_counts[0] = 1;
+            current_prefix_sum = 0;
+        } else {
+            current_prefix_sum += a[i];
+            long long target = current_prefix_sum - P;
+            
+            if (prefix_counts.count(target)) {
+                count_valid += prefix_counts[target];
+            }
+            
+            prefix_counts[current_prefix_sum]++;
+        }
+    }
+    cout << count_valid << "\n";
+}
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+
+    if (ifstream("TREE.INP")) {
+        freopen("TREE.INP", "r", stdin);
+        freopen("TREE.OUT", "w", stdout);
+    }
+
+    int n;
+    long long P, w;
+    cin >> n >> P >> w;
+
+    for (int i = 1; i <= n; ++i) {
+        cin >> a[i];
+    }
+
+    // Cơ chế rẽ nhánh subtask rõ ràng theo cấu trúc phân tách bài làm
+    if (n <= 2000) {
+        sub1_2(n, P, w);
+    } else {
+        sub_full(n, P, w);
+    }
+
+    return 0;
+}
+</pre>
+
+</body>
+</html>

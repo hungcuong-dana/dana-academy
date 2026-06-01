@@ -174,7 +174,7 @@
       <div class="no-submissions-left submissions-left">{{ _('0 submissions left') }}</div>
     {% endif %}
   {% else %}
-    <a href="{{ url('problem_submit', problem.code) }}">
+    <a href="{{ url('problem_submit', problem.code) }}{% if roadmap_rm_param %}?rm={{ roadmap_rm_param }}{% endif %}">
       <button class="submit-btn btn-green btn btn-primary btn-block btn-round">
         <span>{{ _('Submit') }}</span>
         <div class="icon icon-round d-flex align-items-center justify-content-center">
@@ -224,6 +224,13 @@
     <div class="link-row">
       <a href="{{ url('problem_editorial', problem.code) }}">
         <i class="fa fa-newspaper"></i><span> {{ _('Read editorial') }}</span>
+      </a>
+    </div>
+  {% elif can_edit_problem and not request.in_contest %}
+    <hr>
+    <div class="link-row">
+      <a href="{{ url('problem_editorial', problem.code) }}" style="color:#c62828;" title="Editorial chưa public — chỉ admin thấy">
+        <i class="fa fa-newspaper"></i><span> {{ _('Read editorial') }} 🔒</span>
       </a>
     </div>
   {% endif %}
@@ -381,6 +388,13 @@
       </div>
     </div>
   {% endif %}
+{% endblock %}
+
+{% block body %}
+  {% if roadmap_nav %}
+    {% include "problem/roadmap_topic_panel.html" %}
+  {% endif %}
+  {{ super() }}
 {% endblock %}
 
 {% block description %}

@@ -1,0 +1,78 @@
+{% extends "teacher/base.html" %}
+
+{% block teacher_body %}
+  {% include "teacher/_class_tabs.html" %}
+
+  <div class="tc-card">
+    <h2>Học phí kỳ {{ period.strftime('%m/%Y') }}</h2>
+    <form method="get" class="tc-controls" style="margin-bottom:0.5rem;">
+      <label>Chọn tháng: <input type="month" name="period" value="{{ period_str }}"></label>
+      <button class="tc-btn outline small">Xem</button>
+    </form>
+    <div style="font-size:0.92rem; color:var(--tc-muted);">
+      <span class="tc-pill paid">✓ Đã đóng: {{ paid_n }}</span>
+      <span class="tc-pill unpaid">⨯ Chưa đóng: {{ unpaid_n }}</span>
+    </div>
+  </div>
+
+  <form method="post" action="{{ url('teacher_save_tuition', cls.id) }}">
+    {% csrf_token %}
+    <input type="hidden" name="period" value="{{ period_str }}">
+    <div class="tc-card">
+      {% if rows %}
+        <div style="overflow-x:auto;">
+        <table class="tc-table">
+          <thead>
+            <tr>
+              <th>Họ tên</th>
+              <th>Lớp / Trường</th>
+              <th style="width:160px;">Học phí (VNĐ)</th>
+              <th style="width:80px; text-align:center;">Đã đóng</th>
+              <th>Thời gian đóng</th>
+              <th>Ghi chú</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for r in rows %}
+            <tr>
+              <td>{{ r.student.display_name }}</td>
+              <td style="font-size:0.85rem; color:var(--tc-muted);">
+                {% if r.student.grade %}{{ r.student.grade }}{% endif %}
+                {% if r.student.grade and r.student.school %} · {% endif %}
+                {% if r.student.school %}{{ r.student.school }}{% endif %}
+              </td>
+              <td>
+                <input type="text" inputmode="numeric" name="amount_{{ r.student.id }}"
+                       value="{{ '{:,.0f}'.format(r.amount|float)|replace(',', '.') }}"
+                       oninput="this.value = formatVnd(this.value)"
+                       style="text-align:right;">
+              </td>
+              <td style="text-align:center;">
+                <input type="checkbox" name="paid" value="{{ r.student.id }}" {% if r.paid %}checked{% endif %}>
+              </td>
+              <td style="color:var(--tc-muted); font-size:0.85rem;">
+                {% if r.paid_at %}{{ r.paid_at.strftime('%d/%m/%Y %H:%M') }}{% else %}—{% endif %}
+              </td>
+              <td><input type="text" name="note_{{ r.student.id }}" value="{{ r.note }}" placeholder="Đóng tiền mặt..."></td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+        </div>
+        <div style="margin-top:1rem; display:flex; justify-content:flex-end;">
+          <button type="submit" class="tc-btn">💾 Lưu học phí</button>
+        </div>
+      {% else %}
+        <div class="tc-empty">Chưa có học sinh trong lớp.</div>
+      {% endif %}
+    </div>
+  </form>
+
+<script>
+function formatVnd(s) {
+  const digits = (s || "").replace(/\D/g, "");
+  if (!digits) return "";
+  return digits.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+}
+</script>
+{% endblock %}

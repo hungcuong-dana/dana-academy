@@ -1,0 +1,167 @@
+{% extends "teacher/base.html" %}
+
+{% block teacher_body %}
+  {% include "teacher/_class_tabs.html" %}
+
+  {# ─── Ranking table (top) ─── #}
+  <div class="tc-card">
+    <h2>🏆 Bảng xếp hạng</h2>
+    <p class="hint">
+      Xếp theo <b>tổng điểm bài làm</b>. Nhấn vào tiêu đề cột để đổi tiêu chí sắp xếp.
+      {% if no_oj_count %}<br>({{ no_oj_count }} học sinh chưa gắn account OJ nên không có chỉ số.){% endif %}
+    </p>
+
+    {% if ranking %}
+      <div style="overflow-x:auto;">
+      <table class="tc-table" id="rankTable">
+        <thead>
+          <tr>
+            <th style="width:48px;">#</th>
+            <th>Học sinh</th>
+            <th>Account OJ</th>
+            <th class="sortable" data-key="problem_count" style="cursor:pointer;">Bài đã giải ⇅</th>
+            <th class="sortable" data-key="ac_solved" style="cursor:pointer;">Giải đúng (AC) ⇅</th>
+            <th class="sortable" data-key="correct_rate" style="cursor:pointer;">Tỉ lệ đúng ⇅</th>
+            <th class="sortable" data-key="points" style="cursor:pointer;">Tổng điểm ⇅</th>
+            <th class="sortable" data-key="performance" style="cursor:pointer;">Performance ⇅</th>
+            <th class="sortable" data-key="rating" style="cursor:pointer;">Rating ⇅</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for r in ranking %}
+          <tr>
+            <td><b>{{ r.rank }}</b></td>
+            <td>{{ r.name }}</td>
+            <td><a href="{{ url('user_page', r.username) }}" target="_blank">{{ r.username }}</a></td>
+            <td data-key="problem_count" data-val="{{ r.problem_count }}">{{ r.problem_count }}</td>
+            <td data-key="ac_solved" data-val="{{ r.ac_solved }}">{{ r.ac_solved }}</td>
+            <td data-key="correct_rate" data-val="{{ r.correct_rate }}">{{ r.correct_rate }}%</td>
+            <td data-key="points" data-val="{{ r.points }}">{{ r.points }}</td>
+            <td data-key="performance" data-val="{{ r.performance_points }}">{{ r.performance_points }}</td>
+            <td data-key="rating" data-val="{{ r.rating if r.rating is not none else -1 }}">{{ r.rating if r.rating is not none else '—' }}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+      </div>
+    {% else %}
+      <div class="tc-empty">Lớp chưa có học sinh nào gắn account OJ.</div>
+    {% endif %}
+  </div>
+
+  {# ─── Daily activity matrix with date-range filter ─── #}
+  <div class="tc-card">
+    <h2>📆 Hoạt động theo ngày</h2>
+    <p class="hint">Số bài <b>giải được</b> mỗi ngày của từng học sinh — đếm bài public có điểm (gồm cả giải một phần), cùng cách tính với cột “Bài đã giải” ở bảng xếp hạng (tô màu theo mức độ). Chọn khoảng ngày để xem.</p>
+
+    <form method="get" class="tc-controls" style="margin-bottom:0.9rem;">
+      <label style="font-size:0.85rem; color:var(--tc-muted);">Từ
+        <input type="date" name="start" value="{{ range_start_iso }}" max="{{ today_iso }}">
+      </label>
+      <label style="font-size:0.85rem; color:var(--tc-muted);">Đến
+        <input type="date" name="end" value="{{ range_end_iso }}" max="{{ today_iso }}">
+      </label>
+      <button type="submit" class="tc-btn small">Lọc</button>
+    </form>
+
+    {% if matrix.rows and matrix.num_days %}
+      <div style="overflow-x:auto;">
+      <table class="tc-table tc-daymatrix">
+        <thead>
+          <tr>
+            <th style="position:sticky; left:0; background:#f7f2fb; z-index:2;">Học sinh</th>
+            {% for d in matrix.days %}
+              <th style="text-align:center; min-width:40px;">
+                <div style="font-size:0.68rem; color:var(--tc-muted);">{{ ['T2','T3','T4','T5','T6','T7','CN'][d.weekday()] }}</div>
+                {{ d.strftime('%d/%m') }}
+              </th>
+            {% endfor %}
+            <th style="text-align:center;">Tổng</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for row in matrix.rows %}
+          <tr>
+            <td style="position:sticky; left:0; background:#fff; z-index:1; white-space:nowrap;">{{ row.name }}</td>
+            {% for c in row.cells %}
+              <td class="dm dm-t{{ c.tier }}" style="text-align:center;"
+                  title="{{ row.name }} — {{ matrix.days[loop.index0].strftime('%d/%m/%Y') }}: {{ c.n }} bài">
+                {{ c.n if c.n else '' }}
+              </td>
+            {% endfor %}
+            <td style="text-align:center; font-weight:700;">{{ row.total }}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+      </div>
+      <div style="margin-top:0.6rem; font-size:0.75rem; color:var(--tc-muted); display:flex; gap:0.7rem; flex-wrap:wrap; align-items:center;">
+        Chú thích:
+        <span><span class="dm-key dm-t0"></span> 0</span>
+        <span><span class="dm-key dm-t1"></span> 1–2</span>
+        <span><span class="dm-key dm-t2"></span> 3–5</span>
+        <span><span class="dm-key dm-t3"></span> 6+</span>
+      </div>
+    {% else %}
+      <div class="tc-empty">Không có dữ liệu trong khoảng ngày đã chọn.</div>
+    {% endif %}
+  </div>
+
+  {# ─── AI weekly summary (bottom) ─── #}
+  <div class="tc-card">
+    <div style="display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap;">
+      <h2 style="margin:0;">🤖 Tổng kết AI tuần</h2>
+      <form method="post" action="{{ url('teacher_regenerate_class_summary', cls.id) }}" style="margin:0;">
+        {% csrf_token %}
+        <button type="submit" class="tc-btn">⟳ Cập nhật ngay</button>
+      </form>
+    </div>
+    <p class="hint">Tự động sinh hàng tuần vào <b>Chủ Nhật</b>. Nhấn “Cập nhật ngay” để tạo lại ngay lập tức.</p>
+
+    {% if summary %}
+      <div style="font-size:0.8rem; color:var(--tc-muted); margin-bottom:0.5rem;">
+        Tuần bắt đầu {{ summary.week_start.strftime('%d/%m/%Y') }} ·
+        cập nhật {{ summary.generated_at.strftime('%d/%m/%Y %H:%M') }}
+        {% if summary.week_start != current_week_start %}<span class="tc-pill norec" style="font-size:0.65rem;">tuần trước</span>{% endif %}
+      </div>
+      <div class="tc-md">{{ summary.markdown|markdown|safe }}</div>
+    {% else %}
+      <div class="tc-empty">Chưa có tổng kết. Nhấn “Cập nhật ngay” để tạo bản đầu tiên.</div>
+    {% endif %}
+  </div>
+
+  <style>
+    .tc-md h2 { font-size:1.05rem; margin:0.8rem 0 0.3rem; }
+    .tc-md ul { margin:0.2rem 0 0.6rem 1.1rem; }
+    .tc-md p { margin:0.3rem 0; }
+    .tc-daymatrix td.dm { font-weight:600; font-size:0.85rem; }
+    .dm-t0 { background:#fdecec; color:#c0392b; }
+    .dm-t1 { background:#fff4d6; color:#8a6d00; }
+    .dm-t2 { background:#c8e6d0; color:#1f7a3a; }
+    .dm-t3 { background:#66bb6a; color:#fff; }
+    .dm-key { display:inline-block; width:12px; height:12px; border-radius:3px; vertical-align:middle; }
+  </style>
+  <script>
+    (function(){
+      var table = document.getElementById('rankTable');
+      if(!table) return;
+      var tbody = table.tBodies[0];
+      var headers = table.querySelectorAll('th.sortable');
+      headers.forEach(function(th){
+        th.addEventListener('click', function(){
+          var key = th.getAttribute('data-key');
+          var rows = Array.prototype.slice.call(tbody.rows);
+          rows.sort(function(a, b){
+            var av = parseFloat(a.querySelector('[data-key="'+key+'"]').getAttribute('data-val'));
+            var bv = parseFloat(b.querySelector('[data-key="'+key+'"]').getAttribute('data-val'));
+            return bv - av;  // giảm dần
+          });
+          rows.forEach(function(row, i){
+            row.cells[0].innerHTML = '<b>' + (i+1) + '</b>';
+            tbody.appendChild(row);
+          });
+        });
+      });
+    })();
+  </script>
+{% endblock %}

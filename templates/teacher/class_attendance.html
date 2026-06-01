@@ -1,0 +1,108 @@
+{% extends "teacher/base.html" %}
+
+{% block teacher_body %}
+  {% include "teacher/_class_tabs.html" %}
+
+  {% if not has_schedule %}
+    <div class="tc-card">
+      <h2>⚠ Lớp chưa có lịch học</h2>
+      <p class="hint">Cần <a href="{{ url('teacher_class_schedule', cls.id) }}">cài lịch học</a> trước.
+      Bạn vẫn có thể điểm danh tự do theo ngày dưới đây nếu cần.</p>
+      <form method="get" class="tc-controls" style="margin-bottom:0;">
+        <label>Chọn ngày: <input type="date" name="date" value="{{ date_str }}"></label>
+        <button class="tc-btn outline small">Xem</button>
+      </form>
+    </div>
+  {% else %}
+    <div class="tc-card">
+      <h2>Buổi học trong tuần</h2>
+      <p class="hint">Chọn buổi học để điểm danh. Pin xanh = hôm nay, mờ = tương lai.</p>
+      <div style="display:flex; flex-wrap:wrap; gap:0.4rem; margin-bottom:0.5rem;">
+        {% for p in lesson_pills %}
+          <a href="?date={{ p.date_str }}"
+             style="
+               padding: 0.4rem 0.8rem; border-radius:10px;
+               text-decoration:none; font-size:0.88rem;
+               border: 1.5px solid
+                 {% if p.is_selected %}var(--tc-primary){% elif p.is_today %}#2e7d32{% else %}var(--tc-border){% endif %};
+               background:
+                 {% if p.is_selected %}var(--tc-primary){% elif p.is_today %}#e8f5e9{% else %}#fff{% endif %};
+               color:
+                 {% if p.is_selected %}#fff{% elif p.is_today %}#2e7d32{% else %}var(--tc-text){% endif %};
+               opacity: {% if p.is_future and not p.is_selected %}0.5{% else %}1{% endif %};
+             ">
+            <b>{{ p.label_day }}</b> {{ p.label_date }}{% if p.is_today %} (hôm nay){% endif %}
+          </a>
+        {% endfor %}
+      </div>
+      <form method="get" class="tc-controls" style="margin-bottom:0;">
+        <label style="font-size:0.85rem; color:var(--tc-muted);">Hoặc chọn ngày khác:
+          <input type="date" name="date" value="{{ date_str }}">
+        </label>
+        <button class="tc-btn outline small">Xem</button>
+      </form>
+    </div>
+  {% endif %}
+
+  <div class="tc-card">
+    <h2>
+      Điểm danh ngày {{ date.strftime('%d/%m/%Y') }}
+      {% if is_lesson_day %}
+        <span class="tc-pill" style="background:#e8f5e9; color:#2e7d32; margin-left:0.5rem; font-size:0.78rem;">có lịch học</span>
+      {% elif has_schedule %}
+        <span class="tc-pill norec" style="margin-left:0.5rem; font-size:0.78rem;">ngày này không có lịch</span>
+      {% endif %}
+    </h2>
+    {% if lessons_today %}
+      <div style="background:#faf7fd; border:1px solid var(--tc-border); border-radius:8px; padding:0.7rem 1rem; margin-bottom:1rem;">
+        {% for s in lessons_today %}
+          <div style="font-size:0.92rem;">
+            <b>{{ s.start_time.strftime('%H:%M') }}–{{ s.end_time.strftime('%H:%M') }}</b>
+            · {{ s.subject }}
+            {% if s.teacher %} · 👨‍🏫 {{ s.teacher }}{% endif %}
+            {% if s.location %} · 📍 {{ s.location }}{% endif %}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <form method="post" action="{{ url('teacher_save_attendance', cls.id) }}">
+      {% csrf_token %}
+      <input type="hidden" name="date" value="{{ date_str }}">
+      {% if rows %}
+        <div style="overflow-x:auto;">
+        <table class="tc-table">
+          <thead>
+            <tr>
+              <th style="width:40px;"><input type="checkbox" id="checkall" title="Tick tất cả"></th>
+              <th>Họ tên</th>
+              <th>Account OJ</th>
+              <th>Ghi chú</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for r in rows %}
+            <tr>
+              <td><input type="checkbox" name="present" value="{{ r.student.id }}" class="tickbox" {% if r.present %}checked{% endif %}></td>
+              <td>{{ r.student.display_name }}</td>
+              <td>{% if r.student.profile_id %}{{ r.student.profile.user.username }}{% else %}—{% endif %}</td>
+              <td><input type="text" name="note_{{ r.student.id }}" value="{{ r.note }}" placeholder="đi muộn / nghỉ phép..."></td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+        </div>
+        <div style="margin-top:1rem; display:flex; justify-content:flex-end;">
+          <button type="submit" class="tc-btn">💾 Lưu điểm danh</button>
+        </div>
+        <script>
+          document.getElementById("checkall").addEventListener("change", function(e) {
+            document.querySelectorAll(".tickbox").forEach(b => b.checked = e.target.checked);
+          });
+        </script>
+      {% else %}
+        <div class="tc-empty">Chưa có học sinh trong lớp.</div>
+      {% endif %}
+    </form>
+  </div>
+{% endblock %}

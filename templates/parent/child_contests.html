@@ -35,7 +35,7 @@
       Tổng kết kết quả của con qua từng kì thi đã hoàn thành.
     </p>
     {% if recent_contest_participations %}
-      <table style="width:100%; border-collapse:collapse;">
+      <div class="parent-tablewrap"><table style="width:100%; border-collapse:collapse;">
         <thead>
           <tr style="text-align:left; border-bottom:2px solid #e6e9ef;">
             <th style="padding:0.55rem 0;">Kì thi</th>
@@ -48,7 +48,15 @@
         <tbody>
           {% for p in recent_contest_participations %}
             <tr style="border-bottom:1px solid #f0f0f0;">
-              <td style="padding:0.55rem 0;">{{ p.contest.name }}</td>
+              <td style="padding:0.55rem 0;">
+                {{ p.contest.name }}
+                {% if p.virtual %}
+                  <span class="badge badge-pending" style="margin-left:0.4rem;"
+                        title="Tham gia ảo: làm bài sau khi kì thi đã kết thúc (luyện tập). Không tính vào rating.">
+                    Tham gia ảo
+                  </span>
+                {% endif %}
+              </td>
               <td><strong>{{ p.score|round(1) if p.score is not none else "—" }}</strong></td>
               <td>
                 {% if p.rating %}
@@ -69,7 +77,7 @@
             </tr>
           {% endfor %}
         </tbody>
-      </table>
+      </table></div>
     {% else %}
       <p style="color:#888; margin:0;">Con chưa tham gia kì thi nào.</p>
     {% endif %}
@@ -82,7 +90,7 @@
         Rating phản ánh trình độ tổng hợp của con qua các kì thi có xếp hạng.
         Chỉ số càng cao thể hiện kết quả càng ổn định.
       </p>
-      <table style="width:100%; border-collapse:collapse;">
+      <div class="parent-tablewrap"><table style="width:100%; border-collapse:collapse;">
         <thead>
           <tr style="text-align:left; border-bottom:2px solid #e6e9ef;">
             <th style="padding:0.55rem 0;">Kì thi</th>
@@ -105,7 +113,7 @@
             </tr>
           {% endfor %}
         </tbody>
-      </table>
+      </table></div>
     </div>
   {% endif %}
 {% endblock %}

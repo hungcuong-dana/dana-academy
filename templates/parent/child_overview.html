@@ -36,77 +36,242 @@
   {% endif %}
 
   <div class="parent-grid">
-    <div class="parent-card">
+    <div class="parent-card" title="Tổng số bài tập con đã làm đúng hoàn toàn (đạt đủ điểm).">
       <div class="parent-stat-num">{{ child_summary.problems_solved }}</div>
       <div class="parent-stat-label">Tổng số bài giải đúng</div>
+      <div style="font-size:0.75rem; color:#999; margin-top:0.25rem;">
+        Số bài làm đúng từ đầu đến giờ.
+      </div>
     </div>
-    <div class="parent-card">
+    <div class="parent-card" title="Tổng điểm con đạt được khi giải đúng các bài. Mỗi bài có mức điểm khác nhau (bài khó nhiều điểm hơn).">
       <div class="parent-stat-num">{{ child_summary.points|round(1) }}</div>
       <div class="parent-stat-label">Điểm tích lũy</div>
+      <div style="font-size:0.75rem; color:#999; margin-top:0.25rem;">
+        Tổng điểm cộng dồn từ các bài giải đúng.
+      </div>
     </div>
-    <div class="parent-card">
+    <div class="parent-card" title="Điểm xếp hạng tham gia các kì thi (giống ELO). Càng làm tốt nhiều kì thi, rating càng cao.">
       <div class="parent-stat-num">
         {{ child_summary.rating if child_summary.rating else "—" }}
       </div>
       <div class="parent-stat-label">Điểm rating kì thi</div>
+      <div style="font-size:0.75rem; color:#999; margin-top:0.25rem;">
+        Xếp hạng dựa trên kết quả các kì thi.
+      </div>
     </div>
-    <div class="parent-card">
+    <div class="parent-card" title="Trung bình cộng tỉ lệ giải đúng theo từng bài trong 30 ngày qua. VD: bài 1 đúng 1/1 lần (100%), bài 2 đúng 1/3 lần (33%) → trung bình ≈ 66.5%.">
       <div class="parent-stat-num">{{ child_summary.correct_rate_30d }}%</div>
       <div class="parent-stat-label">Tỉ lệ giải đúng (30 ngày)</div>
+      <div style="font-size:0.75rem; color:#999; margin-top:0.25rem;">
+        Trung bình tỉ lệ đúng/bài trong tháng qua.
+      </div>
     </div>
   </div>
 
   {% if class_compare %}
-    <div class="parent-card">
-      <h2>📈 So với các bạn cùng lớp ({{ class_compare.organization_name }})</h2>
-      <p class="section-hint">
-        Cột xanh là của con, cột cam là trung bình lớp. Dùng để biết con đang đứng ở đâu so với chung.
-      </p>
-      <div style="display:flex; gap:1rem; margin-bottom:0.5rem;">
-        <span class="legend"><span class="dot" style="background:#1958c1;"></span> Con bạn</span>
-        <span class="legend"><span class="dot" style="background:#ffa726;"></span> Trung bình lớp</span>
-      </div>
-      {% set metrics = [
-        ("Số bài giải đúng", class_compare.child_problems_solved, class_compare.avg_problems_solved),
-        ("Điểm tích lũy", class_compare.child_points, class_compare.avg_points),
-        ("Điểm performance", class_compare.child_performance_points, class_compare.avg_performance_points)
-      ] %}
-      {% for label, child_val, avg_val in metrics %}
-        {% set max_v = [child_val, avg_val, 1]|max %}
-        <div style="margin-bottom:0.85rem;">
-          <div style="display:flex; justify-content:space-between;
-                      font-size:0.9rem; margin-bottom:0.1rem;">
-            <span>{{ label }}</span>
-            <span>Con: <strong>{{ child_val|round(1) }}</strong> ·
-              TB lớp: {{ avg_val|round(1) }}</span>
-          </div>
-          <div class="compare-bar compare-child">
-            <div style="width: {{ (child_val * 100 / max_v)|round(1) }}%;"></div>
-          </div>
-          <div class="compare-bar compare-class">
-            <div style="width: {{ (avg_val * 100 / max_v)|round(1) }}%;"></div>
-          </div>
+    <div class="parent-card compare-card">
+      <div class="compare-head">
+        <div>
+          <h2 style="margin:0;">📈 So với các bạn cùng lớp</h2>
+          <div class="compare-org">{{ class_compare.organization_name }}</div>
         </div>
-      {% endfor %}
+        <details class="compare-info">
+          <summary>ℹ️ Giải thích chỉ số</summary>
+          <div class="compare-info-body">
+            <p><strong>Số bài giải đúng:</strong> tổng số bài tập con đã làm đúng (đạt đủ điểm tối đa).</p>
+            <p><strong>Điểm tích lũy:</strong> tổng điểm cao nhất của mỗi bài con đã làm — bài càng khó càng nhiều điểm.</p>
+            <p><strong>Điểm performance:</strong> chỉ số trình độ tự động tính theo độ khó của các bài giải — công bằng để so sánh năng lực.</p>
+          </div>
+        </details>
+      </div>
+
+      {% set metrics = [
+        ("Số bài giải đúng", "📝", class_compare.child_problems_solved, class_compare.avg_problems_solved, "bài"),
+        ("Điểm tích lũy", "🏆", class_compare.child_points, class_compare.avg_points, "đ"),
+        ("Điểm performance", "⭐", class_compare.child_performance_points, class_compare.avg_performance_points, "đ")
+      ] %}
+      <div class="compare-grid">
+        {% for label, icon, child_v, avg_v, unit in metrics %}
+          {% set max_v = [child_v, avg_v, 1]|max %}
+          {% set diff = child_v - avg_v %}
+          {% set pct = ((diff * 100 / avg_v) if avg_v > 0 else 0)|round %}
+          {% if diff > 0 %}{% set status = "ahead" %}{% set arrow = "▲" %}{% set status_text = "Hơn TB lớp" %}
+          {% elif diff < 0 %}{% set status = "behind" %}{% set arrow = "▼" %}{% set status_text = "Dưới TB lớp" %}
+          {% else %}{% set status = "equal" %}{% set arrow = "●" %}{% set status_text = "Bằng TB lớp" %}{% endif %}
+          <div class="compare-metric metric-{{ status }}">
+            <div class="metric-head">
+              <span class="metric-icon">{{ icon }}</span>
+              <span class="metric-label">{{ label }}</span>
+            </div>
+            <div class="metric-main">
+              <span class="metric-val">{{ child_v|round(1) }}</span>
+              <span class="metric-unit">{{ unit }}</span>
+            </div>
+            <div class="metric-status">
+              <span class="status-badge status-{{ status }}">
+                {{ arrow }} {{ status_text }}
+                {% if pct != 0 %}<span class="status-pct"> ({{ '+' if pct > 0 else '' }}{{ pct }}%)</span>{% endif %}
+              </span>
+            </div>
+            <div class="metric-bar">
+              <div class="metric-bar-fill" style="width: {{ (child_v * 100 / max_v)|round(1) }}%;"></div>
+              {% if max_v > 0 and avg_v > 0 %}
+                <div class="metric-bar-avg" style="left: {{ (avg_v * 100 / max_v)|round(1) }}%;">
+                  <span class="avg-tick"></span>
+                  <span class="avg-label">TB</span>
+                </div>
+              {% endif %}
+            </div>
+            <div class="metric-foot">
+              <span class="foot-child">Con: <strong>{{ child_v|round(1) }}</strong></span>
+              <span class="foot-class">TB lớp: <strong>{{ avg_v|round(1) }}</strong></span>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
     </div>
+
+    <style>
+      .compare-card { padding: 1.2rem 1.3rem 1.3rem; }
+      .compare-head {
+        display: flex; justify-content: space-between; align-items: flex-start;
+        gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap;
+      }
+      .compare-org { font-size: 0.85rem; color: #666; margin-top: 0.15rem; }
+      .compare-info summary {
+        cursor: pointer; color: #1958c1; font-size: 0.82rem;
+        list-style: none; padding: 0.25rem 0.65rem;
+        background: rgba(25,88,193,0.08); border-radius: 999px;
+        border: 1px solid rgba(25,88,193,0.18);
+        user-select: none;
+      }
+      .compare-info summary::-webkit-details-marker { display: none; }
+      .compare-info-body {
+        margin-top: 0.6rem; padding: 0.7rem 0.85rem;
+        background: #f7faff; border: 1px solid #e1ecff; border-radius: 10px;
+        font-size: 0.85rem; color: #444;
+      }
+      .compare-info-body p { margin: 0 0 0.4rem; }
+      .compare-info-body p:last-child { margin-bottom: 0; }
+
+      .compare-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.85rem;
+      }
+      @media (max-width: 800px) { .compare-grid { grid-template-columns: 1fr; } }
+
+      .compare-metric {
+        position: relative;
+        padding: 1rem 1.1rem 1rem;
+        background: #f8fafc;
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+        transition: transform 0.18s, box-shadow 0.2s, border-color 0.2s;
+      }
+      .compare-metric:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px -8px rgba(15,23,42,0.12);
+      }
+      .compare-metric.metric-ahead {
+        background: linear-gradient(180deg, #ecfdf5, #f8fafc);
+        border-color: #86efac;
+      }
+      .compare-metric.metric-behind {
+        background: linear-gradient(180deg, #fef2f2, #f8fafc);
+        border-color: #fecaca;
+      }
+
+      .metric-head {
+        display: flex; align-items: center; gap: 0.45rem;
+        color: #475569; font-size: 0.85rem; font-weight: 500;
+        margin-bottom: 0.4rem;
+      }
+      .metric-icon { font-size: 1rem; }
+
+      .metric-main {
+        display: flex; align-items: baseline; gap: 0.3rem;
+        margin-bottom: 0.5rem;
+      }
+      .metric-val {
+        font-size: 2rem; font-weight: 700; letter-spacing: -0.02em;
+        color: #0f172a; line-height: 1;
+      }
+      .metric-ahead .metric-val { color: #047857; }
+      .metric-behind .metric-val { color: #b91c1c; }
+      .metric-unit { font-size: 0.85rem; color: #94a3b8; font-weight: 500; }
+
+      .status-badge {
+        display: inline-flex; align-items: center; gap: 0.3rem;
+        font-size: 0.75rem; font-weight: 600;
+        padding: 0.2rem 0.6rem; border-radius: 999px;
+      }
+      .status-ahead { background: rgba(16,185,129,0.15); color: #047857; border: 1px solid rgba(16,185,129,0.35); }
+      .status-behind { background: rgba(239,68,68,0.12); color: #b91c1c; border: 1px solid rgba(239,68,68,0.3); }
+      .status-equal { background: rgba(100,116,139,0.12); color: #475569; border: 1px solid rgba(100,116,139,0.25); }
+      .status-pct { font-weight: 500; opacity: 0.85; }
+
+      .metric-status { margin-bottom: 0.85rem; }
+
+      .metric-bar {
+        position: relative;
+        height: 8px; background: #e5e7eb; border-radius: 999px;
+        overflow: visible; margin-bottom: 0.55rem;
+      }
+      .metric-bar-fill {
+        position: absolute; left: 0; top: 0; bottom: 0;
+        background: linear-gradient(90deg, #1958c1, #2e83f1);
+        border-radius: 999px;
+        transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .metric-ahead .metric-bar-fill { background: linear-gradient(90deg, #10b981, #34d399); }
+      .metric-behind .metric-bar-fill { background: linear-gradient(90deg, #ef4444, #f87171); }
+
+      .metric-bar-avg {
+        position: absolute; top: -3px; bottom: -3px;
+        transform: translateX(-50%);
+        display: flex; flex-direction: column; align-items: center;
+      }
+      .avg-tick {
+        width: 3px; height: 14px; background: #f59e0b;
+        border-radius: 2px;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+      }
+      .avg-label {
+        position: absolute; top: 16px;
+        font-size: 0.65rem; font-weight: 700; color: #d97706;
+        letter-spacing: 0.5px;
+      }
+
+      .metric-foot {
+        display: flex; justify-content: space-between;
+        font-size: 0.78rem; color: #64748b;
+        margin-top: 1.1rem;
+        padding-top: 0.5rem;
+        border-top: 1px dashed #e5e7eb;
+      }
+      .metric-foot strong { color: #1e293b; font-weight: 600; }
+      .metric-foot .foot-class strong { color: #b45309; }
+    </style>
   {% endif %}
 
   {% if topic_breakdown %}
     <div class="parent-card">
       <h2>🎯 Hiệu suất theo chủ đề</h2>
       <p class="section-hint">
-        Mỗi chủ đề là một mảng kiến thức. Tỉ lệ càng cao, con càng vững mảng đó.
+        Mỗi chủ đề là một mảng kiến thức. Tỉ lệ là trung bình tỉ lệ đúng theo từng bài
+        (vd: bài 1 đúng 1/1 = 100%, bài 2 đúng 1/3 = 33% → trung bình ≈ 66.5%).
         <span style="color:#28a745;">Xanh</span>: tốt ·
         <span style="color:#f0ad4e;">Vàng</span>: tạm ổn ·
         <span style="color:#d9534f;">Đỏ</span>: cần luyện thêm.
       </p>
-      <table style="width:100%; border-collapse:collapse;">
+      <div class="parent-tablewrap"><table style="width:100%; border-collapse:collapse;">
         <thead>
           <tr style="text-align:left; border-bottom:1px solid #ddd;">
             <th style="padding:0.5rem 0;">Chủ đề</th>
-            <th style="padding:0.5rem 0;">Đã làm</th>
-            <th style="padding:0.5rem 0;">Giải đúng</th>
-            <th style="padding:0.5rem 0;">Tỉ lệ</th>
+            <th style="padding:0.5rem 0;" title="Số bài tập (không phải số lần nộp) con đã làm.">Số bài đã làm</th>
+            <th style="padding:0.5rem 0;" title="Số bài tập con đã giải đúng ít nhất 1 lần.">Bài giải đúng</th>
+            <th style="padding:0.5rem 0;" title="Trung bình tỉ lệ giải đúng / mỗi bài.">Tỉ lệ trung bình</th>
           </tr>
         </thead>
         <tbody>
@@ -126,7 +291,7 @@
             </tr>
           {% endfor %}
         </tbody>
-      </table>
+      </table></div>
     </div>
   {% endif %}
 
@@ -134,30 +299,42 @@
     <h2>🕒 Bài làm gần nhất</h2>
     <p class="section-hint">10 bài con đã nộp gần đây nhất.</p>
     {% if recent_submissions %}
-      <ul style="list-style:none; padding:0; margin:0;">
-        {% for s in recent_submissions %}
-          <li style="display:flex; justify-content:space-between;
-                     align-items:center; padding:0.5rem 0;
-                     border-bottom:1px solid #f0f0f0;">
-            <span>{{ s.problem.name }}
-              <small style="color:#888;">·
-                {{ s.language.short_name or s.language.key }}</small>
-            </span>
-            <span>
-              {% if s.result == 'AC' %}
-                <span class="badge badge-correct">Đúng</span>
-              {% elif s.result %}
-                <span class="badge badge-wrong">Chưa đúng</span>
-              {% else %}
-                <span class="badge badge-pending">Đang chấm</span>
-              {% endif %}
-              <small style="color:#888; margin-left:0.4rem;">
-                {{ s.date.strftime("%d/%m %H:%M") }}
-              </small>
-            </span>
-          </li>
-        {% endfor %}
-      </ul>
+      <div class="parent-tablewrap"><table style="width:100%; border-collapse:collapse;">
+        <thead>
+          <tr style="text-align:left; border-bottom:1px solid #e6e9ef;
+                     color:#777; font-size:0.85rem;">
+            <th style="padding:0.4rem 0;">Bài</th>
+            <th style="padding:0.4rem 0;">Kết quả</th>
+            <th style="padding:0.4rem 0;" title="Điểm con đạt được cho lần nộp này.">Điểm</th>
+            <th style="padding:0.4rem 0;">Thời gian</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for s in recent_submissions %}
+            <tr style="border-bottom:1px solid #f0f0f0;">
+              <td style="padding:0.5rem 0;">
+                {{ s.problem.name }}
+                <small style="color:#888;">· {{ s.language.short_name or s.language.key }}</small>
+              </td>
+              <td>
+                {% if s.result == 'AC' %}
+                  <span class="badge badge-correct">Đúng</span>
+                {% elif s.result %}
+                  <span class="badge badge-wrong">Chưa đúng</span>
+                {% else %}
+                  <span class="badge badge-pending">Đang chấm</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if s.display_points is not none %}
+                  <strong style="color:#1958c1;">{{ s.display_points|round(1) }}</strong>
+                {% else %}—{% endif %}
+              </td>
+              <td><small style="color:#888;">{{ s.date.strftime("%d/%m %H:%M") }}</small></td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table></div>
       <a href="{{ url('parent_child_submissions', child.id) }}"
          style="display:inline-block; margin-top:0.85rem; color:#1958c1;
                 text-decoration:none; font-weight:600;">

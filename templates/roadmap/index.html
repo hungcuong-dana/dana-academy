@@ -1,0 +1,199 @@
+{% extends "roadmap/base.html" %}
+{% block title %}Lộ trình học tập{% endblock %}
+
+{% macro ring(percent, size, stroke, color, color2, id_suffix) %}
+  {% set r = (size - stroke) / 2 %}
+  {% set c = 2 * 3.14159 * r %}
+  {% set off = c * (1 - percent / 100.0) %}
+  <svg width="{{ size }}" height="{{ size }}" viewBox="0 0 {{ size }} {{ size }}">
+    <defs>
+      <linearGradient id="grad-{{ id_suffix }}" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="{{ color }}"/>
+        <stop offset="100%" stop-color="{{ color2 }}"/>
+      </linearGradient>
+    </defs>
+    <circle cx="{{ size/2 }}" cy="{{ size/2 }}" r="{{ r }}"
+            fill="none" stroke="var(--rm-track)" stroke-width="{{ stroke }}"/>
+    <circle cx="{{ size/2 }}" cy="{{ size/2 }}" r="{{ r }}"
+            fill="none" stroke="url(#grad-{{ id_suffix }})" stroke-width="{{ stroke }}"
+            stroke-dasharray="{{ c|round(2) }}" stroke-dashoffset="{{ off|round(2) }}"
+            stroke-linecap="round"/>
+  </svg>
+{% endmacro %}
+
+{% block body %}
+<div class="roadmap-page">
+  <div class="roadmap-shell">
+    <!-- ───────── Hero ───────── -->
+    <div class="rm-hero">
+      <div class="rm-hero-text">
+        <div class="eyebrow"><i class="fa fa-route"></i> Learning Path</div>
+        <h1>Lộ trình học tập</h1>
+        <p class="lead">
+          Hành trình 7 mức từ nhập môn đến chuyên sâu. Theo dõi tiến độ, mở khoá chủ đề mới
+          và chinh phục đỉnh cao thuật toán theo lộ trình được thiết kế bài bản.
+        </p>
+      </div>
+    </div>
+
+    <!-- ───────── Stats dashboard ───────── -->
+    <div class="rm-stats">
+      <div class="rm-stat" style="--stat-color: #6366f1; --stat-color2: #4338ca;">
+        <div class="ico"><i class="fa fa-check"></i></div>
+        <div class="num"><span data-count-to="{{ grand.problems_solved }}">{{ grand.problems_solved }}</span><span class="total"> / {{ grand.problems_total }}</span></div>
+        <div class="label">Bài tập đã giải</div>
+      </div>
+      <div class="rm-stat" style="--stat-color: #10b981; --stat-color2: #047857;">
+        <div class="ico"><i class="fa fa-chart-line"></i></div>
+        <div class="num"><span data-count-to="{{ grand.percent }}">{{ grand.percent }}</span>%</div>
+        <div class="label">Hoàn thành toàn lộ trình</div>
+      </div>
+      <div class="rm-stat" style="--stat-color: #a855f7; --stat-color2: #7c3aed;">
+        <div class="ico"><i class="fa fa-list-check"></i></div>
+        <div class="num"><span data-count-to="{{ grand.topics_started }}">{{ grand.topics_started }}</span><span class="total"> / {{ grand.topics_total }}</span></div>
+        <div class="label">Chủ đề đã bắt đầu</div>
+      </div>
+      <div class="rm-stat" style="--stat-color: #f59e0b; --stat-color2: #b45309;">
+        <div class="ico"><i class="fa fa-layer-group"></i></div>
+        <div class="num"><span data-count-to="{{ grand.levels_started }}">{{ grand.levels_started }}</span><span class="total"> / {{ grand.levels_total }}</span></div>
+        <div class="label">Mức đã chạm</div>
+      </div>
+    </div>
+
+    <!-- ───────── Search + Filter ───────── -->
+    <div class="rm-toolbar">
+      <div class="rm-search">
+        <i class="fa fa-search"></i>
+        <input id="rm-search-input" type="text" placeholder="Tìm chủ đề: vòng lặp, đồ thị, quy hoạch động..." autocomplete="off">
+      </div>
+      <div class="rm-filters">
+        <button class="rm-filter active" data-filter="all">Tất cả</button>
+        <button class="rm-filter" data-filter="in-progress">Đang học</button>
+        <button class="rm-filter" data-filter="done">Hoàn thành</button>
+        <button class="rm-filter" data-filter="upcoming">Sắp ra mắt</button>
+      </div>
+    </div>
+
+    <!-- ───────── Vertical path ───────── -->
+    <div class="rm-path" id="rm-path">
+      {% for card in cards %}
+        {% set state = "done" if (card.total > 0 and card.solved == card.total)
+                       else ("in-progress" if card.solved > 0
+                       else ("upcoming" if card.total == 0 else "untouched")) %}
+        <a class="rm-card{% if state == 'done' %} done{% endif %}"
+           href="{{ url('roadmap_level', card.key) }}"
+           data-state="{{ state }}"
+           data-topics="{{ card.topic_chips|join('|')|lower }}"
+           style="--lvl-color: {{ card.color }}; --lvl-color2: {{ card.color2 }}; --lvl-glow: {{ card.color }}55;">
+          <div class="bignum">{{ card.key|replace('lv','0') }}</div>
+          <div>
+            <div class="icon-row">
+              <span class="lvl-emoji">{{ card.icon }}</span>
+              <span class="badge-level">{{ card.title }}</span>
+              {% if state == "done" %}
+                <span class="badge-status done"><i class="fa fa-check-circle"></i> Hoàn thành</span>
+              {% elif state == "in-progress" %}
+                <span class="badge-status progress"><i class="fa fa-bolt"></i> Đang học</span>
+              {% elif state == "upcoming" %}
+                <span class="badge-status soon"><i class="fa fa-hourglass"></i> Sắp ra mắt</span>
+              {% endif %}
+            </div>
+            <h2 class="title">{{ card.subtitle }}</h2>
+            <p class="blurb">{{ card.blurb }}</p>
+            <div class="chips">
+              {% for chip in card.topic_chips %}
+                <span class="chip" data-chip="{{ chip|lower }}">{{ chip }}</span>
+              {% endfor %}
+              {% if card.topic_more > 0 %}
+                <span class="chip more">+{{ card.topic_more }} chủ đề</span>
+              {% endif %}
+            </div>
+          </div>
+          <div class="side">
+            {% if card.total > 0 %}
+              <div class="ring">
+                {{ ring(card.percent, 130, 9, card.color, card.color2, "idx-" ~ card.key) }}
+                <div class="pct">
+                  {{ card.percent }}%
+                  <span class="sm">{{ card.solved }} / {{ card.total }}</span>
+                </div>
+              </div>
+              <span class="cta">Tiếp tục học <i class="fa fa-arrow-right"></i></span>
+            {% else %}
+              <div class="ring">
+                {{ ring(0, 130, 9, card.color, card.color2, "idx-empty-" ~ card.key) }}
+                <div class="pct" style="font-size: 1rem;">
+                  <i class="fa fa-screwdriver-wrench" style="font-size: 1.8rem; opacity: 0.55;"></i>
+                  <span class="sm">Sắp ra mắt</span>
+                </div>
+              </div>
+            {% endif %}
+          </div>
+        </a>
+      {% endfor %}
+    </div>
+
+    <div class="rm-empty" id="rm-empty" style="display: none; margin-top: 1rem;">
+      <div class="ico"><i class="fa fa-search"></i></div>
+      <div class="em-title">Không tìm thấy</div>
+      <div>Thử từ khoá khác hoặc đổi bộ lọc</div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  // ── Count-up ──
+  document.querySelectorAll('[data-count-to]').forEach(el => {
+    const target = parseInt(el.dataset.countTo, 10);
+    if (isNaN(target)) return;
+    if (target === 0) { el.textContent = '0'; return; }
+    const duration = 1000;
+    const start = performance.now();
+    function tick(now) {
+      const t = Math.min(1, (now - start) / duration);
+      const eased = 1 - Math.pow(1 - t, 3);
+      el.textContent = Math.floor(eased * target);
+      if (t < 1) requestAnimationFrame(tick); else el.textContent = target;
+    }
+    requestAnimationFrame(tick);
+  });
+
+  // ── Search + filter ──
+  const input = document.getElementById('rm-search-input');
+  const filterBtns = document.querySelectorAll('.rm-filter');
+  const cards = document.querySelectorAll('.rm-card');
+  const emptyEl = document.getElementById('rm-empty');
+  let currentFilter = 'all';
+
+  function apply() {
+    const q = input.value.trim().toLowerCase();
+    let visible = 0;
+    cards.forEach(card => {
+      const state = card.dataset.state || '';
+      const topics = card.dataset.topics || '';
+      const subtitle = (card.querySelector('.title')?.textContent || '').toLowerCase();
+      const matchFilter = currentFilter === 'all' || currentFilter === state;
+      const matchSearch = !q || topics.includes(q) || subtitle.includes(q);
+      const show = matchFilter && matchSearch;
+      card.classList.toggle('is-hidden', !show);
+      if (show) visible++;
+      card.querySelectorAll('.chip[data-chip]').forEach(chip => {
+        chip.classList.toggle('match', !!(q && chip.dataset.chip.includes(q)));
+      });
+    });
+    emptyEl.style.display = visible === 0 ? 'block' : 'none';
+  }
+
+  input.addEventListener('input', apply);
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentFilter = btn.dataset.filter;
+      apply();
+    });
+  });
+})();
+</script>
+{% endblock %}

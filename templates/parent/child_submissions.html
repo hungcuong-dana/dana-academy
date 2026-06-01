@@ -11,7 +11,7 @@
       Lịch sử các bài con đã nộp, cùng kết quả và ngôn ngữ lập trình sử dụng.
     </p>
     {% if submissions %}
-      <table style="width:100%; border-collapse:collapse;">
+      <div class="parent-tablewrap"><table style="width:100%; border-collapse:collapse;">
         <thead>
           <tr style="text-align:left; border-bottom:2px solid #e6e9ef;">
             <th style="padding:0.55rem 0;">Bài</th>
@@ -42,13 +42,13 @@
                   <span class="badge badge-pending">Đang chấm</span>
                 {% endif %}
               </td>
-              <td>{{ s.points|round(1) if s.points is not none else "—" }}</td>
+              <td>{{ s.display_points|round(1) if s.display_points is not none else "—" }}</td>
               <td><small>{{ s.language.short_name or s.language.key }}</small></td>
               <td><small style="color:#888;">{{ s.date.strftime("%d/%m/%Y %H:%M") }}</small></td>
             </tr>
           {% endfor %}
         </tbody>
-      </table>
+      </table></div>
       <div style="margin-top:1rem; display:flex; gap:0.5rem; justify-content:center;">
         {% if has_prev %}
           <a href="?page={{ page - 1 }}"

@@ -1,0 +1,319 @@
+{% extends "roadmap/base.html" %}
+{% block title %}{{ level.title }} — {{ level.subtitle }}{% endblock %}
+
+{% macro ring(percent, size, stroke, color, color2, id_suffix) %}
+  {% set r = (size - stroke) / 2 %}
+  {% set c = 2 * 3.14159 * r %}
+  {% set off = c * (1 - percent / 100.0) %}
+  <svg width="{{ size }}" height="{{ size }}" viewBox="0 0 {{ size }} {{ size }}">
+    <defs>
+      <linearGradient id="grad-{{ id_suffix }}" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="{{ color }}"/>
+        <stop offset="100%" stop-color="{{ color2 }}"/>
+      </linearGradient>
+    </defs>
+    <circle cx="{{ size/2 }}" cy="{{ size/2 }}" r="{{ r }}"
+            fill="none" stroke="var(--rm-track)" stroke-width="{{ stroke }}"/>
+    <circle cx="{{ size/2 }}" cy="{{ size/2 }}" r="{{ r }}"
+            fill="none" stroke="url(#grad-{{ id_suffix }})" stroke-width="{{ stroke }}"
+            stroke-dasharray="{{ c|round(2) }}" stroke-dashoffset="{{ off|round(2) }}"
+            stroke-linecap="round"/>
+  </svg>
+{% endmacro %}
+
+{% block body %}
+<div class="roadmap-page">
+  <div class="roadmap-shell"
+       style="--lvl-color: {{ level.color }}; --lvl-color2: {{ level.color2 }}; --lvl-glow: {{ level.color }}40; --diff-color: {{ difficulty_color }};">
+
+    <div class="rm-crumbs">
+      <a href="{{ url('roadmap_index') }}"><i class="fa fa-arrow-left"></i> Lộ trình</a>
+      <span class="sep">/</span>
+      <span>{{ level.title }}: {{ level.subtitle }}</span>
+    </div>
+
+    <div class="rm-level-layout">
+      <!-- ════ Main column ════ -->
+      <div>
+        <!-- Hero -->
+        <div class="rm-lvl-hero">
+          <div class="hh-content">
+            <span class="icon-badge"><span class="emoji">{{ level.icon }}</span> {{ level.title }}</span>
+            <h1>{{ level.subtitle }}</h1>
+            <div class="hh-meta">
+              <span class="meta-chip diff"><i class="fa fa-bolt"></i> {{ difficulty_label }}</span>
+              <span class="meta-chip"><i class="fa fa-list-check"></i> {{ stats.topic_count }} chủ đề</span>
+              <span class="meta-chip"><i class="fa fa-puzzle-piece"></i> {{ stats.total }} bài tập</span>
+            </div>
+            <p class="blurb">{{ level.blurb }}</p>
+            <div class="hh-progress-row">
+              <div class="progress-track"><span style="width: {{ stats.percent }}%;"></span></div>
+              <div class="progress-text"><span class="pct">{{ stats.percent }}%</span> {{ stats.solved }}/{{ stats.total }} bài</div>
+            </div>
+          </div>
+          <div class="hh-ring">
+            {{ ring(stats.percent, 160, 11, level.color, level.color2, "hero-" ~ level_key) }}
+            <div class="pct-inner">
+              <span class="big">{{ stats.percent }}%</span>
+              <span class="sm">{{ stats.solved }} / {{ stats.total }} bài</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="rm-stats">
+          <div class="rm-stat" style="--stat-color: #10b981; --stat-color2: #047857;">
+            <div class="ico"><i class="fa fa-check"></i></div>
+            <div class="num" data-count-to="{{ stats.solved }}">{{ stats.solved }}</div>
+            <div class="label">Đã giải</div>
+          </div>
+          <div class="rm-stat" style="--stat-color: #f59e0b; --stat-color2: #b45309;">
+            <div class="ico"><i class="fa fa-hourglass-half"></i></div>
+            <div class="num" data-count-to="{{ stats.attempted_only }}">{{ stats.attempted_only }}</div>
+            <div class="label">Đã thử</div>
+          </div>
+          <div class="rm-stat" style="--stat-color: #64748b; --stat-color2: #334155;">
+            <div class="ico"><i class="far fa-circle"></i></div>
+            <div class="num" data-count-to="{{ stats.untouched }}">{{ stats.untouched }}</div>
+            <div class="label">Chưa làm</div>
+          </div>
+          <div class="rm-stat" style="--stat-color: {{ level.color }}; --stat-color2: {{ level.color2 }};">
+            <div class="ico"><i class="fa fa-list-check"></i></div>
+            <div class="num"><span data-count-to="{{ stats.topic_done }}">{{ stats.topic_done }}</span><span class="total"> / {{ stats.topic_count }}</span></div>
+            <div class="label">Chủ đề xong</div>
+          </div>
+        </div>
+
+        <!-- Search -->
+        <div class="rm-lvl-search">
+          <i class="fa fa-search"></i>
+          <input id="lvl-search" type="text" placeholder="Tìm chủ đề trong {{ level.title }}: vòng lặp, mảng..." autocomplete="off">
+          <span class="count" id="lvl-search-count" style="display: none;">0</span>
+        </div>
+
+        <!-- Categories as accordions -->
+        <div id="lvl-cats">
+          {% for cat in categories %}
+            <div class="rm-acc open" data-cat-name="{{ cat.name|lower }}">
+              <div class="rm-acc-head">
+                <div class="cat-info">
+                  <div class="cat-mark"><i class="fa fa-folder-open"></i></div>
+                  <div>
+                    <h3>{{ cat.name }}</h3>
+                    <div class="cat-meta">
+                      <span>{{ cat.topics|length }} chủ đề</span>
+                      {% if cat.total > 0 %}
+                        <span class="sep">•</span>
+                        <span>{{ cat.solved }}/{{ cat.total }} bài</span>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+                <div class="toggle"><i class="fa fa-chevron-down"></i></div>
+              </div>
+              <div class="rm-acc-body">
+                <div class="rm-acc-inner">
+                  {% for t in cat.topics %}
+                    <a class="rm-tc{% if not t.has_problems %} empty{% elif t.is_done %} done{% endif %}"
+                       href="{{ url('roadmap_type', level_key, t.slug) }}"
+                       data-topic="{{ t.label|lower }}"
+                       data-state="{% if t.is_done %}done{% elif t.is_started %}progress{% elif t.is_upcoming %}upcoming{% else %}untouched{% endif %}"
+                       title="{{ t.label }}{% if t.has_problems %} — {{ t.solved }}/{{ t.total }} bài • {{ t.est_time }}{% endif %}">
+                      <div class="tc-ico"><i class="fa {{ t.icon }}"></i></div>
+                      <div class="tc-body">
+                        <div class="tc-head">
+                          <span class="tc-title">{{ t.label }}</span>
+                          {% if t.is_done %}
+                            <span class="badge-pill done"><i class="fa fa-check-circle"></i> Hoàn thành</span>
+                          {% elif t.is_started %}
+                            <span class="badge-pill progress"><i class="fa fa-bolt"></i> Đang học</span>
+                          {% elif t.has_problems %}
+                            <span class="badge-pill"><i class="fa fa-circle-dot"></i> Chưa làm</span>
+                          {% else %}
+                            <span class="badge-pill soon"><i class="fa fa-lock"></i> Sắp ra mắt</span>
+                          {% endif %}
+                        </div>
+                        <div class="tc-meta">
+                          <span class="badge-pill diff"><i class="fa fa-signal"></i> {{ difficulty_label }}</span>
+                          <span class="badge-pill"><i class="fa fa-clock"></i> {{ t.est_time }}</span>
+                          {% if t.has_problems %}
+                            <span class="badge-pill"><i class="fa fa-puzzle-piece"></i> {{ t.total }} bài</span>
+                          {% endif %}
+                        </div>
+                        {% if t.has_problems %}
+                          <div class="tc-progress">
+                            <div class="tc-bar{% if t.is_done %} is-done{% endif %}"><span style="width: {{ t.percent }}%;"></span></div>
+                            <div class="tc-bar-text">{{ t.solved }}/{{ t.total }} · {{ t.percent }}%</div>
+                          </div>
+                        {% endif %}
+                      </div>
+                      <span class="tc-cta">{% if t.is_done %}Ôn lại <i class="fa fa-arrow-right"></i>{% elif t.is_started %}Tiếp tục <i class="fa fa-arrow-right"></i>{% elif t.has_problems %}Bắt đầu <i class="fa fa-arrow-right"></i>{% else %}<i class="fa fa-lock"></i> Khoá{% endif %}</span>
+                    </a>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- ════ Sidebar ════ -->
+      <aside class="rm-sidebar">
+        <!-- Overall progress -->
+        <div class="rm-sb-card rm-sb-progress">
+          <div class="sb-head">
+            <i class="fa fa-chart-line"></i>
+            <h4>Tiến độ tổng</h4>
+          </div>
+          <div class="sb-pct">{{ stats.percent }}<span class="sm">%</span></div>
+          <div class="sb-sub">{{ stats.solved }} / {{ stats.total }} bài đã giải</div>
+          <div class="sb-bar"><span style="width: {{ stats.percent }}%;"></span></div>
+          <div class="sb-breakdown">
+            <div class="sb-bd-item">
+              <div class="v solved">{{ stats.solved }}</div>
+              <div class="k">Đã giải</div>
+            </div>
+            <div class="sb-bd-item">
+              <div class="v attempted">{{ stats.attempted_only }}</div>
+              <div class="k">Đã thử</div>
+            </div>
+            <div class="sb-bd-item">
+              <div class="v untouched">{{ stats.untouched }}</div>
+              <div class="k">Còn lại</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recommended next -->
+        {% if recommended %}
+          <a class="rm-sb-card rm-sb-rec" href="{{ url('roadmap_type', level_key, recommended.slug) }}" style="text-decoration: none; color: inherit;">
+            <div class="sb-head">
+              <i class="fa fa-compass"></i>
+              <h4>Tiếp theo bạn nên học</h4>
+            </div>
+            <div class="rec-ico"><i class="fa {{ recommended.icon }}"></i></div>
+            <div class="rec-title">{{ recommended.label }}</div>
+            <div class="rec-meta">
+              <span class="badge-pill diff"><i class="fa fa-signal"></i> {{ difficulty_label }}</span>
+              <span class="badge-pill"><i class="fa fa-clock"></i> {{ recommended.est_time }}</span>
+            </div>
+            <span class="rec-cta">{% if recommended.is_started %}Tiếp tục ({{ recommended.solved }}/{{ recommended.total }}) <i class="fa fa-arrow-right"></i>{% else %}Bắt đầu ngay <i class="fa fa-arrow-right"></i>{% endif %}</span>
+          </a>
+        {% endif %}
+
+        <!-- Related topics -->
+        {% if related %}
+          <div class="rm-sb-card rm-sb-related">
+            <div class="sb-head">
+              <i class="fa fa-link"></i>
+              <h4>Chủ đề liên quan</h4>
+            </div>
+            {% for r in related %}
+              <a class="rel-item" href="{{ url('roadmap_type', level_key, r.slug) }}">
+                <div class="rel-ico"><i class="fa {{ r.icon }}"></i></div>
+                <div>
+                  <div class="rel-title">{{ r.label }}</div>
+                  <div class="rel-meta">{{ r.solved }}/{{ r.total }} bài · {{ r.percent }}%</div>
+                </div>
+              </a>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </aside>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  // ── Count-up animation ──
+  document.querySelectorAll('[data-count-to]').forEach(el => {
+    const target = parseInt(el.dataset.countTo, 10);
+    if (isNaN(target)) return;
+    if (target === 0) { el.textContent = '0'; return; }
+    const duration = 900;
+    const start = performance.now();
+    function tick(now) {
+      const t = Math.min(1, (now - start) / duration);
+      const eased = 1 - Math.pow(1 - t, 3);
+      el.textContent = Math.floor(eased * target);
+      if (t < 1) requestAnimationFrame(tick); else el.textContent = target;
+    }
+    requestAnimationFrame(tick);
+  });
+
+  // ── Accordion toggle ──
+  document.querySelectorAll('.rm-acc-head').forEach(head => {
+    head.addEventListener('click', () => head.parentElement.classList.toggle('open'));
+  });
+
+  // ── Search within level ──
+  const search = document.getElementById('lvl-search');
+  const countEl = document.getElementById('lvl-search-count');
+  const accs = document.querySelectorAll('.rm-acc');
+  search.addEventListener('input', () => {
+    const q = search.value.trim().toLowerCase();
+    let matches = 0;
+    accs.forEach(acc => {
+      const topics = acc.querySelectorAll('.rm-tc');
+      let visible = 0;
+      topics.forEach(t => {
+        const m = !q || t.dataset.topic.includes(q) || acc.dataset.catName.includes(q);
+        t.style.display = m ? '' : 'none';
+        if (m) { visible++; matches++; }
+      });
+      acc.style.display = (q && visible === 0) ? 'none' : '';
+      if (q && visible > 0) acc.classList.add('open');
+    });
+    if (q) {
+      countEl.textContent = matches + ' chủ đề';
+      countEl.style.display = '';
+    } else {
+      countEl.style.display = 'none';
+    }
+  });
+
+  // ── Ripple effect on topic card click ──
+  document.querySelectorAll('.rm-tc').forEach(card => {
+    card.addEventListener('click', e => {
+      const rect = card.getBoundingClientRect();
+      const ripple = document.createElement('span');
+      ripple.className = 'ripple';
+      ripple.style.left = (e.clientX - rect.left) + 'px';
+      ripple.style.top = (e.clientY - rect.top) + 'px';
+      ripple.style.width = ripple.style.height = '20px';
+      card.appendChild(ripple);
+      setTimeout(() => ripple.remove(), 600);
+    });
+  });
+
+  // ── Confetti burst when level 100% complete (only once per page load) ──
+  const levelDone = {{ 'true' if stats.is_complete else 'false' }};
+  if (levelDone && !sessionStorage.getItem('rm-confetti-{{ level_key }}')) {
+    sessionStorage.setItem('rm-confetti-{{ level_key }}', '1');
+    fireConfetti();
+  }
+  function fireConfetti() {
+    const colors = ['#10b981', '#6366f1', '#f59e0b', '#a855f7', '#ef4444', '#06b6d4'];
+    const N = 60;
+    for (let i = 0; i < N; i++) {
+      const piece = document.createElement('div');
+      piece.className = 'confetti-piece';
+      piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+      piece.style.left = (50 + (Math.random() - 0.5) * 30) + '%';
+      piece.style.top = '20%';
+      piece.style.transform = `rotate(${Math.random() * 360}deg)`;
+      document.body.appendChild(piece);
+      const x = (Math.random() - 0.5) * 800;
+      const y = 400 + Math.random() * 300;
+      const rot = Math.random() * 720;
+      piece.animate([
+        { transform: piece.style.transform, opacity: 1 },
+        { transform: `translate(${x}px, ${y}px) rotate(${rot}deg)`, opacity: 0 }
+      ], { duration: 1800 + Math.random() * 800, easing: 'cubic-bezier(0.16, 1, 0.3, 1)' });
+      setTimeout(() => piece.remove(), 2800);
+    }
+  }
+})();
+</script>
+{% endblock %}

@@ -15,6 +15,52 @@
       <p>Vui lòng liên hệ giáo viên hoặc quản trị để được gán học sinh.</p>
     </div>
   {% else %}
+    <div class="parent-card" style="background:#f7faff;">
+      <div class="parent-datebar" style="display:flex; flex-wrap:wrap; align-items:center; gap:0.85rem;">
+        <strong style="font-size:0.95rem; color:#1958c1;">📅 Xem hoạt động ngày:</strong>
+
+        <a href="?date={{ prev_date_iso }}"
+           title="Ngày trước"
+           style="padding:0.4rem 0.7rem; background:#fff; border:1px solid #d0d8e6;
+                  border-radius:8px; text-decoration:none; color:#1958c1;
+                  font-weight:600;">←</a>
+
+        <form method="get" style="display:inline-flex; align-items:center; gap:0.4rem; margin:0;">
+          <input type="date" name="date" value="{{ selected_date_iso }}"
+                 max="{{ today_iso }}"
+                 onchange="this.form.submit()"
+                 style="padding:0.4rem 0.6rem; border:1px solid #d0d8e6;
+                        border-radius:8px; font-size:0.95rem;">
+        </form>
+
+        {% if next_date_iso %}
+          <a href="?date={{ next_date_iso }}"
+             title="Ngày sau"
+             style="padding:0.4rem 0.7rem; background:#fff; border:1px solid #d0d8e6;
+                    border-radius:8px; text-decoration:none; color:#1958c1;
+                    font-weight:600;">→</a>
+        {% else %}
+          <span style="padding:0.4rem 0.7rem; background:#eee; border:1px solid #ddd;
+                       border-radius:8px; color:#aaa; font-weight:600;"
+                title="Không thể xem ngày trong tương lai">→</span>
+        {% endif %}
+
+        {% if not is_today_selected %}
+          <a href="{{ url('parent_home') }}"
+             style="margin-left:0.5rem; font-size:0.85rem; color:#1958c1;
+                    text-decoration:none;">Quay lại hôm nay</a>
+        {% endif %}
+
+        <span style="margin-left:auto; font-size:0.9rem; color:#555;">
+          {% if is_today_selected %}
+            Đang xem: <strong>Hôm nay</strong> ({{ selected_date.strftime("%d/%m/%Y") }})
+          {% else %}
+            Đang xem: <strong>{{ selected_date.strftime("%d/%m/%Y") }}</strong>
+          {% endif %}
+        </span>
+      </div>
+    </div>
+
     <div class="parent-card">
       <h2>Học sinh của bạn</h2>
       <p class="section-hint">
@@ -48,22 +94,138 @@
 
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem;">
               <div>
+                <div class="parent-stat-num">{{ s.problem_count }}</div>
+                <div class="parent-stat-label">Tổng số bài đã giải</div>
+              </div>
+              <div>
                 <div class="parent-stat-num">{{ s.problems_solved }}</div>
-                <div class="parent-stat-label">Bài đã giải đúng</div>
+                <div class="parent-stat-label">Bài giải đúng (AC)</div>
               </div>
               <div>
                 <div class="parent-stat-num">{{ s.points|round(1) }}</div>
                 <div class="parent-stat-label">Điểm tích lũy</div>
               </div>
               <div>
-                <div class="parent-stat-num">{{ s.submission_count_30d }}</div>
-                <div class="parent-stat-label">Bài làm 30 ngày</div>
+                <div class="parent-stat-num">{{ s.performance_points|round(1) }}</div>
+                <div class="parent-stat-label">Điểm performance</div>
+              </div>
+              <div>
+                <div class="parent-stat-num">{{ s.total_submissions }}</div>
+                <div class="parent-stat-label">Tổng số lần nộp bài</div>
               </div>
               <div>
                 <div class="parent-stat-num">{{ s.correct_rate_30d }}%</div>
                 <div class="parent-stat-label">Tỉ lệ giải đúng</div>
               </div>
             </div>
+
+            {# Activity widget for the selected date (default: today) — shown FIRST #}
+            {% set day = children_day_activity.get(s.id) %}
+            {% if day %}
+              {% set n = day.solved_problems %}
+              {% set day_label_prefix = 'Hôm nay' if day.is_today else 'Ngày ' ~ day.date.strftime('%d/%m') %}
+              {% if n == 0 %}
+                {% set tier_bg = '#fdecec' %}
+                {% set tier_fg = '#c0392b' %}
+                {% set tier_icon = '⚠️' %}
+                {% set tier_label = day_label_prefix ~ ' con chưa giải bài nào' %}
+                {% set tier_sub = 'Phụ huynh nên nhắc con học bài.' if day.is_today else 'Không có hoạt động.' %}
+              {% elif n <= 2 %}
+                {% set tier_bg = '#fff4d6' %}
+                {% set tier_fg = '#8a6d00' %}
+                {% set tier_icon = '🟡' %}
+                {% set tier_label = day_label_prefix ~ ' con giải được ' ~ n ~ ' bài' %}
+                {% set tier_sub = 'Cần cố gắng thêm.' %}
+              {% elif n <= 4 %}
+                {% set tier_bg = '#fff0d6' %}
+                {% set tier_fg = '#a05a00' %}
+                {% set tier_icon = '🟠' %}
+                {% set tier_label = day_label_prefix ~ ' con giải được ' ~ n ~ ' bài' %}
+                {% set tier_sub = 'Đang tiến bộ.' %}
+              {% elif n <= 9 %}
+                {% set tier_bg = '#dcf2e1' %}
+                {% set tier_fg = '#1f7a3a' %}
+                {% set tier_icon = '✅' %}
+                {% set tier_label = day_label_prefix ~ ' con giải được ' ~ n ~ ' bài' %}
+                {% set tier_sub = 'Học rất tốt!' %}
+              {% else %}
+                {% set tier_bg = '#c8e6d0' %}
+                {% set tier_fg = '#0e5128' %}
+                {% set tier_icon = '🏆' %}
+                {% set tier_label = day_label_prefix ~ ' con giải được ' ~ n ~ ' bài' %}
+                {% set tier_sub = 'Xuất sắc!' %}
+              {% endif %}
+              <div style="margin-top:0.85rem; padding:0.65rem 0.85rem;
+                          background:{{ tier_bg }}; color:{{ tier_fg }};
+                          border-radius:8px; font-size:0.88rem;">
+                <div style="font-weight:600;">{{ tier_icon }} {{ tier_label }}</div>
+                <div style="font-size:0.78rem; opacity:0.85; margin-top:0.15rem;">
+                  {{ tier_sub }} · {{ day.submissions }} lần nộp
+                  {% if not day.is_today %} hôm đó{% else %} hôm nay{% endif %}.
+                  {% if day.points %} Điểm trong ngày: {{ day.points }}.{% endif %}
+                </div>
+              </div>
+            {% endif %}
+
+            {# Weekly progress for the SELECTED date's week (Mon→Sun) + red warning if < 10 #}
+            {% set wkact = children_week_activity.get(s.id) %}
+            {% if wkact %}
+              {% set wk = wkact.solved_problems %}
+              {% if wk < 10 %}
+                {% set wk_bg = '#fdecec' %}{% set wk_fg = '#c0392b' %}{% set wk_icon = '⚠️' %}
+                {% set wk_sub = 'Dưới 10 bài/tuần — phụ huynh nên nhắc con luyện tập thêm.' %}
+              {% else %}
+                {% set wk_bg = '#dcf2e1' %}{% set wk_fg = '#1f7a3a' %}{% set wk_icon = '✅' %}
+                {% set wk_sub = 'Đạt mục tiêu luyện tập trong tuần. Rất tốt!' %}
+              {% endif %}
+              {% set wk_when = 'Tuần này' if wkact.is_current_week else ('Tuần ' ~ wkact.week_start.strftime('%d/%m') ~ '–' ~ wkact.week_end.strftime('%d/%m')) %}
+              <div style="margin-top:0.7rem; padding:0.65rem 0.85rem;
+                          background:{{ wk_bg }}; color:{{ wk_fg }};
+                          border-radius:8px; font-size:0.88rem;">
+                <div style="font-weight:600;">{{ wk_icon }} {{ wk_when }} con giải được {{ wk }} bài</div>
+                <div style="font-size:0.78rem; opacity:0.85; margin-top:0.15rem;">
+                  {{ wk_sub }} · {{ wkact.submissions }} lần nộp
+                  ({{ wkact.week_start.strftime('%d/%m') }}–{{ wkact.week_end.strftime('%d/%m') }}).
+                </div>
+              </div>
+            {% endif %}
+
+            {# Monthly calendar heatmap — always expanded #}
+            {% set cal = children_month_calendar.get(s.id) %}
+            {% if cal %}
+              <details class="parent-cal-toggle" style="margin-top:0.7rem;" open>
+                <summary>📅 Lịch tháng {{ selected_month_label }}</summary>
+                <table class="pcal">
+                  <thead><tr><th>T2</th><th>T3</th><th>T4</th><th>T5</th><th>T6</th><th>T7</th><th>CN</th></tr></thead>
+                  <tbody>
+                  {% for week in cal.weeks %}
+                    <tr>
+                    {% for cell in week %}
+                      <td>
+                        {% if not cell.in_month %}
+                          <div class="cell t-empty"></div>
+                        {% else %}
+                          <div class="cell {% if cell.tier == -1 %}t-empty{% else %}t{{ cell.tier }}{% endif %}{% if cell.is_today %} today{% endif %}"
+                               title="{{ cell.date.strftime('%d/%m/%Y') }}: {{ cell.solved }} bài giải, {{ cell.submissions }} lần nộp">
+                            {{ cell.day }}{% if cell.tier >= 0 %}<span class="n">{{ cell.solved }}</span>{% endif %}
+                          </div>
+                        {% endif %}
+                      </td>
+                    {% endfor %}
+                    </tr>
+                  {% endfor %}
+                  </tbody>
+                </table>
+                <div class="pcal-legend">
+                  <span>Tháng {{ selected_month_label }}: <b>{{ cal.month_solved }}</b> bài · <b>{{ cal.active_days }}</b> ngày có làm bài</span>
+                  <span class="legend"><span class="dot" style="background:#fdecec;"></span>0</span>
+                  <span class="legend"><span class="dot" style="background:#fff4d6;"></span>1–2</span>
+                  <span class="legend"><span class="dot" style="background:#c8e6d0;"></span>3–5</span>
+                  <span class="legend"><span class="dot" style="background:#66bb6a;"></span>6+</span>
+                </div>
+              </details>
+            {% endif %}
+
             {% if next_lesson %}
               <div style="margin-top:1rem; padding:0.65rem 0.85rem;
                           background:#f0f7ff; border-left:3px solid #1958c1;

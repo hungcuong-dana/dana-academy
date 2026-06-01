@@ -401,6 +401,19 @@ class ProblemDetail(
         # Add comment context
         context = self.get_comment_context(context)
 
+        # Roadmap-aware navigation: if user arrived from a roadmap topic
+        # (?rm=lv0/array), show the topic's problem list as an in-flow panel
+        # so they can move to the next problem without going back through
+        # Lộ trình → Mức → Chủ đề.
+        from judge.views.roadmap import parse_rm_param, build_topic_nav
+        rm = self.request.GET.get("rm", "")
+        level_key, topic_slug = parse_rm_param(rm)
+        if level_key:
+            context["roadmap_nav"] = build_topic_nav(
+                self.request, level_key, topic_slug, current_problem_id=self.object.id,
+            )
+            context["roadmap_rm_param"] = "{}/{}".format(level_key, topic_slug)
+
         return context
 
 
@@ -1095,9 +1108,17 @@ def problem_submit(request, problem, submission=None):
             model.source = source
             model.judge(rejudge=False, judge_id=form.cleaned_data["judge"])
 
-            return HttpResponseRedirect(
-                reverse("submission_status", args=[str(model.id)])
-            )
+            rm_after = (
+                request.POST.get("rm")
+                or request.GET.get("rm")
+                or ""
+            ).strip()
+            status_url = reverse("submission_status", args=[str(model.id)])
+            from judge.views.roadmap import parse_rm_param
+            if parse_rm_param(rm_after) != (None, None):
+                from urllib.parse import urlencode
+                status_url = "{}?{}".format(status_url, urlencode({"rm": rm_after}))
+            return HttpResponseRedirect(status_url)
         else:
             form_data = form.cleaned_data
             if submission is not None:
@@ -1149,6 +1170,17 @@ def problem_submit(request, problem, submission=None):
                 next_valid_submit_time = t + timezone.timedelta(minutes=1)
                 next_valid_submit_time = next_valid_submit_time.isoformat()
 
+    from judge.views.roadmap import parse_rm_param
+    rm_param = (request.POST.get("rm") or request.GET.get("rm") or "").strip()
+    if parse_rm_param(rm_param) == (None, None):
+        rm_param = ""
+    problem_detail_url = reverse("problem_detail", args=[problem.code])
+    if rm_param:
+        from urllib.parse import urlencode
+        problem_detail_url = "{}?{}".format(
+            problem_detail_url, urlencode({"rm": rm_param})
+        )
+
     return render(
         request,
         "problem/submit.html",
@@ -1163,7 +1195,7 @@ def problem_submit(request, problem, submission=None):
                 % {
                     "problem": format_html(
                         '<a href="{0}">{1}</a>',
-                        reverse("problem_detail", args=[problem.code]),
+                        problem_detail_url,
                         problem.translated_name(request.LANGUAGE_CODE),
                     ),
                 }
@@ -1181,6 +1213,7 @@ def problem_submit(request, problem, submission=None):
                 else False
             ),
             "next_valid_submit_time": next_valid_submit_time,
+            "roadmap_rm_param": rm_param,
         },
     )
 

@@ -4,7 +4,7 @@ from django.utils.translation import gettext_lazy as _, ngettext
 
 class ClassScheduleAdmin(admin.ModelAdmin):
     list_display = (
-        "organization",
+        "teacher_class",
         "day_of_week",
         "start_time",
         "end_time",
@@ -13,10 +13,9 @@ class ClassScheduleAdmin(admin.ModelAdmin):
         "location",
         "is_active",
     )
-    list_filter = ("organization", "day_of_week", "is_active")
-    search_fields = ("organization__name", "subject", "teacher")
-    autocomplete_fields = ("organization",)
-    ordering = ("organization", "day_of_week", "start_time")
+    list_filter = ("teacher_class", "day_of_week", "is_active")
+    search_fields = ("teacher_class__name", "subject", "teacher")
+    ordering = ("teacher_class", "day_of_week", "start_time")
 
 
 class ChildAIAssessmentAdmin(admin.ModelAdmin):

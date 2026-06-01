@@ -1,0 +1,108 @@
+{% extends "teacher/base.html" %}
+
+{% block teacher_body %}
+  {% include "teacher/_class_tabs.html" %}
+
+  <div class="tc-card">
+    <h2>Thêm học sinh</h2>
+    <p class="hint">
+      <b>Họ tên</b> bắt buộc. <b>Account OJ</b> tùy chọn — nếu HS chưa có
+      tài khoản OJ thì bỏ trống. Cần tạo account OJ? Vào
+      <a href="/admin/auth/user/add/">Django admin</a> hoặc
+      <a href="{{ url('registration_register') }}">/accounts/register/</a>.
+    </p>
+
+    <form method="post" action="{{ url('teacher_add_student', cls.id) }}">
+      {% csrf_token %}
+      <div class="tc-inline-form" style="margin-top:0;">
+        <label style="grid-column: span 2;">Họ và tên *
+          <input type="text" name="name" placeholder="Nguyễn Văn A" required>
+        </label>
+        <label style="grid-column: span 2;">Account OJ (tùy chọn)
+          <input type="text" list="profileList" name="profile_picker"
+                 placeholder="Gõ username/tên để autocomplete..."
+                 onchange="document.getElementById('profile_id_field').value = (this.value.match(/#(\d+)$/)||[])[1] || '';">
+          <input type="hidden" name="profile_id" id="profile_id_field">
+          <datalist id="profileList">
+            {% for p in available_profiles %}
+              <option value="{{ p.user.first_name|default(p.user.username) }} (@{{ p.user.username }}) #{{ p.id }}"></option>
+            {% endfor %}
+          </datalist>
+        </label>
+        <label>SĐT<input type="text" name="phone"></label>
+        <label>Zalo<input type="text" name="zalo"></label>
+        <label>Facebook<input type="text" name="facebook"></label>
+        <label>Lớp ở trường<input type="text" name="grade" placeholder="VD: Lớp 9"></label>
+        <label>Trường<input type="text" name="school"></label>
+        <label style="align-self:end;"><button type="submit" class="tc-btn">+ Thêm vào lớp</button></label>
+      </div>
+    </form>
+  </div>
+
+  <div class="tc-card">
+    <h2>Danh sách học sinh ({{ roster|length }})</h2>
+    {% if roster %}
+      <div style="overflow-x:auto;">
+      <table class="tc-table">
+        <thead>
+          <tr>
+            <th style="min-width:170px;">Họ tên</th>
+            <th>Account OJ</th>
+            <th>Lớp</th>
+            <th>Trường</th>
+            <th>SĐT</th>
+            <th>Zalo</th>
+            <th>Facebook</th>
+            <th style="width:80px;">Thao tác</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for s in roster %}
+          <tr>
+            <td>{{ s.display_name }}</td>
+            <td>
+              {% if s.profile_id %}
+                <a href="{{ url('user_page', s.profile.user.username) }}" target="_blank">{{ s.profile.user.username }}</a>
+              {% else %}
+                <span class="tc-pill norec">không OJ</span>
+              {% endif %}
+            </td>
+            <td>{{ s.grade|default("—") }}</td>
+            <td>{{ s.school|default("—") }}</td>
+            <td>{{ s.phone|default("—") }}</td>
+            <td>{{ s.zalo|default("—") }}</td>
+            <td>{% if s.facebook %}<a href="{{ s.facebook }}" target="_blank">{{ s.facebook|truncatechars(28) }}</a>{% else %}—{% endif %}</td>
+            <td>
+              <details class="tc-detail" style="margin-bottom:0; padding:0.3rem 0.5rem;">
+                <summary>Sửa</summary>
+                <form method="post" action="{{ url('teacher_save_student', cls.id) }}" class="tc-inline-form">
+                  {% csrf_token %}
+                  <input type="hidden" name="student_id" value="{{ s.id }}">
+                  <label>Họ tên<input type="text" name="name" value="{{ s.name }}"></label>
+                  <label>Lớp ở trường<input type="text" name="grade" value="{{ s.grade }}"></label>
+                  <label>Trường<input type="text" name="school" value="{{ s.school }}"></label>
+                  <label>SĐT<input type="text" name="phone" value="{{ s.phone }}"></label>
+                  <label>Zalo<input type="text" name="zalo" value="{{ s.zalo }}"></label>
+                  <label>Facebook<input type="text" name="facebook" value="{{ s.facebook }}"></label>
+                  <label style="grid-column: span 2;">Ghi chú<input type="text" name="note" value="{{ s.note }}"></label>
+                  <label style="align-self:end;"><button class="tc-btn small">Lưu</button></label>
+                </form>
+                <form method="post" action="{{ url('teacher_remove_student', cls.id) }}"
+                      style="margin-top:0.5rem;"
+                      onsubmit="return confirm('Gỡ {{ s.display_name }} khỏi lớp?');">
+                  {% csrf_token %}
+                  <input type="hidden" name="student_id" value="{{ s.id }}">
+                  <button class="tc-btn danger small">Gỡ khỏi lớp</button>
+                </form>
+              </details>
+            </td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+      </div>
+    {% else %}
+      <div class="tc-empty">Chưa có học sinh nào trong lớp này.</div>
+    {% endif %}
+  </div>
+{% endblock %}

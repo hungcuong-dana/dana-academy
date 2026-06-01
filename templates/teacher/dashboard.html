@@ -1,0 +1,319 @@
+{% extends "teacher/base.html" %}
+
+{% block teacher_media %}
+  <style>
+    .tc-cal { width: 100%; border-collapse: separate; border-spacing: 4px; }
+    .tc-cal th {
+      background: #f3edf9; color: var(--tc-primary-dark);
+      padding: 0.4rem 0.3rem; text-align: center;
+      font-size: 0.82rem; border-radius: 6px; border: none;
+    }
+    .tc-cal td {
+      background: #fafafa; border: 1px solid var(--tc-border);
+      vertical-align: top; padding: 0.3rem 0.4rem;
+      height: 75px; width: 14.28%;
+      border-radius: 7px; font-size: 0.78rem;
+      position: relative;
+    }
+    .tc-cal td.outside { background: #fff; color: #bbb; opacity: 0.4; border-style: dashed; }
+    /* Ngày sắp tới có buổi học → màu xanh lá nhạt */
+    .tc-cal td.has-session.future {
+      background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+      border-color: #81c784;
+    }
+    /* Ngày đã qua có buổi học → xám rất nhạt */
+    .tc-cal td.has-session.past {
+      background: #f0f0f0; border-color: #d8d8d8;
+    }
+    /* Hôm nay luôn nổi nhất */
+    .tc-cal td.today {
+      border: 2.5px solid var(--tc-primary);
+      background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+      box-shadow: 0 0 0 3px rgba(106, 27, 154, 0.12);
+    }
+    .tc-cal td.today.has-session {
+      background: linear-gradient(135deg, #c8e6c9 0%, #e1bee7 100%);
+    }
+    .tc-cal .day-num {
+      font-weight: 700; font-size: 0.85rem;
+      color: var(--tc-primary-dark);
+    }
+    .tc-cal td.today .day-num { color: var(--tc-primary); font-size: 0.95rem; }
+    .tc-cal td.outside .day-num { color: #bbb; }
+    .tc-cal td.has-session.future .day-num { color: #1b5e20; }
+    .tc-cal td.has-session.past .day-num { color: #888; }
+    .tc-cal td.has-session.today .day-num { color: var(--tc-primary); }
+    .tc-cal .sess {
+      display: block; margin-top: 2px;
+      color: #fff;
+      border-radius: 4px; padding: 1px 5px;
+      font-size: 0.72rem; line-height: 1.3;
+      white-space: nowrap; overflow: hidden;
+      text-overflow: ellipsis;
+      font-weight: 500;
+      text-decoration: none;
+    }
+    /* Mỗi lớp một màu — assign theo cls.id mod 8 */
+    .sess-c0 { background: #6a1b9a; }   /* tím */
+    .sess-c1 { background: #1565c0; }   /* xanh dương */
+    .sess-c2 { background: #2e7d32; }   /* xanh lá đậm */
+    .sess-c3 { background: #c62828; }   /* đỏ */
+    .sess-c4 { background: #ef6c00; }   /* cam */
+    .sess-c5 { background: #00838f; }   /* teal */
+    .sess-c6 { background: #ad1457; }   /* hồng đậm */
+    .sess-c7 { background: #4527a0; }   /* indigo */
+    .tc-cal .sess:hover { filter: brightness(0.85); color: #fff; }
+    /* Buổi đã qua → mờ + chuyển xám */
+    .tc-cal td.past .sess {
+      background: #bdbdbd !important; color: #fff;
+      filter: none;
+    }
+    .tc-cal td.past .sess:hover { background: #9e9e9e !important; }
+
+    .tc-upnext {
+      border-left: 4px solid var(--tc-accent);
+      padding: 0.75rem 1rem;
+      background: #faf7fd;
+      border-radius: 0 8px 8px 0;
+      margin-bottom: 0.8rem;
+    }
+    .tc-upnext .meta {
+      color: var(--tc-muted); font-size: 0.85rem; margin: 0.2rem 0 0.4rem;
+    }
+    .tc-upnext textarea {
+      width: 100%; min-height: 50px;
+      padding: 0.45rem 0.6rem;
+      border: 1px solid var(--tc-border);
+      border-radius: 6px; font-size: 0.9rem;
+      font-family: inherit; resize: vertical;
+    }
+    .tc-upnext .save-row {
+      display: flex; justify-content: flex-end;
+      margin-top: 0.4rem; gap: 0.4rem; align-items: center;
+    }
+    .tc-upnext .updated-at {
+      color: var(--tc-muted); font-size: 0.78rem; margin-right: auto;
+    }
+    .tc-upnext .badge-today {
+      display: inline-block; background: var(--tc-primary); color: #fff;
+      padding: 0.05rem 0.5rem; border-radius: 999px;
+      font-size: 0.7rem; font-weight: 600; margin-left: 0.4rem;
+    }
+  </style>
+{% endblock %}
+
+{% block teacher_body %}
+  <div class="tc-hero">
+    <h1>👋 Xin chào, {{ request.user.first_name|default(request.user.username) }}</h1>
+    <p>Quản lý lớp học, điểm danh, học phí và đánh giá học lực — Dana Academy.</p>
+  </div>
+
+  {# ─── Danh sách lớp + nút Tạo lớp ──────────────────────── #}
+  <div class="tc-card">
+    <div style="display:flex; justify-content:space-between; align-items:center; gap:0.5rem; flex-wrap:wrap; margin-bottom:0.7rem;">
+      <h2 style="margin:0;">📚 Danh sách lớp ({{ rows|length }})</h2>
+      <button type="button" class="tc-btn" onclick="document.getElementById('createClassPanel').open = true; document.getElementById('createClassPanel').scrollIntoView({behavior:'smooth'});">
+        ➕ Tạo lớp mới
+      </button>
+    </div>
+    {% if rows %}
+      <div class="tc-grid">
+        {% for r in rows %}
+          <div class="tc-class-card" style="position:relative;">
+            <a href="{{ url('teacher_class_students', r.cls.id) }}" style="color:inherit; text-decoration:none;">
+              <div class="tc-class-name">
+                {{ r.cls.name }}
+                {% if not r.cls.is_active %}<span class="tc-pill norec" style="margin-left:0.4rem;">tạm dừng</span>{% endif %}
+              </div>
+              <div class="tc-class-stats">
+                <span>👥 <b>{{ r.student_count }}</b> HS</span>
+                {% if r.tuition_total %}
+                  <span>💰 {{ r.paid_count }}/{{ r.tuition_total }} đóng (tháng này)</span>
+                {% endif %}
+              </div>
+            </a>
+            <div style="position:absolute; top:0.6rem; right:0.6rem; display:flex; gap:0.3rem;">
+              <details class="tc-detail" style="margin:0; padding:0; border:none; background:none;">
+                <summary style="list-style:none; cursor:pointer; color:var(--tc-muted); padding:0.2rem 0.4rem;">⚙</summary>
+                <div style="position:absolute; right:0; top:1.7rem; background:#fff; border:1px solid var(--tc-border); border-radius:8px; padding:0.7rem; box-shadow:0 4px 12px rgba(0,0,0,0.1); min-width:240px; z-index:5;">
+                  <form method="post" action="{{ url('teacher_class_edit', r.cls.id) }}" style="display:flex; flex-direction:column; gap:0.4rem;">
+                    {% csrf_token %}
+                    <label style="font-size:0.78rem; color:var(--tc-muted);">Tên<input type="text" name="name" value="{{ r.cls.name }}" style="padding:0.3rem; border:1px solid var(--tc-border); border-radius:6px; width:100%;"></label>
+                    <label style="font-size:0.78rem; color:var(--tc-muted);">Tên ngắn<input type="text" name="short_name" value="{{ r.cls.short_name }}" style="padding:0.3rem; border:1px solid var(--tc-border); border-radius:6px; width:100%;"></label>
+                    <label style="font-size:0.78rem;"><input type="checkbox" name="is_active" {% if r.cls.is_active %}checked{% endif %}> Đang hoạt động</label>
+                    <button class="tc-btn small">Lưu</button>
+                  </form>
+                  <form method="post" action="{{ url('teacher_class_delete', r.cls.id) }}" style="margin-top:0.5rem;"
+                        onsubmit="return confirm('Xóa vĩnh viễn lớp {{ r.cls.name }} và toàn bộ dữ liệu điểm danh / học phí / học lực / lịch học?');">
+                    {% csrf_token %}
+                    <button class="tc-btn danger small" style="width:100%;">🗑 Xóa lớp</button>
+                  </form>
+                </div>
+              </details>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="tc-empty">Chưa có lớp nào. Click "+ Tạo lớp mới" ở trên.</div>
+    {% endif %}
+  </div>
+
+  {# ─── Form tạo lớp (collapsed, mở khi click nút trên) ─── #}
+  <details class="tc-card" id="createClassPanel" style="padding:0;">
+    <summary style="padding:1.1rem 1.4rem; cursor:pointer; font-weight:600; color:var(--tc-primary); list-style:none;">
+      ➕ Tạo lớp mới
+    </summary>
+    <div style="padding:0 1.4rem 1.25rem;">
+      <p class="hint" style="margin-top:0;">Lớp học chỉ tồn tại trong portal giáo viên — không liên quan đến group OJ.</p>
+      <form method="post" action="{{ url('teacher_class_create') }}">
+        {% csrf_token %}
+        <div class="tc-inline-form" style="margin-top:0;">
+          <label>Tên lớp *<input type="text" name="name" placeholder="VD: Lớp 10A1" required></label>
+          <label>Tên ngắn<input type="text" name="short_name" maxlength="50" placeholder="10A1"></label>
+          <label style="grid-column: span 2;">Mô tả ngắn<input type="text" name="description" placeholder="Tin học - khối 10..."></label>
+        </div>
+
+        <h3 style="margin-top:1.25rem; color:var(--tc-primary); font-size:0.95rem;">📅 Thời khóa biểu hàng tuần</h3>
+        <div style="overflow-x:auto;">
+        <table class="tc-table" id="newScheduleTable">
+          <thead>
+            <tr>
+              <th style="width:120px;">Thứ</th>
+              <th style="width:110px;">Bắt đầu</th>
+              <th style="width:110px;">Kết thúc</th>
+              <th>Môn / Buổi học</th>
+              <th>Giáo viên</th>
+              <th>Phòng</th>
+              <th style="width:50px;"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <select name="day">
+                  <option value="0">Thứ Hai</option><option value="1">Thứ Ba</option>
+                  <option value="2">Thứ Tư</option><option value="3">Thứ Năm</option>
+                  <option value="4">Thứ Sáu</option><option value="5">Thứ Bảy</option>
+                  <option value="6">Chủ Nhật</option>
+                </select>
+              </td>
+              <td><input type="time" name="start" value="19:00"></td>
+              <td><input type="time" name="end" value="21:00"></td>
+              <td><input type="text" name="subject" placeholder="Tin học - CTDL"></td>
+              <td><input type="text" name="teacher"></td>
+              <td><input type="text" name="location"></td>
+              <td><button type="button" class="tc-btn danger small" onclick="this.closest('tr').remove()">x</button></td>
+            </tr>
+          </tbody>
+        </table>
+        </div>
+        <div style="margin-top:0.7rem; display:flex; gap:0.5rem; justify-content:space-between;">
+          <button type="button" class="tc-btn outline small" onclick="addScheduleRow()">+ Thêm buổi</button>
+          <button type="submit" class="tc-btn">+ Tạo lớp</button>
+        </div>
+      </form>
+    </div>
+  </details>
+
+  {# ─── Lịch tháng tổng quát ─────────────────────────────── #}
+  <div class="tc-card">
+    <div style="display:flex; justify-content:space-between; align-items:center; gap:0.5rem; flex-wrap:wrap; margin-bottom:0.7rem;">
+      <h2 style="margin:0;">📅 Lịch dạy tháng {{ cal_label }}</h2>
+      <div style="display:flex; gap:0.4rem; align-items:center;">
+        <a href="?month={{ prev_month }}" class="tc-btn outline small">← Tháng trước</a>
+        <a href="?month={{ this_month }}" class="tc-btn outline small">Hôm nay</a>
+        <a href="?month={{ next_month }}" class="tc-btn outline small">Tháng sau →</a>
+      </div>
+    </div>
+    <table class="tc-cal">
+      <thead>
+        <tr>
+          <th>T2</th><th>T3</th><th>T4</th><th>T5</th><th>T6</th><th>T7</th><th>CN</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for week in cal_weeks %}
+        <tr>
+        {% for d in week %}
+          <td class="{% if d.is_outside %}outside{% endif %} {% if d.is_today %}today{% endif %} {% if d.is_past and not d.is_today %}past{% endif %} {% if d.is_future %}future{% endif %} {% if d.sessions and not d.is_outside %}has-session{% endif %}">
+            <span class="day-num">{{ d.day_num }}</span>
+            {% for s in d.sessions %}
+              <a href="{{ url('teacher_class_attendance', s.teacher_class.id) }}?date={{ d.date_str }}"
+                 class="sess sess-c{{ s.teacher_class.id % 8 }}" title="{{ s.teacher_class.name }} · {{ s.subject }} · {{ s.start_time.strftime('%H:%M') }}–{{ s.end_time.strftime('%H:%M') }}{% if s.location %} @ {{ s.location }}{% endif %}">
+                {{ s.start_time.strftime('%H:%M') }} {{ s.teacher_class.short_name|default(s.teacher_class.name)|truncatechars(14) }}
+              </a>
+            {% endfor %}
+          </td>
+        {% endfor %}
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {# ─── Buổi học sắp tới với ghi chú ────────────────────── #}
+  <div class="tc-card">
+    <h2>⏭ Buổi học sắp tới</h2>
+    {% if upcoming %}
+      {% for u in upcoming %}
+        {% set s = u.schedule %}
+        {% set cls = s.teacher_class %}
+        <div class="tc-upnext">
+          <div>
+            <b style="color:var(--tc-primary-dark);">{{ cls.name }}</b>
+            <span style="color:var(--tc-muted); font-size:0.85rem; margin-left:0.4rem;">
+              ({{ s.subject }})
+            </span>
+            {% if u.date.strftime('%Y-%m-%d') == this_month + '-' + ('%02d' % u.date.day) %}{% endif %}
+          </div>
+          <div class="meta">
+            🗓 {{ ['Thứ Hai','Thứ Ba','Thứ Tư','Thứ Năm','Thứ Sáu','Thứ Bảy','Chủ Nhật'][u.date.weekday()] }},
+            {{ u.date.strftime('%d/%m/%Y') }} ·
+            ⏰ {{ s.start_time.strftime('%H:%M') }}–{{ s.end_time.strftime('%H:%M') }}
+            {% if s.teacher %} · 👨‍🏫 {{ s.teacher }}{% endif %}
+            {% if s.location %} · 📍 {{ s.location }}{% endif %}
+          </div>
+          <form method="post" action="{{ url('teacher_save_session_note') }}">
+            {% csrf_token %}
+            <input type="hidden" name="cls_id" value="{{ cls.id }}">
+            <input type="hidden" name="date" value="{{ u.date.strftime('%Y-%m-%d') }}">
+            <input type="hidden" name="next" value="{{ request.path }}{% if request.GET.month %}?month={{ request.GET.month }}{% endif %}">
+            <textarea name="content" placeholder="Ghi chú nội dung buổi học, bài kiểm tra...">{% if u.note %}{{ u.note.content }}{% endif %}</textarea>
+            <div class="save-row">
+              {% if u.note %}
+                <span class="updated-at">Sửa lần cuối: {{ u.note.updated_at.strftime('%d/%m/%Y %H:%M') }}</span>
+              {% endif %}
+              <button class="tc-btn small">💾 Lưu ghi chú</button>
+            </div>
+          </form>
+        </div>
+      {% endfor %}
+    {% else %}
+      <div class="tc-empty">
+        Chưa có buổi học nào trong 60 ngày tới. Hãy <a href="#">cài lịch học</a> cho lớp.
+      </div>
+    {% endif %}
+  </div>
+
+<script>
+function addScheduleRow() {
+  const tbody = document.querySelector("#newScheduleTable tbody");
+  const tr = document.createElement("tr");
+  tr.innerHTML = `
+    <td><select name="day">
+      <option value="0">Thứ Hai</option><option value="1">Thứ Ba</option>
+      <option value="2">Thứ Tư</option><option value="3">Thứ Năm</option>
+      <option value="4">Thứ Sáu</option><option value="5">Thứ Bảy</option>
+      <option value="6">Chủ Nhật</option>
+    </select></td>
+    <td><input type="time" name="start" value="19:00"></td>
+    <td><input type="time" name="end" value="21:00"></td>
+    <td><input type="text" name="subject" placeholder="Tin học - CTDL"></td>
+    <td><input type="text" name="teacher"></td>
+    <td><input type="text" name="location"></td>
+    <td><button type="button" class="tc-btn danger small" onclick="this.closest('tr').remove()">x</button></td>`;
+  tbody.appendChild(tr);
+}
+</script>
+{% endblock %}

@@ -178,9 +178,71 @@
       color: #777;
     }
 
-    @media (max-width: 600px) {
-      .parent-hero { padding: 1.1rem 1.2rem; }
+    /* Reusable horizontal-scroll wrapper for wide tables on small screens */
+    .parent-tablewrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+    /* Monthly calendar heatmap */
+    .parent-cal-toggle > summary {
+      cursor: pointer; color: #1958c1; font-weight: 600; font-size: 0.9rem;
+      list-style: none; padding: 0.25rem 0;
+    }
+    .parent-cal-toggle > summary::-webkit-details-marker { display: none; }
+    .parent-cal-toggle > summary::before { content: "▸ "; }
+    .parent-cal-toggle[open] > summary::before { content: "▾ "; }
+    table.pcal { width: 100%; border-collapse: separate; border-spacing: 3px; margin-top: 0.5rem; table-layout: fixed; }
+    table.pcal th { font-size: 0.7rem; color: #999; font-weight: 600; padding: 2px 0; text-align: center; }
+    table.pcal td { padding: 0; }
+    table.pcal .cell {
+      border-radius: 7px; min-height: 36px; padding: 3px 5px;
+      font-size: 0.68rem; color: #777; text-align: right; line-height: 1.1;
+    }
+    table.pcal .cell .n { display: block; text-align: center; font-weight: 700; font-size: 0.82rem; margin-top: 1px; }
+    table.pcal .t-empty { background: #f6f7f9; color: #c4c4c4; }
+    table.pcal .t0 { background: #fdecec; color: #c0392b; }
+    table.pcal .t1 { background: #fff4d6; color: #8a6d00; }
+    table.pcal .t2 { background: #c8e6d0; color: #1f7a3a; }
+    table.pcal .t3 { background: #66bb6a; color: #fff; }
+    table.pcal .cell.today { outline: 2px solid #1958c1; outline-offset: -2px; }
+    .pcal-legend {
+      display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center;
+      font-size: 0.72rem; color: #777; margin-top: 0.5rem;
+    }
+
+    @media (max-width: 768px) {
+      .parent-shell { margin: 0.6rem auto 3rem; padding: 0 0.6rem; overflow-x: hidden; }
+      .parent-hero { padding: 1.1rem 1.2rem; border-radius: 12px; margin-bottom: 1rem; }
       .parent-hero h1 { font-size: 1.2rem; }
+      .parent-hero p { font-size: 0.85rem; }
+      .parent-card { padding: 1rem 0.95rem; border-radius: 10px; }
+      .parent-card h2 { font-size: 0.98rem; }
+
+      /* Tabs scroll sideways instead of stacking */
+      .parent-tabs {
+        flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch;
+        gap: 0.3rem; scrollbar-width: none; -ms-overflow-style: none;
+      }
+      .parent-tabs::-webkit-scrollbar { display: none; }
+      .parent-tabs a { flex: 0 0 auto; white-space: nowrap; padding: 0.5rem 0.8rem; font-size: 0.9rem; }
+
+      /* Single-column stats/children grids */
+      .parent-grid { grid-template-columns: 1fr 1fr; }
+      .parent-stat-num { font-size: 1.5rem; }
+
+      /* Tables scroll horizontally, nothing hidden */
+      .parent-tablewrap table { font-size: 0.85rem; min-width: 480px; }
+      .parent-tablewrap th, .parent-tablewrap td { padding: 0.45rem 0.5rem !important; }
+
+      /* Date-navigation bar: stop horizontal overflow, status drops to own line */
+      .parent-datebar { gap: 0.5rem !important; }
+      .parent-datebar form { flex: 1 1 auto; min-width: 0; margin: 0; }
+      .parent-datebar input[type="date"] { width: 100%; box-sizing: border-box; }
+      .parent-datebar > span[style*="margin-left"] { margin-left: 0 !important; flex-basis: 100%; }
+    }
+
+    @media (max-width: 480px) {
+      .parent-hero h1 { font-size: 1.1rem; }
+      .parent-grid { grid-template-columns: 1fr; }
+      .upcoming-contest { flex-direction: column; align-items: flex-start; gap: 0.3rem; }
     }
   </style>
   {% block parent_media %}{% endblock %}

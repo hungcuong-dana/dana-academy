@@ -252,15 +252,17 @@ def post_comment(request):
     if is_comment_locked(request):
         return HttpResponseForbidden(_("Comments are not allowed during this contest"))
 
-    if (
-        not request.user.is_staff
-        and not request.profile.submission_set.filter(
+    if not request.user.is_staff:
+        # Allow commenting once the user has either AC'd a problem OR
+        # interacted via vote/like on at least one page.
+        has_ac = request.profile.submission_set.filter(
             points=F("problem__points")
         ).exists()
-    ):
-        return HttpResponseBadRequest(
-            _("You need to solve at least one problem before commenting")
-        )
+        has_voted = request.profile.voted_page.exists()
+        if not has_ac and not has_voted:
+            return HttpResponseBadRequest(
+                _("You need to solve a problem or vote/like a post before commenting")
+            )
 
     parent = request.POST.get("parent")
     content_type_id = request.POST.get("content_type_id")
