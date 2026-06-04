@@ -1,10 +1,10 @@
 .contest-problemset {
     html {
-        background: white;
+        background: var(--panel);
     }
 
     body {
-        background: white;
+        background: var(--panel);
         margin: 0;
         padding: 20px;
     }
@@ -14,13 +14,13 @@
         margin-bottom: 2em;
 
         h1 {
-            color: #393630;
+            color: var(--text);
             font-size: 2.5em;
             margin-bottom: 0.2em;
         }
 
         h2 {
-            color: #666;
+            color: var(--text-2);
             font-size: 1.5em;
             margin-top: 0;
         }
@@ -29,7 +29,7 @@
             margin-top: 1em;
 
             a {
-                color: #007bff;
+                color: var(--blue);
                 text-decoration: none;
                 font-size: 1.1em;
 
@@ -42,7 +42,7 @@
 
     .problem-section {
         margin-bottom: 4em;
-        border-bottom: 1px solid #eee;
+        border-bottom: 1px solid var(--border-soft);
         padding-bottom: 2em;
 
         &:last-child {
@@ -51,9 +51,9 @@
     }
 
     .problem-title {
-        color: #393630;
+        color: var(--text);
         font-size: 2em;
-        border-bottom: 2px solid #007bff;
+        border-bottom: 2px solid var(--blue);
         padding-bottom: 0.5em;
         margin-bottom: 1em;
     }
@@ -68,7 +68,7 @@
             font-size: 0.95em;
 
             .fa {
-                color: #007bff;
+                color: var(--blue);
                 margin-right: 0.5em;
                 width: 16px;
             }
@@ -76,22 +76,22 @@
 
         .info-block .fa-check {
             background: rgba(40, 167, 69, 0.15);
-            color: #155724;
+            color: var(--green);
         }
 
         .info-block .fa-clock {
             background: rgba(255, 193, 7, 0.15);
-            color: #856404;
+            color: var(--yellow);
         }
 
         .info-block .fa-server {
             background: rgba(40, 167, 69, 0.15);
-            color: #155724;
+            color: var(--green);
         }
 
         .info-block .fa-file {
             background: rgba(0, 123, 255, 0.15);
-            color: #004085;
+            color: var(--blue);
         }
     }
 
@@ -99,7 +99,7 @@
     .contest-problems,
     .problems {
         a {
-            color: #007bff;
+            color: var(--blue);
             text-decoration: none;
 
             &:hover {
@@ -122,7 +122,7 @@
         }
 
         pre, .codehilite {
-            border: 1px solid #e9ecef;
+            border: 1px solid var(--border);
             border-radius: 5px;
             padding: 1.2em;
             margin: 1.5em 0;
@@ -130,7 +130,7 @@
         }
 
         table {
-            background: white;
+            background: var(--panel);
 
             th, td {
                 padding: 12px;
@@ -142,10 +142,10 @@
         }
 
         blockquote {
-            border-left: 4px solid #007bff;
+            border-left: 4px solid var(--blue);
             margin: 1.5em 0;
-            color: #666;
-            background: #f9f9f9;
+            color: var(--text-2);
+            background: var(--panel-2);
             padding: 1em 1em 1em 2em;
             border-radius: 0 5px 5px 0;
         }

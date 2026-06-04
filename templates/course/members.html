@@ -51,6 +51,37 @@
 {% block middle_content %}
   <center><h2>{{content_title}}</h2></center>
   <div class="container">
+    {% if pending_requests %}
+      <div class="c-panel c-join-reqs">
+        <div class="ph">
+          <i class="fa fa-user-clock"></i> {{ _('Yêu cầu chờ duyệt') }}
+          <span class="c-req-count">{{ pending_requests|length }}</span>
+        </div>
+        <div class="pc">
+          {% for req in pending_requests %}
+            <div class="c-req-row">
+              <span class="c-req-user">
+                <i class="fa fa-user"></i> {{ req.user.user.username }}
+                <small>{{ req.created|date(_("H:i d/m/Y")) }}</small>
+              </span>
+              <span class="c-req-actions">
+                <form method="post" action="{{ url('course_manage_join_request', course.slug) }}">
+                  {% csrf_token %}
+                  <input type="hidden" name="request_id" value="{{ req.id }}">
+                  <button type="submit" name="action" value="approve" class="c-btn green">
+                    <i class="fa fa-check"></i> {{ _('Duyệt') }}
+                  </button>
+                  <button type="submit" name="action" value="reject" class="c-btn ghost">
+                    <i class="fa fa-xmark"></i> {{ _('Từ chối') }}
+                  </button>
+                </form>
+              </span>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+
     {% if members %}
       <table class="members-table">
         <thead>

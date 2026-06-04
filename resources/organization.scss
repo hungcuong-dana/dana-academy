@@ -2,15 +2,15 @@
 @use "sass:color";
 
 .leave-organization, .leave-organization:hover {
-    color: red;
+    color: var(--red);
 }
 #control-list li {
-    border-bottom: 1px solid black;
+    border-bottom: 1px solid var(--text);
 }
 #pending-count-box {
     float: right;
     text-align: center;
-    background: red;
+    background: var(--red);
     color: white;
     border-radius: 3px;
     padding-left: 0.3em;
@@ -42,8 +42,8 @@
 }
 
 .organization-card {
-    background-color: #fff;
-    border: 1px solid #ddd;
+    background-color: var(--panel);
+    border: 1px solid var(--border);
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     text-align: center;
@@ -59,7 +59,7 @@
 
     &:hover {
         transform: translateY(-5px);
-        color: $theme_color;
+        color: var(--amber);
     }
 
     img.org-logo {
@@ -68,7 +68,7 @@
         object-fit: contain;
         object-position: center;
         flex-shrink: 0;
-        background-color: #f0f0f0;
+        background-color: var(--panel-2);
     }
 
     .org-details {
@@ -106,21 +106,21 @@
 .organization-row {
     display: block;
     padding: 0.5em;
-    border-bottom: 1px #ccc solid;
+    border-bottom: 1px var(--border) solid;
     border-top: none;
-    color: black;
+    color: var(--text);
     font-weight: 500;
     display: flex;
     align-items: center;
 
     &:hover {
-        background-color: #f3f3f3;
+        background-color: var(--row-hover);
     }
 }
 
 .org-help-text {
     display: block;
-    color: gray;
+    color: var(--muted);
 }
 
 #search-organization {
@@ -131,7 +131,7 @@
 .org-about {
     font-size: 0.85rem;
     line-height: 1.5;
-    color: #4b5563;
+    color: var(--text-2);
 
     .content-description {
         font-size: inherit;
@@ -151,7 +151,7 @@
         font-size: 1em;
         margin: 0.5em 0 0.3em 0;
         font-weight: 600;
-        color: #374151;
+        color: var(--text);
 
         &:first-child {
             margin-top: 0;
@@ -174,7 +174,7 @@
     }
 
     a {
-        color: $theme_color;
+        color: var(--amber);
     }
 
     code {
@@ -207,19 +207,19 @@
     width: 3rem;
     border-radius: 50%;
     object-fit: cover;
-    border: 2px solid #ddd;
+    border: 2px solid var(--border);
 }
 
 .organization-title {
     font-size: 1.5rem;
     font-weight: bold;
-    color: #333;
+    color: var(--text);
     margin: 0;
 }
 
 .organization-tag-edit {
     margin-left: 0.3em;
-    color: $theme_color;
+    color: var(--amber);
     &:hover {
         color: color.adjust($theme_color, $lightness: -15%);
     }
@@ -400,13 +400,13 @@
 
 .org-badge-public {
     background: rgba(255, 255, 255, 0.9);
-    color: #16a34a;
+    color: var(--green);
     border: 1px solid rgba(34, 197, 94, 0.3);
 }
 
 .org-badge-private {
     background: rgba(255, 255, 255, 0.9);
-    color: #b45309;
+    color: var(--yellow);
     border: 1px solid rgba(234, 179, 8, 0.3);
 }
 
@@ -419,11 +419,11 @@
     border-radius: 4px;
     font-size: 0.8rem;
     font-weight: 500;
-    color: #374151;
+    color: var(--text);
 
     i {
         font-size: 0.75rem;
-        color: #6b7280;
+        color: var(--muted);
     }
 }
 
@@ -555,7 +555,7 @@
     gap: 0.4rem;
     padding: 0.5rem 1rem;
     background: rgba(255, 255, 255, 0.9);
-    color: #16a34a;
+    color: var(--green);
     border: 1px solid rgba(34, 197, 94, 0.3);
     border-radius: 8px;
     font-size: 0.85rem;
@@ -630,7 +630,7 @@
 
 // Post Composer - Facebook-style post creation box
 .post-composer {
-    background: white;
+    background: var(--panel);
     border: 1px solid $border_gray;
     border-radius: 8px;
     padding: 0.75em;
@@ -660,7 +660,7 @@
     }
 
     .composer-placeholder {
-        color: #6b7280;
+        color: var(--muted);
         flex: 1;
     }
 
@@ -736,7 +736,7 @@
 // used on 2-column pages so themed backgrounds don't bleed through and
 // hurt text contrast.
 .org-form-card {
-    background: white;
+    background: var(--panel);
     padding: 1.5em 2em;
     border-radius: 1em;
 }

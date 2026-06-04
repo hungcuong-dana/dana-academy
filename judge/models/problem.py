@@ -135,7 +135,7 @@ class Problem(CacheableModel, PageVotable, Bookmarkable):
         verbose_name=_("problem code"),
         unique=True,
         validators=[
-            RegexValidator("^[a-z0-9]+$", _("Problem code must be ^[a-z0-9]+$"))
+            RegexValidator("^[a-z0-9_]+$", _("Problem code must be ^[a-z0-9_]+$"))
         ],
         help_text=_(
             "A short, unique code for the problem, " "used in the url after /problem/"
@@ -354,6 +354,17 @@ class Problem(CacheableModel, PageVotable, Bookmarkable):
         if self.testers.filter(id=user.profile.id).exists():
             return True
 
+        # If the problem belongs to a course section and the user is enrolled
+        # in that course (course-private exercises stay hidden from the public
+        # problem list but remain accessible to course members).
+        from judge.models.course import CourseLessonProblem
+
+        if CourseLessonProblem.objects.filter(
+            problem_id=self.id,
+            lesson__course__courserole__user=user.profile,
+        ).exists():
+            return True
+
         # If user is currently in a contest containing that problem.
         current = user.profile.current_contest_id
         if not in_contest or current is None:
@@ -562,6 +573,11 @@ class Problem(CacheableModel, PageVotable, Bookmarkable):
 
     def has_public_editorial(self):
         return _get_problem_has_public_editorial(self.id)
+
+    def has_editorial(self):
+        # Any editorial exists (may be unpublished/private) — for the editor-only
+        # "🔒" preview link, so it isn't shown (and 404s) when there's no Solution.
+        return Solution.objects.filter(problem=self).exists()
 
     def get_allowed_languages(self):
         return [item["id"] for item in _get_allowed_languages(self.id)]

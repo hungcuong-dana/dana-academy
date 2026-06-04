@@ -16,7 +16,7 @@ from registration.backends.default.views import (
 from registration.models import RegistrationProfile
 from registration.forms import RegistrationForm
 
-from judge.models import Language, Profile, TIMEZONE
+from judge.models import Language, Organization, Profile, TIMEZONE
 from judge.utils.recaptcha import ReCaptchaField, ReCaptchaWidget
 from judge.utils.turnstile import TurnstileField, is_turnstile_configured
 from judge.widgets import Select2Widget
@@ -43,6 +43,13 @@ class CustomRegistrationForm(RegistrationForm):
         queryset=Language.objects.all(),
         label=_("Preferred language"),
         empty_label=None,
+        widget=Select2Widget(attrs={"style": "width:100%"}),
+    )
+    organization = ModelChoiceField(
+        queryset=Organization.objects.filter(is_open=True).order_by("name"),
+        label=_("Group"),
+        required=False,
+        empty_label="— Không tham gia nhóm nào —",
         widget=Select2Widget(attrs={"style": "width:100%"}),
     )
 
@@ -108,6 +115,11 @@ class RegistrationView(OldRegistrationView):
         profile.timezone = cleaned_data["timezone"]
         profile.language = cleaned_data["language"]
         profile.save()
+
+        # Optional: join the chosen open group/class at registration
+        org = cleaned_data.get("organization")
+        if org is not None:
+            profile.organizations.add(org)
 
         # Auto-activate the account — email verification is currently disabled
         # because SMTP quota is exhausted. The user's email is still stored

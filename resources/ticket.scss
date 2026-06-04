@@ -1,7 +1,7 @@
 .ticket-container {
     display: flex;
     #content > h2:first-child small {
-        color: #999;
+        color: var(--muted);
         font-size: 0.9em;
         margin-left: 0.3em;
     }
@@ -11,11 +11,11 @@
     }
 
     #content > h2:first-child .fa-check-circle {
-        color: #00a900;
+        color: var(--green);
     }
 
     #content > h2:first-child .fa-exclamation-circle {
-        color: darkred;
+        color: var(--red);
     }
 
     .ticket-container {
@@ -45,15 +45,15 @@
 
     .info-box {
         margin: 5px 0 10px;
-        border: 1px #999 solid;
+        border: 1px var(--border) solid;
         border-radius: 5px;
     }
 
     .info-title {
         padding: 2px 5px;
         font-weight: 600;
-        border-bottom: 1px #999 solid;
-        background: #eee;
+        border-bottom: 1px var(--border) solid;
+        background: var(--panel-2);
         border-radius: 5px 5px 0 0;
     }
 
@@ -62,7 +62,7 @@
     }
 
     .info-empty {
-        color: #999;
+        color: var(--muted);
         font-style: italic;
     }
 
@@ -126,16 +126,16 @@
     }
 
     .message .detail {
-        border: 1px #999 solid;
+        border: 1px var(--border) solid;
         border-radius: 5px;
         flex: 1;
         min-width: 200px;
     }
 
     .message .header {
-        background: #eee;
-        color: #777;
-        border-bottom: 1px solid #999;
+        background: var(--panel-2);
+        color: var(--muted);
+        border-bottom: 1px solid var(--border);
         border-radius: 5px 5px 0 0;
         padding: 2px 7px;
         display: inline-flex;
@@ -177,7 +177,7 @@
 // Ticket feed styles
 .ticket-item {
     padding: 16px 20px;
-    border-bottom: 1px solid #e8e8e8;
+    border-bottom: 1px solid var(--border);
     display: flex;
     align-items: center;
     transition: background-color 0.2s ease;
@@ -193,11 +193,11 @@
         border-radius: 6px;
 
         &.open {
-            background-color: #f39c12;
+            background-color: var(--yellow);
         }
 
         &.closed {
-            background-color: #27ae60;
+            background-color: var(--green);
         }
 
         span {
@@ -219,7 +219,7 @@
             a {
                 font-size: 16px;
                 font-weight: 700;
-                color: #2c3e50;
+                color: var(--text);
                 text-decoration: none;
                 line-height: 1.4;
             }
@@ -227,7 +227,7 @@
 
         .ticket-link {
             font-size: 13px;
-            color: #7f8c8d;
+            color: var(--muted);
             font-weight: 500;
 
             .fa {
@@ -236,7 +236,7 @@
             }
 
             a {
-                color: #7f8c8d;
+                color: var(--muted);
                 text-decoration: none;
             }
         }
@@ -255,7 +255,7 @@
             align-items: flex-end;
 
             span {
-                color: #34495e;
+                color: var(--text-2);
                 font-size: 14px;
                 font-weight: 500;
                 margin-bottom: 2px;
@@ -264,7 +264,7 @@
 
         .ticket-time {
             font-size: 13px;
-            color: #7f8c8d;
+            color: var(--muted);
             font-weight: 500;
             min-width: 80px;
         }

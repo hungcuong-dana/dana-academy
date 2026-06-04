@@ -1,0 +1,113 @@
+{% extends "course/base.html" %}
+
+{% block left_sidebar %}
+  <div class="left-sidebar">
+    {{ make_tab_item('home', 'fa fa-home', course.get_absolute_url(), _('Home')) }}
+    {{ make_tab_item('lesson', 'fa fa-book', url('course_lesson_detail', course.slug, lesson.id), lesson.title) }}
+    {% for s in sections %}
+      <a class="left-sidebar-item {% if s.id == section.id %}active{% endif %}"
+         href="{{ url('course_section_detail', course.slug, lesson.id, s.id) }}">
+        <span class="sidebar-icon"><i class="fa fa-circle-dot"></i></span>
+        <span class="sidebar-text">{{ s.title }}</span>
+      </a>
+    {% endfor %}
+  </div>
+{% endblock %}
+
+{% block middle_content %}
+  <div class="course-detail-page">
+    <div class="c-page-head">
+      <span class="c-eyebrow">
+        <a href="{{ url('course_lesson_detail', course.slug, lesson.id) }}" class="c-back-link">{{ lesson.title }}</a>
+        · {{ _('Phần') }} {{ section_index }}
+      </span>
+      <h1>{{ section.title }}</h1>
+    </div>
+
+    <div class="c-secbar {{ 'is-done' if section_done }}">
+      <div class="c-secbar-state">
+        {% if section_done %}
+          <i class="fa fa-circle-check"></i> {{ _('Đã học') }}
+        {% elif section_solved > 0 %}
+          <i class="fa fa-circle-half-stroke"></i> {{ _('Đang học') }}
+        {% else %}
+          <i class="fa fa-circle"></i> {{ _('Chưa học') }}
+        {% endif %}
+        {% if section_total %}<span class="c-secbar-ex">· {{ section_solved }}/{{ section_total }} {{ _('bài tập') }}</span>{% endif %}
+      </div>
+      <form method="post" action="{{ url('course_section_toggle_done', course.slug, lesson.id, section.id) }}">
+        {% csrf_token %}
+        {% if section_marked %}
+          <button type="submit" class="c-btn ghost"><i class="fa fa-rotate-left"></i> {{ _('Bỏ đánh dấu') }}</button>
+        {% else %}
+          <button type="submit" class="c-btn green"><i class="fa fa-check"></i> {{ _('Đánh dấu đã học') }}</button>
+        {% endif %}
+      </form>
+    </div>
+
+    <div class="c-sec-block">
+      <div class="c-sec-head"><span class="c-sec-name"><i class="fa fa-book-open"></i> {{ _('Lý thuyết') }}</span></div>
+      <div class="c-sec-body">
+        {% if section.theory %}
+          <div class="content-description">{{ section.theory|markdown(breaks=False)|reference|str|safe }}</div>
+        {% else %}
+          <p class="c-sec-empty">{{ _('Lý thuyết đang được biên soạn…') }}</p>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="c-sec-block">
+      <div class="c-sec-head"><span class="c-sec-name"><i class="fa fa-dumbbell"></i> {{ _('Bài tập') }}</span></div>
+      <div class="c-sec-body">
+        {% if problems %}
+          <ul class="course-problem-list">
+            {% for item in problems %}
+              {% set problem = item.problem %}
+              <a href="{{ url('problem_detail', problem.code) }}?c={{ course.slug }}&s={{ section.id }}">
+                <li>
+                  {% if problem.id in completed_problem_ids %}
+                    <i class="solved-problem-color fa fa-check-circle"></i>
+                  {% elif problem.id in attempted_problems %}
+                    <i class="attempted-problem-color fa fa-minus-circle"></i>
+                  {% else %}
+                    <i class="unsolved-problem-color fa fa-minus-circle"></i>
+                  {% endif %}
+                  <span class="problem-name">{{ problem.name }}</span>
+                  {% set pp = problem_points[problem.id] %}
+                  <span class="score">
+                    {% if pp and pp.case_total %}
+                      {{ (pp.case_points / pp.case_total * item.score)|floatformat(1) }} / {{ item.score|floatformat(0) }}
+                    {% else %}0 / {{ item.score|floatformat(0) }}{% endif %}
+                  </span>
+                </li>
+              </a>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p class="c-sec-empty">{{ _('Chưa có bài tập cho phần này.') }}</p>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="c-sec-nav">
+      {% if prev_section %}
+        <a class="c-btn ghost" href="{{ url('course_section_detail', course.slug, lesson.id, prev_section.id) }}">
+          <i class="fa fa-arrow-left"></i> {{ prev_section.title|truncate(28) }}
+        </a>
+      {% else %}<span></span>{% endif %}
+      {% if next_section %}
+        <a class="c-btn primary" href="{{ url('course_section_detail', course.slug, lesson.id, next_section.id) }}">
+          {{ next_section.title|truncate(28) }} <i class="fa fa-arrow-right"></i>
+        </a>
+      {% endif %}
+    </div>
+
+    {% if is_editable %}
+      <div class="c-lesson-actions">
+        <a href="{{ url('course_section_edit', course.slug, lesson.id, section.id) }}" class="c-btn primary">
+          <i class="fa fa-edit"></i> {{ _('Chỉnh sửa phần này') }}
+        </a>
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}

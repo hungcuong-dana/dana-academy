@@ -12,8 +12,10 @@ from django.views.generic.detail import SingleObjectMixin
 
 from reversion import revisions
 
+from django.core.cache import cache
+
 from judge.forms import BlogPostEditForm
-from judge.models import BlogPost
+from judge.models import BlogPost, Language, Problem, Profile, Submission
 from judge.utils.feed import build_home_feed
 from judge.utils.views import TitleMixin, generic_message
 from judge.views.bookmark import BookMarkDetailView
@@ -69,6 +71,20 @@ class PostList(HomeFeedView):
         context["title"] = self.title or _("Home")
         context["page_type"] = "blog"
         context["show_organization_private_icon"] = True
+
+        # Homepage hero stats (cached — avoids 4 counts on every load).
+        stats = cache.get("home_hero_stats")
+        if stats is None:
+            stats = {
+                "problem_count": Problem.objects.filter(
+                    is_public=True, is_organization_private=False
+                ).count(),
+                "user_count": Profile.objects.count(),
+                "submission_count": Submission.objects.count(),
+                "language_count": Language.objects.count(),
+            }
+            cache.set("home_hero_stats", stats, 3600)
+        context.update(stats)
 
         # For logged-in users: use pre-built feed result
         if hasattr(self, "feed_result") and self.feed_result:

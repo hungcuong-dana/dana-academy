@@ -226,7 +226,7 @@
         <i class="fa fa-newspaper"></i><span> {{ _('Read editorial') }}</span>
       </a>
     </div>
-  {% elif can_edit_problem and not request.in_contest %}
+  {% elif can_edit_problem and problem.has_editorial() and not request.in_contest %}
     <hr>
     <div class="link-row">
       <a href="{{ url('problem_editorial', problem.code) }}" style="color:#c62828;" title="Editorial chưa public — chỉ admin thấy">
@@ -393,6 +393,8 @@
 {% block body %}
   {% if roadmap_nav %}
     {% include "problem/roadmap_topic_panel.html" %}
+  {% elif course_nav %}
+    {% include "problem/course_section_panel.html" %}
   {% endif %}
   {{ super() }}
 {% endblock %}

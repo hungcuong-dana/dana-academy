@@ -1,0 +1,3580 @@
+@charset "UTF-8";
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.course-content-title {
+  font-weight: bold;
+}
+
+.course-list {
+  width: 100%;
+  margin: 0 auto;
+  list-style: none;
+  padding: 0;
+}
+.course-list .course-item {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+     -moz-box-align: center;
+          align-items: center;
+  border: 1px solid var(--border);
+  padding: 20px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  background-color: var(--panel);
+  -webkit-box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  -webkit-transition: -webkit-transform 0.2s ease-in-out;
+  transition: -webkit-transform 0.2s ease-in-out;
+  -moz-transition: transform 0.2s ease-in-out, -moz-transform 0.2s ease-in-out;
+  transition: transform 0.2s ease-in-out;
+  transition: transform 0.2s ease-in-out, -webkit-transform 0.2s ease-in-out, -moz-transform 0.2s ease-in-out;
+}
+.course-list .course-item:hover {
+  -webkit-transform: translateY(-2px);
+     -moz-transform: translateY(-2px);
+      -ms-transform: translateY(-2px);
+          transform: translateY(-2px);
+  -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+          box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+.course-list .course-image {
+  -webkit-box-flex: 0;
+  -webkit-flex: 0 0 auto;
+     -moz-box-flex: 0;
+          flex: 0 0 auto;
+  width: 50px;
+  height: 50px;
+  margin-right: 20px;
+  border-radius: 5px;
+  overflow: hidden;
+}
+.course-list .course-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 5px;
+}
+.course-list .course-content {
+  -webkit-box-flex: 1;
+  -webkit-flex: 1;
+     -moz-box-flex: 1;
+          flex: 1;
+}
+.course-list .course-name {
+  font-size: 1.5em;
+  margin-bottom: 5px;
+}
+
+.lesson-list {
+  list-style: none;
+  padding: 0;
+}
+.lesson-list li:hover {
+  -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+          box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  background: #ffffe0;
+}
+.lesson-list li {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  margin-bottom: 20px;
+  padding-top: 10px;
+  border-radius: 5px;
+  -webkit-box-shadow: 0 2px 4px #ccc;
+          box-shadow: 0 2px 4px #ccc;
+}
+.lesson-list li.lesson-locked {
+  opacity: 0.7;
+  background: #f1f2f2;
+  cursor: not-allowed;
+  padding-bottom: 10px;
+}
+.lesson-list li.lesson-locked:hover {
+  -webkit-box-shadow: 0 2px 4px #ccc;
+          box-shadow: 0 2px 4px #ccc;
+  background: #f1f2f2;
+}
+.lesson-list li.lesson-locked .lesson-lock-icon {
+  color: #ae0000;
+  margin-right: 0.3em;
+}
+.lesson-list li.lesson-locked .locked-text {
+  color: #ae0000;
+  font-weight: bold;
+}
+.lesson-list li.lesson-locked .prerequisite-info {
+  font-size: 0.85em;
+  color: #00007d;
+  margin-left: 1em;
+  margin-right: 1em;
+  margin-top: 0.5em;
+  padding-top: 0.5em;
+  border-top: 1px dashed #ccc;
+}
+.lesson-list li.lesson-locked .prerequisite-info i {
+  margin-right: 0.3em;
+  color: #ccc;
+}
+.lesson-list li.lesson-locked .prerequisite-info .prereq-item {
+  font-style: italic;
+}
+.lesson-list .lesson-title {
+  font-size: 1.25em;
+  margin-left: 1em;
+  margin-right: 1em;
+  color: initial;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: flex;
+  gap: 1em;
+}
+.lesson-list .lesson-title .lesson-points {
+  margin-left: auto;
+  font-size: 0.9em;
+  -webkit-align-self: flex-end;
+          align-self: flex-end;
+  color: var(--text-2);
+}
+.lesson-list .progress-container {
+  background: var(--panel-2);
+  border-radius: 3px;
+  height: 10px;
+  width: 100%;
+  margin-top: 10px;
+}
+.lesson-list .progress-bar {
+  background: var(--green);
+  height: 10px;
+  border-radius: 3px;
+  line-height: 10px;
+  color: white;
+  text-align: right;
+  font-size: smaller;
+}
+
+.course-problem-list {
+  list-style-type: none;
+  padding: 0;
+  font-size: 15px;
+}
+.course-problem-list i {
+  font-size: large;
+}
+.course-problem-list li {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+     -moz-box-align: center;
+          align-items: center;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+     -moz-box-pack: justify;
+          justify-content: space-between;
+  border-bottom: 1px solid var(--border-soft);
+  padding: 10px;
+  border-radius: 5px;
+}
+.course-problem-list .problem-name {
+  margin-left: 10px;
+}
+.course-problem-list li:hover {
+  background: var(--row-hover);
+}
+.course-problem-list .score {
+  font-weight: bold;
+  margin-left: auto;
+}
+.course-problem-list a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.course-contest-card, .course-lesson-card {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-top: 20px;
+  padding: 15px;
+  -webkit-box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+          box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: flex;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+     -moz-box-pack: justify;
+          justify-content: space-between;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+     -moz-box-align: center;
+          align-items: center;
+}
+.course-contest-card h5, .course-lesson-card h5 {
+  margin: 0 0 10px;
+  font-size: 1.2em;
+  color: var(--text);
+}
+.course-contest-card p, .course-lesson-card p {
+  margin: 5px 0;
+  color: var(--text-2);
+}
+.course-contest-card .problem-codes, .course-lesson-card .problem-codes {
+  font-family: monospace;
+  color: var(--text-2);
+  font-size: 0.9em;
+}
+
+.add-button-container {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: flex;
+  -webkit-box-pack: end;
+  -webkit-justify-content: flex-end;
+     -moz-box-pack: end;
+          justify-content: flex-end;
+}
+
+.inline-role-form {
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -moz-inline-box;
+  display: inline-flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+     -moz-box-align: center;
+          align-items: center;
+  gap: 10px;
+}
+
+.inline-delete-form {
+  display: inline;
+}
+
+.no-permission-text {
+  color: var(--muted);
+}
+
+.members-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+  margin-top: 1em;
+}
+.members-table th, .members-table td {
+  padding: 10px;
+  border: 1px solid var(--border);
+  text-align: left;
+}
+.members-table th {
+  background-color: var(--panel-2);
+  font-weight: bold;
+}
+.members-table tr:nth-child(even) {
+  background-color: var(--bg-soft);
+}
+.members-table tr:hover {
+  background-color: var(--row-hover);
+}
+
+.add-member-form {
+  background-color: var(--bg-soft);
+  padding: 15px;
+  border-radius: 5px;
+  border: 1px solid var(--border);
+  margin-top: 20px;
+}
+
+.form-row {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: flex;
+  gap: 15px;
+  -webkit-box-align: end;
+  -webkit-align-items: flex-end;
+     -moz-box-align: end;
+          align-items: flex-end;
+  -webkit-flex-wrap: wrap;
+          flex-wrap: wrap;
+  margin-top: 1em;
+}
+
+.form-field {
+  -webkit-box-flex: 1;
+  -webkit-flex: 1;
+     -moz-box-flex: 1;
+          flex: 1;
+  min-width: 200px;
+}
+.form-field label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+.form-field input, .form-field select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+}
+
+.role-badge {
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+.role-badge.role-teacher {
+  background-color: var(--blue);
+  color: white;
+}
+.role-badge.role-assistant {
+  background-color: var(--green);
+  color: white;
+}
+.role-badge.role-student {
+  background-color: #6c757d;
+  color: white;
+}
+
+.role-select {
+  padding: 5px 8px;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  font-size: 14px;
+  background-color: var(--panel);
+  cursor: pointer;
+  min-width: 100px;
+}
+.role-select:hover {
+  border-color: var(--muted);
+}
+.role-select:focus {
+  outline: none;
+  border-color: var(--blue);
+  -webkit-box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+          box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.no-members-text {
+  text-align: center;
+  color: var(--text-2);
+  margin: 40px 0;
+}
+
+.form-error {
+  color: var(--red);
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+.course-detail-page {
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.course-detail-page .c-about-card {
+  max-width: none;
+}
+.course-detail-page .contest-name {
+  font-weight: bold;
+  font-size: 1.1em;
+}
+.course-detail-page .contest-details {
+  font-size: 0.9em;
+}
+.course-detail-page .course-leave-form {
+  float: right;
+}
+.course-detail-page .course-leave-form form {
+  display: inline;
+}
+.course-detail-page .course-total-points {
+  float: right;
+  font-weight: normal;
+}
+
+.course-edit-page .form-header {
+  margin-bottom: 0.5em;
+}
+.course-edit-page .form-container {
+  margin-bottom: 1em;
+}
+.course-edit-page .form-field-wrapper {
+  margin-bottom: 1em;
+}
+.course-edit-page .form-actions {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: flex;
+  -webkit-box-pack: start;
+  -webkit-justify-content: flex-start;
+     -moz-box-pack: start;
+          justify-content: flex-start;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+     -moz-box-align: center;
+          align-items: center;
+}
+
+.edit-lessons-tabs {
+  margin-bottom: 1.5em;
+}
+
+.edit-lessons-page.order-tab .prereq-description {
+  color: #00007d;
+  font-size: 0.9em;
+  margin-bottom: 1em;
+}
+.edit-lessons-page.order-tab .order-section-title {
+  margin-bottom: 15px;
+}
+.edit-lessons-page.order-tab .sortable-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.edit-lessons-page.order-tab .sortable-item {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+     -moz-box-align: center;
+          align-items: center;
+  padding: 10px 15px;
+  margin-bottom: 5px;
+  background: #f1f2f2;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: move;
+}
+.edit-lessons-page.order-tab .sortable-item:hover {
+  background: #ededed;
+}
+.edit-lessons-page.order-tab .sortable-item.ui-sortable-helper {
+  -webkit-box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+.edit-lessons-page.order-tab .drag-handle {
+  margin-right: 15px;
+  color: var(--muted);
+}
+.edit-lessons-page.order-tab .item-order {
+  min-width: 30px;
+  font-weight: bold;
+  color: #00007d;
+}
+.edit-lessons-page.order-tab .item-title {
+  -webkit-box-flex: 1;
+  -webkit-flex: 1;
+     -moz-box-flex: 1;
+          flex: 1;
+}
+.edit-lessons-page.order-tab .item-title a {
+  color: #00007d;
+  text-decoration: none;
+}
+.edit-lessons-page.order-tab .item-title a:hover {
+  text-decoration: underline;
+}
+.edit-lessons-page.order-tab .item-meta {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+     -moz-box-align: center;
+          align-items: center;
+  gap: 4px;
+  margin-right: 15px;
+  color: var(--text-2);
+  font-size: 0.9em;
+}
+.edit-lessons-page.order-tab .item-meta .item-points {
+  font-weight: 500;
+  color: #00007d;
+}
+.edit-lessons-page.order-tab .item-meta .inline-points-edit {
+  width: 3.5em;
+  border: 1px solid var(--muted);
+  background: var(--panel);
+  color: #00007d;
+  font: inherit;
+  font-weight: 600;
+  text-align: right;
+  border-radius: 3px;
+  padding: 2px 6px;
+  -webkit-transition: border-color 0.15s, background-color 0.4s;
+  -moz-transition: border-color 0.15s, background-color 0.4s;
+  transition: border-color 0.15s, background-color 0.4s;
+  -webkit-appearance: textfield;
+          appearance: textfield;
+  -moz-appearance: textfield;
+}
+.edit-lessons-page.order-tab .item-meta .inline-points-edit::-webkit-inner-spin-button, .edit-lessons-page.order-tab .item-meta .inline-points-edit::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+          appearance: none;
+  margin: 0;
+}
+.edit-lessons-page.order-tab .item-meta .inline-points-edit:hover {
+  border-color: #00007d;
+}
+.edit-lessons-page.order-tab .item-meta .inline-points-edit:focus {
+  border-color: var(--amber);
+  outline: none;
+}
+.edit-lessons-page.order-tab .item-meta .inline-points-edit.saved {
+  background-color: rgba(0, 200, 0, 0.15);
+}
+.edit-lessons-page.order-tab .item-meta .inline-points-edit.error {
+  border-color: #ae0000;
+}
+.edit-lessons-page.order-tab .item-meta .points-suffix {
+  font-weight: 500;
+}
+.edit-lessons-page.order-tab .item-meta .item-visibility i {
+  font-size: 1.1em;
+}
+.edit-lessons-page.order-tab .item-meta .item-visibility.public {
+  color: var(--green);
+}
+.edit-lessons-page.order-tab .item-meta .item-visibility.private {
+  color: #ae0000;
+}
+.edit-lessons-page.order-tab .item-actions {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: flex;
+  gap: 5px;
+}
+.edit-lessons-page.order-tab .item-actions .action-btn.small {
+  padding: 4px 8px;
+  font-size: 0.85em;
+}
+.edit-lessons-page.order-tab .save-status {
+  display: none;
+  padding: 8px 12px;
+  margin-top: 10px;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+.edit-lessons-page.order-tab .save-status.success {
+  background: var(--green-bg);
+  color: var(--green);
+}
+.edit-lessons-page.order-tab .save-status.error {
+  background: var(--red-bg);
+  color: var(--red);
+}
+.edit-lessons-page.prerequisites-tab .prereq-description {
+  color: #00007d;
+  font-size: 0.9em;
+  margin-bottom: 1em;
+}
+.edit-lessons-page.prerequisites-tab .prereq-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1em;
+}
+.edit-lessons-page.prerequisites-tab .prereq-table th, .edit-lessons-page.prerequisites-tab .prereq-table td {
+  padding: 10px;
+  border: 1px solid #ccc;
+  text-align: left;
+}
+.edit-lessons-page.prerequisites-tab .prereq-table th {
+  background-color: #f1f2f2;
+  font-weight: bold;
+}
+.edit-lessons-page.prerequisites-tab .prereq-table tr:hover:not(.add-row) {
+  background-color: #f1f2f2;
+}
+.edit-lessons-page.prerequisites-tab .prereq-table .prereq-arrow {
+  text-align: center;
+  width: 40px;
+  color: #00007d;
+}
+.edit-lessons-page.prerequisites-tab .prereq-table .add-row {
+  background-color: #f1f2f2;
+}
+.edit-lessons-page.prerequisites-tab .prereq-table .add-row select, .edit-lessons-page.prerequisites-tab .prereq-table .add-row input {
+  padding: 6px 8px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  background: var(--panel);
+}
+.edit-lessons-page.prerequisites-tab .prereq-table .add-row select {
+  width: 100%;
+  max-width: 200px;
+}
+.edit-lessons-page.prerequisites-tab .prereq-table .delete-btn {
+  color: #ae0000;
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-size: 1.1em;
+  padding: 5px 10px;
+}
+.edit-lessons-page.prerequisites-tab .prereq-table .delete-btn:hover {
+  opacity: 0.7;
+}
+.edit-lessons-page.prerequisites-tab .prereq-table .prereq-percentage-cell .edit-percentage {
+  width: 60px;
+  padding: 4px 6px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  text-align: center;
+  -webkit-transition: background-color 0.3s ease, border-color 0.3s ease;
+  -moz-transition: background-color 0.3s ease, border-color 0.3s ease;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+.edit-lessons-page.prerequisites-tab .prereq-table .prereq-percentage-cell .edit-percentage:focus {
+  outline: none;
+  border-color: var(--amber);
+}
+.edit-lessons-page.prerequisites-tab .prereq-table .prereq-percentage-cell .edit-percentage:disabled {
+  background-color: #f1f2f2;
+  cursor: wait;
+}
+.edit-lessons-page.prerequisites-tab .prereq-table .prereq-percentage-cell .edit-percentage.edit-success {
+  background-color: var(--green-bg);
+  border-color: var(--green);
+}
+.edit-lessons-page.prerequisites-tab .prereq-error {
+  color: #ae0000;
+  margin-top: 10px;
+  font-size: 0.9em;
+}
+.edit-lessons-page.prerequisites-tab .prereq-error i {
+  margin-right: 0.3em;
+}
+.edit-lessons-page.prerequisites-tab .no-prereqs {
+  text-align: center;
+  color: #00007d;
+  padding: 30px;
+  background: #f1f2f2;
+  border-radius: 5px;
+  margin-top: 1em;
+}
+.edit-lessons-page.prerequisites-tab .no-prereqs i {
+  font-size: 2em;
+  margin-bottom: 10px;
+  display: block;
+  opacity: 0.5;
+}
+.edit-lessons-page.prerequisites-tab .prereq-hint {
+  font-style: italic;
+  opacity: 0.8;
+}
+.edit-lessons-page.prerequisites-tab .prereq-hint i {
+  margin-right: 0.3em;
+}
+.edit-lessons-page.prerequisites-tab .prereq-add-section {
+  margin-top: 1em;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: flex;
+  gap: 0.5em;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+     -moz-box-align: center;
+          align-items: center;
+}
+.edit-lessons-page.prerequisites-tab .prereq-json-section {
+  margin-top: 2em;
+  padding-top: 1.5em;
+  border-top: 1px dashed #ccc;
+}
+.edit-lessons-page.prerequisites-tab .prereq-json-section h4 {
+  margin-top: 0;
+  margin-bottom: 0.5em;
+  color: #00007d;
+}
+.edit-lessons-page.prerequisites-tab .prereq-json-section .prereq-json-textarea {
+  width: 100%;
+  font-family: monospace;
+  font-size: 0.9em;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+  min-height: 80px;
+}
+.edit-lessons-page.prerequisites-tab .prereq-json-section .prereq-json-actions {
+  margin-top: 0.5em;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: flex;
+  gap: 0.5em;
+}
+.edit-lessons-page.prerequisites-tab .prereq-refresh-section {
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid #ccc;
+}
+.edit-lessons-page.prerequisites-tab .prereq-refresh-section .prereq-refresh-form {
+  display: inline;
+}
+.edit-lessons-page.prerequisites-tab .prereq-refresh-section .prereq-refresh-hint {
+  margin-left: 10px;
+  font-size: 0.9em;
+}
+
+.course-list-page .course-list {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+     -moz-box-orient: vertical;
+     -moz-box-direction: normal;
+          flex-direction: column;
+  gap: 16px;
+  margin-top: 20px;
+}
+.course-list-page .course-item {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: flex;
+  -webkit-box-align: start;
+  -webkit-align-items: flex-start;
+     -moz-box-align: start;
+          align-items: flex-start;
+  gap: 16px;
+  padding: 16px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  -webkit-transition: all 0.2s ease;
+  -moz-transition: all 0.2s ease;
+  transition: all 0.2s ease;
+}
+.course-list-page .course-item:hover {
+  -webkit-box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-color: var(--border);
+}
+.course-list-page .course-image {
+  width: 80px;
+  height: 80px;
+  -webkit-flex-shrink: 0;
+          flex-shrink: 0;
+  border-radius: 8px;
+  background: -moz-linear-gradient(315deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+     -moz-box-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+     -moz-box-pack: center;
+          justify-content: center;
+  color: white;
+  font-size: 2em;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+.course-list-page .course-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+}
+.course-list-page .course-content {
+  -webkit-box-flex: 1;
+  -webkit-flex: 1;
+     -moz-box-flex: 1;
+          flex: 1;
+  min-width: 0;
+}
+.course-list-page .course-header {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: flex;
+  -webkit-box-align: start;
+  -webkit-align-items: flex-start;
+     -moz-box-align: start;
+          align-items: flex-start;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+     -moz-box-pack: justify;
+          justify-content: space-between;
+  margin-bottom: 8px;
+  gap: 12px;
+}
+.course-list-page .course-title {
+  -webkit-box-flex: 1;
+  -webkit-flex: 1;
+     -moz-box-flex: 1;
+          flex: 1;
+}
+.course-list-page .course-name {
+  font-size: 1.5em;
+  font-weight: 700;
+  color: var(--text);
+  text-decoration: none;
+  display: block;
+  margin-bottom: 4px;
+  line-height: 1.2;
+}
+.course-list-page .course-name:hover {
+  color: #667eea;
+}
+.course-list-page .course-badges {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: flex;
+  -webkit-flex-wrap: wrap;
+          flex-wrap: wrap;
+  gap: 6px;
+  -webkit-flex-shrink: 0;
+          flex-shrink: 0;
+}
+.course-list-page .badge {
+  display: inline-block;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.9em;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+.course-list-page .badge.badge-open {
+  background: var(--green-bg);
+  color: var(--green);
+}
+.course-list-page .badge.badge-closed {
+  background: var(--red-bg);
+  color: var(--red);
+}
+.course-list-page .badge.badge-join {
+  background: var(--green-bg) !important;
+  color: var(--green) !important;
+  border: none !important;
+  cursor: pointer !important;
+  -webkit-transition: all 0.2s ease !important;
+  -moz-transition: all 0.2s ease !important;
+  transition: all 0.2s ease !important;
+}
+.course-list-page .badge.badge-join:hover {
+  background: #c8e6c9 !important;
+  -webkit-transform: translateY(-1px) !important;
+     -moz-transform: translateY(-1px) !important;
+      -ms-transform: translateY(-1px) !important;
+          transform: translateY(-1px) !important;
+  -webkit-box-shadow: 0 2px 4px rgba(46, 125, 50, 0.2) !important;
+          box-shadow: 0 2px 4px rgba(46, 125, 50, 0.2) !important;
+}
+.course-list-page .course-description {
+  color: var(--muted);
+  font-size: 0.95em;
+  line-height: 1.5;
+  margin-bottom: 12px;
+}
+.course-list-page .course-meta {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: flex;
+  -webkit-flex-wrap: wrap;
+          flex-wrap: wrap;
+  gap: 16px;
+  font-size: 0.9em;
+  color: var(--text-2);
+}
+.course-list-page .course-meta-item {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+     -moz-box-align: center;
+          align-items: center;
+  gap: 6px;
+}
+.course-list-page .course-meta-item i {
+  color: var(--muted);
+  width: 14px;
+}
+.course-list-page .course-organizations {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: flex;
+  -webkit-flex-wrap: wrap;
+          flex-wrap: wrap;
+  gap: 4px;
+}
+.course-list-page .org-badge {
+  background: var(--panel-2);
+  color: var(--text-2);
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.75em;
+  border: 1px solid var(--border);
+}
+.course-list-page .no-courses {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--muted);
+  background: var(--bg-soft);
+  border-radius: 12px;
+}
+.course-list-page .no-courses h3 {
+  color: var(--text-2);
+  margin-bottom: 8px;
+}
+.course-list-page .pagination-wrapper {
+  margin-top: 24px;
+  text-align: center;
+}
+.course-list-page .course-join-form {
+  display: inline;
+}
+.course-list-page .course-join-form form {
+  display: inline;
+}
+@media (max-width: 768px) {
+  .course-list-page .course-item {
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: column;
+       -moz-box-orient: vertical;
+       -moz-box-direction: normal;
+            flex-direction: column;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+       -moz-box-align: center;
+            align-items: center;
+    text-align: center;
+    gap: 12px;
+  }
+  .course-list-page .course-header {
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: column;
+       -moz-box-orient: vertical;
+       -moz-box-direction: normal;
+            flex-direction: column;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+       -moz-box-align: center;
+            align-items: center;
+    text-align: center;
+    gap: 8px;
+  }
+  .course-list-page .course-meta {
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+       -moz-box-pack: center;
+            justify-content: center;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: column;
+       -moz-box-orient: vertical;
+       -moz-box-direction: normal;
+            flex-direction: column;
+    gap: 8px;
+  }
+  .course-list-page .course-meta-item {
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+       -moz-box-pack: center;
+            justify-content: center;
+  }
+}
+
+.course-create-page .form-header {
+  margin-bottom: 0.5em;
+}
+.course-create-page .course-info {
+  background: var(--panel-2);
+  padding: 15px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+}
+.course-create-page .course-info h4 {
+  margin-top: 0;
+  color: var(--text);
+}
+.course-create-page .course-info ul {
+  margin: 10px 0;
+  padding-left: 20px;
+}
+.course-create-page .course-info li {
+  margin: 5px 0;
+  color: var(--text-2);
+}
+.course-create-page .form-container {
+  margin-bottom: 1em;
+}
+.course-create-page .form-field-wrapper {
+  margin-bottom: 1em;
+}
+.course-create-page .form-actions {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: flex;
+  -webkit-box-pack: start;
+  -webkit-justify-content: flex-start;
+     -moz-box-pack: start;
+          justify-content: flex-start;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+     -moz-box-align: center;
+          align-items: center;
+}
+.course-create-page .form-actions .action-btn + .action-btn {
+  margin-left: 10px;
+}
+
+.course-enrollment-page .enrollment-message {
+  text-align: center;
+  padding: 40px 20px;
+  background-color: var(--bg-soft);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin: 20px 0;
+}
+.course-enrollment-page .enrollment-message h2 {
+  color: var(--text-2);
+  margin-bottom: 20px;
+}
+.course-enrollment-page .enrollment-message p {
+  color: var(--text-2);
+  font-size: 1.1em;
+  margin-bottom: 25px;
+  line-height: 1.5;
+}
+.course-enrollment-page .course-info {
+  background-color: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px;
+  margin: 20px 0;
+}
+.course-enrollment-page .course-info h3 {
+  color: var(--text-2);
+  margin-bottom: 15px;
+}
+.course-enrollment-page .enrollment-form {
+  display: inline;
+}
+.course-enrollment-page .enrollment-form form {
+  display: inline;
+}
+
+.course-tag {
+  background: -moz-linear-gradient(315deg, #2563eb, #1d4ed8);
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+}
+
+.org-course-edit-page .course-info {
+  background: var(--panel-2);
+  padding: 15px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+}
+.org-course-edit-page .course-info h4 {
+  margin-top: 0;
+  color: var(--text);
+}
+.org-course-edit-page .course-info ul {
+  margin: 10px 0;
+  padding-left: 20px;
+}
+.org-course-edit-page .course-info li {
+  margin: 5px 0;
+  color: var(--text-2);
+}
+.org-course-edit-page .form-actions {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-soft);
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: flex;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+     -moz-box-pack: justify;
+          justify-content: space-between;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+     -moz-box-align: center;
+          align-items: center;
+}
+.org-course-edit-page .form-actions-left {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: flex;
+  gap: 10px;
+}
+.org-course-edit-page .form-field-wrapper {
+  margin-bottom: 1em;
+}
+.org-course-edit-page .delete-course-btn {
+  background: var(--red);
+  color: white;
+}
+
+.course-grades-page table {
+  font-size: 15px;
+}
+.course-grades-page td {
+  height: 2.5em;
+}
+.course-grades-page .user-name {
+  padding-left: 1em !important;
+}
+.course-grades-page .total-score {
+  font-weight: bold;
+}
+.course-grades-page .grades-filter-form {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+     -moz-box-align: center;
+          align-items: center;
+  gap: 0.5em;
+  -webkit-flex-wrap: wrap;
+          flex-wrap: wrap;
+  margin-top: 0.5em;
+  margin-bottom: 1em;
+}
+.course-grades-page .grades-filter-form input[name=search] {
+  margin: 0;
+}
+.course-grades-page .grades-filter-form label {
+  cursor: pointer;
+}
+.course-grades-page .table-container {
+  width: 100%;
+  overflow-x: auto;
+}
+.course-grades-page .grades-pagination {
+  margin-top: 10px;
+}
+.course-grades-page .points.quiz-col {
+  background: rgba(91, 192, 222, 0.1);
+}
+.course-grades-page .quiz-score {
+  background: rgba(91, 192, 222, 0.05);
+}
+
+/* ============================================================
+   Dana "Compile" — level roadmap (course list) + module roadmap
+   ============================================================ */
+/* --- Billiards-level roadmap on the course list --- */
+.c-levels-wrap {
+  margin-bottom: 1.5rem;
+}
+
+.c-levels {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+  -webkit-box-align: stretch;
+  -webkit-align-items: stretch;
+     -moz-box-align: stretch;
+          align-items: stretch;
+}
+
+.c-level-card {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+     -moz-box-orient: vertical;
+     -moz-box-direction: normal;
+          flex-direction: column;
+  gap: 0.8rem;
+  padding: 1.15rem 1.2rem 1.05rem;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--panel);
+  text-decoration: none;
+  color: var(--text);
+  -webkit-transition: border-color 0.15s ease, -webkit-transform 0.15s ease, -webkit-box-shadow 0.15s ease;
+  transition: border-color 0.15s ease, -webkit-transform 0.15s ease, -webkit-box-shadow 0.15s ease;
+  -moz-transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, -moz-transform 0.15s ease;
+  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, -webkit-transform 0.15s ease, -moz-transform 0.15s ease, -webkit-box-shadow 0.15s ease;
+}
+
+.c-level-card.is-live {
+  border-color: color-mix(in srgb, var(--amber) 45%, var(--border));
+}
+
+.c-level-card.is-live:hover {
+  -webkit-transform: translateY(-3px);
+     -moz-transform: translateY(-3px);
+      -ms-transform: translateY(-3px);
+          transform: translateY(-3px);
+  border-color: var(--amber);
+  -webkit-box-shadow: var(--shadow);
+          box-shadow: var(--shadow);
+}
+
+.c-level-card.is-soon {
+  opacity: 0.72;
+  cursor: not-allowed;
+  background: var(--bg-soft);
+  border-style: dashed;
+}
+
+.c-level-top {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+     -moz-box-align: center;
+          align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.c-level-badge {
+  -webkit-box-flex: 0;
+  -webkit-flex: 0 0 auto;
+     -moz-box-flex: 0;
+          flex: 0 0 auto;
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  border-radius: 13px;
+  font-family: "JetBrains Mono", monospace;
+  font-weight: 700;
+  font-size: 1.2rem;
+  letter-spacing: -0.02em;
+  color: var(--on-amber);
+  background: -moz-linear-gradient(315deg, var(--amber), var(--amber-deep));
+  background: linear-gradient(135deg, var(--amber), var(--amber-deep));
+}
+
+.c-level-card.is-soon .c-level-badge {
+  color: var(--muted);
+  background: color-mix(in srgb, var(--muted) 22%, transparent);
+}
+
+.c-level-name {
+  font-family: "JetBrains Mono", monospace;
+  font-weight: 700;
+  font-size: 1rem;
+  line-height: 1.25;
+  min-width: 0;
+}
+
+.c-level-desc {
+  color: var(--text-2);
+  font-size: 0.85rem;
+  line-height: 1.55;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.c-level-state {
+  margin-top: auto;
+  -webkit-align-self: flex-start;
+          align-self: flex-start;
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -moz-inline-box;
+  display: inline-flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+     -moz-box-align: center;
+          align-items: center;
+  gap: 0.4rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.c-level-state.ok {
+  color: var(--amber-deep);
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--amber) 14%, transparent);
+}
+
+/* --- Course detail: progress hero --- */
+.c-course-hero {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+     -moz-box-align: center;
+          align-items: center;
+  gap: 1.1rem;
+  padding: 1.1rem 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--panel);
+  margin-bottom: 1.1rem;
+}
+
+.c-course-ring {
+  -webkit-box-flex: 0;
+  -webkit-flex: 0 0 auto;
+     -moz-box-flex: 0;
+          flex: 0 0 auto;
+  width: 92px;
+  height: 92px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: -moz-radial-gradient(closest-side, var(--panel) 70%, transparent 71%), conic-gradient(var(--amber) -moz-calc(var(--pct, 0) * 1%), var(--border) 0);
+  background: radial-gradient(closest-side, var(--panel) 70%, transparent 71%), conic-gradient(var(--amber) calc(var(--pct, 0) * 1%), var(--border) 0);
+}
+
+.c-course-ring-val {
+  font-family: "JetBrains Mono", monospace;
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: var(--text);
+}
+
+.c-course-ring-val small {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.c-course-hero-body {
+  -webkit-box-flex: 1;
+  -webkit-flex: 1 1 auto;
+     -moz-box-flex: 1;
+          flex: 1 1 auto;
+  min-width: 0;
+}
+
+.c-course-hero-label {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+.c-course-hero-pts {
+  font-weight: 600;
+  margin: 0.15rem 0 0.55rem;
+  color: var(--text);
+}
+
+.c-course-hero-leave {
+  -webkit-box-flex: 0;
+  -webkit-flex: 0 0 auto;
+     -moz-box-flex: 0;
+          flex: 0 0 auto;
+}
+
+/* --- Module roadmap --- */
+.c-rm-heading {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin: 1.4rem 0 0.9rem;
+  color: var(--text);
+}
+
+.c-roadmap {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.c-rm-node {
+  position: relative;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: flex;
+  gap: 1rem;
+  padding-bottom: 0.9rem;
+}
+
+.c-rm-rail {
+  -webkit-box-flex: 0;
+  -webkit-flex: 0 0 auto;
+     -moz-box-flex: 0;
+          flex: 0 0 auto;
+  width: 38px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: flex;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+     -moz-box-pack: center;
+          justify-content: center;
+  position: relative;
+}
+
+/* connector line between dots */
+.c-rm-node:not(:last-child) .c-rm-rail::after {
+  content: "";
+  position: absolute;
+  top: 38px;
+  bottom: -0.9rem;
+  width: 2px;
+  background: var(--border);
+}
+
+.c-rm-dot {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-family: "JetBrains Mono", monospace;
+  font-weight: 700;
+  font-size: 0.95rem;
+  background: var(--panel-2);
+  color: var(--text-2);
+  border: 2px solid var(--border);
+  z-index: 1;
+}
+
+.c-rm-card {
+  -webkit-box-flex: 1;
+  -webkit-flex: 1 1 auto;
+     -moz-box-flex: 1;
+          flex: 1 1 auto;
+  min-width: 0;
+  display: block;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--panel);
+  color: var(--text);
+  overflow: hidden;
+  -webkit-transition: border-color 0.15s ease;
+  -moz-transition: border-color 0.15s ease;
+  transition: border-color 0.15s ease;
+}
+
+/* non-collapsible (locked) card keeps inner padding */
+div.c-rm-card {
+  padding: 0.8rem 1rem;
+}
+
+/* collapsible <details> card: padding lives on summary/body */
+details.c-rm-card > .c-rm-summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 0.8rem 1rem;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+}
+
+details.c-rm-card > .c-rm-summary::-webkit-details-marker {
+  display: none;
+}
+
+details.c-rm-card[open] {
+  border-color: var(--amber);
+}
+
+.c-rm-summary:hover .c-rm-title {
+  color: var(--amber-deep);
+}
+
+.c-rm-chev {
+  -webkit-box-flex: 0;
+  -webkit-flex: 0 0 auto;
+     -moz-box-flex: 0;
+          flex: 0 0 auto;
+  color: var(--muted);
+  -webkit-transition: -webkit-transform 0.18s ease;
+  transition: -webkit-transform 0.18s ease;
+  -moz-transition: transform 0.18s ease, -moz-transform 0.18s ease;
+  transition: transform 0.18s ease;
+  transition: transform 0.18s ease, -webkit-transform 0.18s ease, -moz-transform 0.18s ease;
+}
+
+details.c-rm-card[open] .c-rm-chev {
+  -webkit-transform: rotate(180deg);
+     -moz-transform: rotate(180deg);
+      -ms-transform: rotate(180deg);
+          transform: rotate(180deg);
+}
+
+.c-rm-card.link:hover {
+  border-color: var(--amber);
+}
+
+.c-rm-top {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+     -moz-box-align: center;
+          align-items: center;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+     -moz-box-pack: justify;
+          justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.c-rm-title {
+  font-weight: 600;
+}
+
+.c-rm-pts {
+  -webkit-box-flex: 0;
+  -webkit-flex: 0 0 auto;
+     -moz-box-flex: 0;
+          flex: 0 0 auto;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.82rem;
+  color: var(--text-2);
+}
+
+.c-rm-state {
+  -webkit-box-flex: 0;
+  -webkit-flex: 0 0 auto;
+     -moz-box-flex: 0;
+          flex: 0 0 auto;
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.c-rm-bar {
+  height: 7px;
+  border-radius: 99px;
+  background: var(--panel-2);
+  overflow: hidden;
+  margin-top: 0.55rem;
+}
+
+.c-rm-bar > i {
+  display: block;
+  height: 100%;
+  border-radius: 99px;
+  background: var(--amber);
+}
+
+.c-rm-pct {
+  font-size: 0.74rem;
+  color: var(--muted);
+  margin-top: 0.25rem;
+}
+
+.c-rm-prereq {
+  font-size: 0.82rem;
+  color: var(--text-2);
+  margin-top: 0.35rem;
+}
+
+.c-rm-prereq b {
+  color: var(--text);
+}
+
+/* state tints */
+.c-rm-node.done .c-rm-dot {
+  background: var(--green);
+  border-color: var(--green);
+  color: var(--on-amber);
+}
+
+.c-rm-node.done .c-rm-rail::after {
+  background: var(--green);
+}
+
+.c-rm-node.active .c-rm-dot,
+.c-rm-node.open .c-rm-dot {
+  border-color: var(--amber);
+  color: var(--amber-deep);
+}
+
+.c-rm-node.locked .c-rm-card {
+  background: var(--bg-soft);
+  border-style: dashed;
+}
+
+.c-rm-node.locked .c-rm-dot {
+  color: var(--muted);
+}
+
+/* --- About as a collapsible (non-sticky) block --- */
+.c-course-about {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--panel);
+  margin-bottom: 1.1rem;
+  overflow: hidden;
+}
+
+.c-course-about > summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 0.8rem 1.1rem;
+  font-weight: 700;
+  font-family: "JetBrains Mono", monospace;
+  color: var(--text);
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+}
+
+.c-course-about > summary::-webkit-details-marker {
+  display: none;
+}
+
+.c-course-about > summary i {
+  color: var(--amber);
+  margin-right: 0.4rem;
+}
+
+.c-course-about-body {
+  padding: 0 1.1rem 1rem;
+  border-top: 1px solid var(--border-soft);
+}
+
+/* --- Module expanded body: sections (theory + exercises) --- */
+.c-rm-body {
+  padding: 0 1rem 1rem;
+  border-top: 1px solid var(--border-soft);
+}
+
+.c-rm-intro {
+  color: var(--text-2);
+  font-size: 0.88rem;
+  margin: 0.7rem 0 0.4rem;
+}
+
+.c-rm-secs {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+     -moz-box-orient: vertical;
+     -moz-box-direction: normal;
+          flex-direction: column;
+  gap: 0.5rem;
+  margin: 0.6rem 0 0.8rem;
+}
+
+.c-rm-sec {
+  border: 1px solid var(--border-soft);
+  border-radius: 10px;
+  background: var(--bg-soft);
+  padding: 0.6rem 0.75rem;
+}
+
+.c-rm-sec-h {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+     -moz-box-align: center;
+          align-items: center;
+  gap: 0.55rem;
+}
+
+.c-rm-sec-n {
+  -webkit-box-flex: 0;
+  -webkit-flex: 0 0 auto;
+     -moz-box-flex: 0;
+          flex: 0 0 auto;
+  width: 22px;
+  height: 22px;
+  display: grid;
+  place-items: center;
+  border-radius: 6px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--amber-deep);
+  background: color-mix(in srgb, var(--amber) 16%, transparent);
+}
+
+.c-rm-sec-t {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.c-rm-sec-actions {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: flex;
+  -webkit-flex-wrap: wrap;
+          flex-wrap: wrap;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+     -moz-box-align: center;
+          align-items: center;
+  gap: 0.5rem 1rem;
+  margin-top: 0.5rem;
+  padding-left: -moz-calc(22px + 0.55rem);
+  padding-left: calc(22px + 0.55rem);
+}
+
+.c-rm-theory {
+  font-size: 0.82rem;
+}
+
+.c-rm-theory > summary {
+  list-style: none;
+  cursor: pointer;
+  color: var(--amber-deep);
+  font-weight: 600;
+}
+
+.c-rm-theory > summary::-webkit-details-marker {
+  display: none;
+}
+
+.c-rm-theory > summary i {
+  margin-right: 0.3rem;
+}
+
+.c-rm-theory > .content-description {
+  margin-top: 0.5rem;
+  padding: 0.5rem 0.7rem;
+  border-left: 2px solid var(--amber);
+  background: var(--panel);
+  border-radius: 0 8px 8px 0;
+}
+
+.c-rm-soon {
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.c-rm-soon i {
+  margin-right: 0.3rem;
+}
+
+.c-rm-ex {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-2);
+  text-decoration: none;
+}
+
+.c-rm-ex:hover {
+  color: var(--amber-deep);
+}
+
+.c-rm-ex i {
+  margin-right: 0.3rem;
+}
+
+.c-rm-open {
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -moz-inline-box;
+  display: inline-flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+     -moz-box-align: center;
+          align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.3rem;
+}
+
+/* ============================================================
+   Search panel (course list right sidebar)
+   ============================================================ */
+/* widen the courses search column so the box isn't cramped / leaves dead space */
+@media (min-width: 800px) {
+  #content-right.courses.right-sidebar {
+    -webkit-box-flex: 0;
+    -webkit-flex: 0 0 30%;
+       -moz-box-flex: 0;
+            flex: 0 0 30%;
+    max-width: 30%;
+    min-width: 260px;
+  }
+}
+.c-srch {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--panel);
+  padding: 1rem 1.05rem 1.1rem;
+  position: -webkit-sticky;
+  position: sticky;
+  top: 84px;
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+.c-srch form {
+  display: block;
+}
+
+.c-srch-h {
+  font-family: "JetBrains Mono", monospace;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 0.75rem;
+}
+
+.c-srch-h i {
+  color: var(--amber);
+  margin-right: 0.4rem;
+}
+
+/* every control fills the box, stacked with clear spacing */
+.c-srch .c-inp,
+.c-srch .c-btn {
+  display: block;
+  width: 100%;
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+  margin: 0 0 0.65rem;
+}
+
+.c-srch .c-btn {
+  margin-bottom: 0;
+  -webkit-box-flex: 0;
+  -webkit-flex: none;
+     -moz-box-flex: 0;
+          flex: none;
+}
+
+.c-srch-lbl {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin: 0.2rem 0 0.35rem;
+}
+
+/* ============================================================
+   Course hero polish + visual roadmap (stepper)
+   ============================================================ */
+.c-course-hero-badge {
+  -webkit-box-flex: 0;
+  -webkit-flex: 0 0 auto;
+     -moz-box-flex: 0;
+          flex: 0 0 auto;
+  width: 54px;
+  height: 54px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  font-family: "JetBrains Mono", monospace;
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: var(--on-amber);
+  background: var(--amber);
+}
+
+.c-course-hero-sub {
+  color: var(--muted);
+  font-weight: 500;
+  font-size: 0.85rem;
+}
+
+/* ============================================================
+   Visual roadmap — tree graph (roadmap.sh style)
+   Central amber spine of module nodes; sections branch to the
+   sides with dotted connectors. Pure CSS, theme-aware.
+   ============================================================ */
+.c-rmap {
+  position: relative;
+  margin: 0.2rem 0 1rem;
+  padding: 0.5rem 0;
+}
+
+/* continuous vertical spine behind the nodes */
+.c-rmap::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 28px;
+  bottom: 28px;
+  width: 3px;
+  -webkit-transform: translateX(-50%);
+     -moz-transform: translateX(-50%);
+      -ms-transform: translateX(-50%);
+          transform: translateX(-50%);
+  background: var(--amber);
+  z-index: 0;
+}
+
+.c-rmap-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+     -moz-box-align: center;
+          align-items: center;
+  min-height: 56px;
+  margin: 0.35rem 0;
+}
+
+.c-rmap-side {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: flex;
+  min-width: 0;
+}
+
+.c-rmap-side.a {
+  -webkit-box-pack: end;
+  -webkit-justify-content: flex-end;
+     -moz-box-pack: end;
+          justify-content: flex-end;
+} /* left group hugs the spine */
+.c-rmap-side.b {
+  -webkit-box-pack: start;
+  -webkit-justify-content: flex-start;
+     -moz-box-pack: start;
+          justify-content: flex-start;
+} /* right group hugs the spine */
+/* spine node (the module) */
+.c-rmap-spine {
+  position: relative;
+  z-index: 1;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: flex;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+     -moz-box-pack: center;
+          justify-content: center;
+  padding: 0 6px;
+}
+
+.c-rmap-node {
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -moz-inline-box;
+  display: inline-flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+     -moz-box-align: center;
+          align-items: center;
+  gap: 0.55rem;
+  max-width: 280px;
+  padding: 0.6rem 0.95rem;
+  border-radius: 12px;
+  border: 2px solid var(--amber-deep);
+  background: var(--amber);
+  color: var(--on-amber);
+  font-weight: 700;
+  text-decoration: none;
+  -webkit-box-shadow: var(--shadow);
+          box-shadow: var(--shadow);
+  -webkit-transition: -webkit-transform 0.15s ease, -webkit-box-shadow 0.15s ease;
+  transition: -webkit-transform 0.15s ease, -webkit-box-shadow 0.15s ease;
+  -moz-transition: transform 0.15s ease, box-shadow 0.15s ease, -moz-transform 0.15s ease;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, -webkit-transform 0.15s ease, -moz-transform 0.15s ease, -webkit-box-shadow 0.15s ease;
+}
+
+.c-rmap-node:hover {
+  -webkit-transform: translateY(-2px);
+     -moz-transform: translateY(-2px);
+      -ms-transform: translateY(-2px);
+          transform: translateY(-2px);
+}
+
+.c-rmap-num {
+  -webkit-box-flex: 0;
+  -webkit-flex: 0 0 auto;
+     -moz-box-flex: 0;
+          flex: 0 0 auto;
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: color-mix(in srgb, #000 18%, transparent);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.82rem;
+}
+
+.c-rmap-t {
+  font-size: 0.95rem;
+  line-height: 1.2;
+}
+
+/* state colours for the node */
+.c-rmap-node.done {
+  background: var(--green);
+  border-color: var(--green);
+}
+
+.c-rmap-node.locked {
+  background: var(--panel-2);
+  border: 2px dashed var(--border);
+  color: var(--muted);
+  -webkit-box-shadow: none;
+          box-shadow: none;
+}
+
+.c-rmap-node.locked .c-rmap-num {
+  background: color-mix(in srgb, var(--muted) 22%, transparent);
+}
+
+/* section group (the leaves) */
+.c-rmap-group {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+     -moz-box-orient: vertical;
+     -moz-box-direction: normal;
+          flex-direction: column;
+  gap: 0.4rem;
+  position: relative;
+  max-width: 280px;
+}
+
+.c-rmap-side.a .c-rmap-group {
+  margin-right: 40px;
+}
+
+.c-rmap-side.b .c-rmap-group {
+  margin-left: 40px;
+}
+
+/* dotted connector from group toward the spine */
+.c-rmap-side.a .c-rmap-group::after,
+.c-rmap-side.b .c-rmap-group::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 40px;
+  border-top: 3px dotted var(--blue);
+}
+
+.c-rmap-side.a .c-rmap-group::after {
+  left: 100%;
+}
+
+.c-rmap-side.b .c-rmap-group::before {
+  right: 100%;
+}
+
+.c-rmap-leaf {
+  display: block;
+  padding: 0.45rem 0.7rem;
+  border-radius: 9px;
+  border: 1px solid var(--amber-deep);
+  background: var(--amber-bg);
+  color: var(--text);
+  font-size: 0.84rem;
+  line-height: 1.25;
+  text-decoration: none;
+  -webkit-transition: border-color 0.15s ease, -webkit-transform 0.15s ease;
+  transition: border-color 0.15s ease, -webkit-transform 0.15s ease;
+  -moz-transition: border-color 0.15s ease, transform 0.15s ease, -moz-transform 0.15s ease;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+  transition: border-color 0.15s ease, transform 0.15s ease, -webkit-transform 0.15s ease, -moz-transform 0.15s ease;
+}
+
+.c-rmap-leaf:hover {
+  -webkit-transform: translateX(2px);
+     -moz-transform: translateX(2px);
+      -ms-transform: translateX(2px);
+          transform: translateX(2px);
+  border-color: var(--amber);
+  color: var(--amber-deep);
+}
+
+/* dim the leaves of a locked module */
+.c-rmap-row.left.locked, .c-rmap-row.right.locked {
+  opacity: 1;
+}
+
+.c-rmap-row:has(.c-rmap-node.locked) .c-rmap-leaf {
+  opacity: 0.55;
+}
+
+/* responsive: collapse to a single left-aligned column (node first, then its group) */
+@media (max-width: 760px) {
+  .c-rmap::before {
+    left: 19px;
+  }
+  .c-rmap-row {
+    grid-template-columns: 1fr;
+    -webkit-box-align: stretch;
+    -webkit-align-items: stretch;
+       -moz-box-align: stretch;
+            align-items: stretch;
+  }
+  .c-rmap-spine {
+    -webkit-box-ordinal-group: 0;
+    -webkit-order: -1;
+       -moz-box-ordinal-group: 0;
+            order: -1;
+    -webkit-box-pack: start;
+    -webkit-justify-content: flex-start;
+       -moz-box-pack: start;
+            justify-content: flex-start;
+  }
+  .c-rmap-side {
+    -webkit-box-pack: start;
+    -webkit-justify-content: flex-start;
+       -moz-box-pack: start;
+            justify-content: flex-start;
+    padding-left: 46px;
+  }
+  .c-rmap-side .c-rmap-group {
+    margin: 0;
+    max-width: none;
+  }
+  .c-rmap-side.a .c-rmap-group::after,
+  .c-rmap-side.b .c-rmap-group::before {
+    display: none;
+  }
+}
+/* ============================================================
+   Roadmap toolbar (zoom + expand/collapse) & viewport
+   ============================================================ */
+.c-rm-headrow {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+     -moz-box-align: center;
+          align-items: center;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+     -moz-box-pack: justify;
+          justify-content: space-between;
+  gap: 1rem;
+  -webkit-flex-wrap: wrap;
+          flex-wrap: wrap;
+  margin: 1.4rem 0 0.6rem;
+}
+
+.c-rm-headrow .c-rm-heading {
+  margin: 0;
+}
+
+.c-rmap-bar {
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -moz-inline-box;
+  display: inline-flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+     -moz-box-align: center;
+          align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.35rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--panel);
+}
+
+.c-rmap-btn {
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -moz-inline-box;
+  display: inline-flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+     -moz-box-align: center;
+          align-items: center;
+  gap: 0.35rem;
+  height: 30px;
+  padding: 0 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: var(--panel-2);
+  color: var(--text);
+  font-size: 0.82rem;
+  cursor: pointer;
+  -webkit-transition: border-color 0.15s ease, background 0.15s ease;
+  -moz-transition: border-color 0.15s ease, background 0.15s ease;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.c-rmap-btn:hover {
+  border-color: var(--amber);
+  color: var(--amber-deep);
+}
+
+.c-rmap-btn.wide {
+  font-weight: 600;
+}
+
+/* roadmap section show/hide */
+.c-rmap.is-hidden {
+  display: none;
+}
+
+/* ============================================================
+   Pending join requests (members page)
+   ============================================================ */
+.c-join-reqs.c-panel {
+  position: static;
+  top: auto;
+  margin-bottom: 1.2rem;
+}
+
+.c-join-reqs .ph {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+     -moz-box-align: center;
+          align-items: center;
+  gap: 0.5rem;
+}
+
+.c-req-count {
+  margin-left: auto;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 0.4rem;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 99px;
+  background: var(--amber);
+  color: var(--on-amber);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.c-req-row {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+     -moz-box-align: center;
+          align-items: center;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+     -moz-box-pack: justify;
+          justify-content: space-between;
+  gap: 1rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.c-req-row:last-child {
+  border-bottom: 0;
+}
+
+.c-req-user {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.c-req-user i {
+  color: var(--muted);
+  margin-right: 0.35rem;
+}
+
+.c-req-user small {
+  color: var(--muted);
+  font-weight: 400;
+  margin-left: 0.5rem;
+}
+
+.c-req-actions form {
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -moz-inline-box;
+  display: inline-flex;
+  gap: 0.5rem;
+}
+
+/* ============================================================
+   "Khoá của tôi" / joinable course cards
+   ============================================================ */
+.c-grid-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 1rem;
+  margin-top: 0.4rem;
+}
+
+.c-ccard {
+  display: grid;
+  grid-template-columns: 60px 1fr;
+  gap: 1rem;
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--panel);
+  -webkit-transition: border-color 0.15s ease, -webkit-box-shadow 0.15s ease, -webkit-transform 0.15s ease;
+  transition: border-color 0.15s ease, -webkit-box-shadow 0.15s ease, -webkit-transform 0.15s ease;
+  -moz-transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease, -moz-transform 0.15s ease;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease, -webkit-box-shadow 0.15s ease, -webkit-transform 0.15s ease, -moz-transform 0.15s ease;
+}
+
+.c-ccard:hover {
+  border-color: var(--amber);
+  -webkit-box-shadow: var(--shadow);
+          box-shadow: var(--shadow);
+  -webkit-transform: translateY(-2px);
+     -moz-transform: translateY(-2px);
+      -ms-transform: translateY(-2px);
+          transform: translateY(-2px);
+}
+
+.c-ccard-badge {
+  width: 60px;
+  height: 60px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  font-family: "JetBrains Mono", monospace;
+  font-weight: 700;
+  font-size: 1.45rem;
+  color: var(--on-amber);
+  background: -moz-linear-gradient(315deg, var(--amber), var(--amber-deep));
+  background: linear-gradient(135deg, var(--amber), var(--amber-deep));
+}
+
+.c-ccard-badge.has-img {
+  background: var(--panel-2);
+}
+
+.c-ccard-badge img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.c-ccard-main {
+  min-width: 0;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+     -moz-box-orient: vertical;
+     -moz-box-direction: normal;
+          flex-direction: column;
+  gap: 0.35rem;
+}
+
+.c-ccard-row {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+     -moz-box-align: center;
+          align-items: center;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+     -moz-box-pack: justify;
+          justify-content: space-between;
+  gap: 0.6rem;
+}
+
+.c-ccard-name {
+  font-weight: 700;
+  font-size: 1.05rem;
+  line-height: 1.25;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.c-ccard-name:hover {
+  color: var(--amber-deep);
+}
+
+.c-ccard-row .course-join-form {
+  -webkit-box-flex: 0;
+  -webkit-flex: 0 0 auto;
+     -moz-box-flex: 0;
+          flex: 0 0 auto;
+  margin: 0;
+}
+
+.c-ccard-desc {
+  margin: 0;
+  color: var(--text-2);
+  font-size: 0.86rem;
+  line-height: 1.45;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.c-ccard-meta {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: flex;
+  -webkit-flex-wrap: wrap;
+          flex-wrap: wrap;
+  gap: 0.3rem 1rem;
+  font-size: 0.8rem;
+  color: var(--text-2);
+  margin-top: 0.15rem;
+}
+
+.c-ccard-meta i {
+  color: var(--muted);
+  margin-right: 0.35rem;
+}
+
+.c-ccard-meta a {
+  color: var(--text-2);
+  text-decoration: none;
+}
+
+.c-ccard-meta a:hover {
+  color: var(--amber-deep);
+}
+
+/* ============================================================
+   Enrollment-required / pending panel
+   ============================================================ */
+.c-enroll {
+  text-align: center;
+  padding: 2.2rem 1.5rem;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--panel);
+  margin-bottom: 1.2rem;
+}
+
+.c-enroll-ico {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 0.8rem;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  font-size: 1.4rem;
+  color: var(--amber-deep);
+  background: var(--amber-bg);
+}
+
+.c-enroll h2 {
+  margin: 0 0 0.4rem;
+  color: var(--text);
+}
+
+.c-enroll p {
+  color: var(--text-2);
+  max-width: 520px;
+  margin: 0 auto 1.2rem;
+  line-height: 1.5;
+}
+
+.c-enroll .c-btn {
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -moz-inline-box;
+  display: inline-flex;
+}
+
+.c-enroll--pending .c-enroll-ico {
+  color: var(--blue);
+  background: var(--blue-bg);
+}
+
+.c-enroll--pending .c-btn[disabled] {
+  opacity: 0.75;
+  cursor: default;
+}
+
+/* clickable section header in the checklist */
+a.c-rm-sec-h {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+     -moz-box-align: center;
+          align-items: center;
+  gap: 0.55rem;
+  text-decoration: none;
+  color: var(--text);
+  border-radius: 8px;
+  padding: 0.15rem 0.25rem;
+  margin: -0.15rem -0.25rem;
+  -webkit-transition: background 0.15s ease, color 0.15s ease;
+  -moz-transition: background 0.15s ease, color 0.15s ease;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+a.c-rm-sec-h:hover {
+  color: var(--amber-deep);
+  background: var(--row-hover);
+}
+
+.c-rm-sec-go {
+  margin-left: auto;
+  color: var(--muted);
+  opacity: 0;
+  -webkit-transform: translateX(-4px);
+     -moz-transform: translateX(-4px);
+      -ms-transform: translateX(-4px);
+          transform: translateX(-4px);
+  -webkit-transition: opacity 0.15s ease, -webkit-transform 0.15s ease;
+  transition: opacity 0.15s ease, -webkit-transform 0.15s ease;
+  -moz-transition: opacity 0.15s ease, transform 0.15s ease, -moz-transform 0.15s ease;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  transition: opacity 0.15s ease, transform 0.15s ease, -webkit-transform 0.15s ease, -moz-transform 0.15s ease;
+}
+
+a.c-rm-sec-h:hover .c-rm-sec-go {
+  opacity: 1;
+  -webkit-transform: translateX(0);
+     -moz-transform: translateX(0);
+      -ms-transform: translateX(0);
+          transform: translateX(0);
+  color: var(--amber-deep);
+}
+
+.c-rm-sec:has(a.c-rm-sec-h) {
+  cursor: pointer;
+}
+
+/* ============================================================
+   Lesson page — section blocks (theory + exercises)
+   ============================================================ */
+.c-lesson-intro {
+  color: var(--text-2);
+  font-size: 0.92rem;
+  margin: 0 0 1.1rem;
+}
+
+.c-back-link {
+  color: var(--amber-deep);
+  text-decoration: none;
+}
+
+.c-back-link:hover {
+  text-decoration: underline;
+}
+
+.c-sec-block {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--panel);
+  margin-bottom: 1.1rem;
+  overflow: hidden;
+}
+
+.c-sec-head {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+     -moz-box-align: center;
+          align-items: center;
+  gap: 0.6rem;
+  padding: 0.85rem 1.1rem;
+  border-bottom: 1px solid var(--border-soft);
+  background: var(--bg-soft);
+  font-family: "JetBrains Mono", monospace;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.c-sec-idx {
+  -webkit-box-flex: 0;
+  -webkit-flex: 0 0 auto;
+     -moz-box-flex: 0;
+          flex: 0 0 auto;
+  width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  border-radius: 7px;
+  font-size: 0.82rem;
+  color: var(--on-amber);
+  background: var(--amber);
+}
+
+.c-sec-name {
+  font-size: 1rem;
+}
+
+.c-sec-body {
+  padding: 1rem 1.1rem;
+}
+
+.c-sec-sub {
+  font-weight: 700;
+  color: var(--text);
+  margin: 0.2rem 0 0.5rem;
+  font-size: 0.9rem;
+}
+
+.c-sec-sub i {
+  color: var(--amber);
+  margin-right: 0.4rem;
+}
+
+.c-sec-body .content-description {
+  margin-bottom: 1rem;
+}
+
+.c-sec-body .course-problem-list {
+  margin: 0 0 0.4rem;
+}
+
+.c-sec-empty {
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-style: italic;
+  margin: 0 0 1rem;
+}
+
+.c-sec-empty-block {
+  text-align: center;
+  color: var(--muted);
+  padding: 2.5rem 1rem;
+  border: 1px dashed var(--border);
+  border-radius: 14px;
+}
+
+.c-sec-empty-block i {
+  font-size: 1.8rem;
+  display: block;
+  margin-bottom: 0.6rem;
+  color: var(--border);
+}
+
+.c-lesson-actions {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: flex;
+  gap: 0.6rem;
+  margin-top: 1rem;
+}
+
+.c-lesson-actions .c-btn {
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -moz-inline-box;
+  display: inline-flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+     -moz-box-align: center;
+          align-items: center;
+  gap: 0.4rem;
+}
+
+/* ============================================================
+   Section cards (lesson page) + section editor
+   ============================================================ */
+.c-seclist {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+     -moz-box-orient: vertical;
+     -moz-box-direction: normal;
+          flex-direction: column;
+  gap: 0.6rem;
+  margin-bottom: 1.1rem;
+}
+
+.c-seccard {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: flex;
+  -webkit-box-align: stretch;
+  -webkit-align-items: stretch;
+     -moz-box-align: stretch;
+          align-items: stretch;
+  gap: 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--panel);
+  -webkit-transition: border-color 0.15s ease, -webkit-box-shadow 0.15s ease, -webkit-transform 0.15s ease;
+  transition: border-color 0.15s ease, -webkit-box-shadow 0.15s ease, -webkit-transform 0.15s ease;
+  -moz-transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease, -moz-transform 0.15s ease;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease, -webkit-box-shadow 0.15s ease, -webkit-transform 0.15s ease, -moz-transform 0.15s ease;
+}
+
+.c-seccard:hover {
+  border-color: var(--amber);
+  -webkit-box-shadow: var(--shadow);
+          box-shadow: var(--shadow);
+  -webkit-transform: translateY(-1px);
+     -moz-transform: translateY(-1px);
+      -ms-transform: translateY(-1px);
+          transform: translateY(-1px);
+}
+
+.c-seccard-main {
+  -webkit-box-flex: 1;
+  -webkit-flex: 1 1 auto;
+     -moz-box-flex: 1;
+          flex: 1 1 auto;
+  min-width: 0;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+     -moz-box-align: center;
+          align-items: center;
+  gap: 0.8rem;
+  padding: 0.8rem 1rem;
+  text-decoration: none;
+  color: var(--text);
+}
+
+.c-seccard-body {
+  min-width: 0;
+  -webkit-box-flex: 1;
+  -webkit-flex: 1 1 auto;
+     -moz-box-flex: 1;
+          flex: 1 1 auto;
+}
+
+.c-seccard-title {
+  display: block;
+  font-weight: 600;
+}
+
+.c-seccard-meta {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: flex;
+  -webkit-flex-wrap: wrap;
+          flex-wrap: wrap;
+  gap: 0.3rem 1rem;
+  font-size: 0.78rem;
+  color: var(--text-2);
+  margin-top: 0.2rem;
+}
+
+.c-seccard-meta i {
+  margin-right: 0.3rem;
+}
+
+.c-seccard-meta .ok {
+  color: var(--green);
+}
+
+.c-seccard-meta .muted {
+  color: var(--muted);
+}
+
+.c-seccard-go {
+  color: var(--muted);
+  -webkit-transition: color 0.15s ease, -webkit-transform 0.15s ease;
+  transition: color 0.15s ease, -webkit-transform 0.15s ease;
+  -moz-transition: transform 0.15s ease, color 0.15s ease, -moz-transform 0.15s ease;
+  transition: transform 0.15s ease, color 0.15s ease;
+  transition: transform 0.15s ease, color 0.15s ease, -webkit-transform 0.15s ease, -moz-transform 0.15s ease;
+}
+
+.c-seccard:hover .c-seccard-go {
+  color: var(--amber-deep);
+  -webkit-transform: translateX(2px);
+     -moz-transform: translateX(2px);
+      -ms-transform: translateX(2px);
+          transform: translateX(2px);
+}
+
+.c-seccard-admin {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+     -moz-box-align: center;
+          align-items: center;
+  padding-right: 0.6rem;
+  border-left: 1px solid var(--border-soft);
+}
+
+.c-seccard-admin .c-btn {
+  padding: 0.35rem 0.55rem;
+}
+
+/* section detail nav */
+.c-sec-nav {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: flex;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+     -moz-box-pack: justify;
+          justify-content: space-between;
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+/* section editor form */
+.c-secform-lbl {
+  display: block;
+  font-weight: 600;
+  margin: 0.2rem 0 0.4rem;
+  color: var(--text);
+}
+
+.c-secform .c-secform-lbl:not(:first-child) {
+  margin-top: 1rem;
+}
+
+.c-secform input[type=text] {
+  width: 100%;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: var(--panel-2);
+  color: var(--text);
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+.c-secform-check {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+     -moz-box-align: center;
+          align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  font-weight: 500;
+}
+
+.c-prob-edit {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.c-prob-edit th {
+  text-align: left;
+  font-size: 0.8rem;
+  color: var(--muted);
+  padding: 0.35rem 0.5rem;
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.c-prob-edit td {
+  padding: 0.45rem 0.5rem;
+  vertical-align: middle;
+}
+
+.c-prob-edit .c-prob-score {
+  width: 90px;
+}
+
+.c-prob-edit .c-prob-del {
+  width: 50px;
+  text-align: center;
+}
+
+.c-prob-edit input[type=number] {
+  width: 80px;
+  padding: 0.4rem 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--panel-2);
+  color: var(--text);
+}
+
+.c-form-hint {
+  color: var(--muted);
+  font-size: 0.8rem;
+  margin-top: 0.6rem;
+}
+
+.c-form-hint i {
+  margin-right: 0.3rem;
+}
+
+.c-sec-delform {
+  margin-top: 1.2rem;
+}
+
+.c-btn-danger {
+  color: var(--red);
+  border-color: var(--red);
+}
+
+.c-btn-danger:hover {
+  background: var(--red-bg);
+}
+
+/* ============================================================
+   Student progress — section status badges & states
+   ============================================================ */
+.c-secst {
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -moz-inline-box;
+  display: inline-flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+     -moz-box-align: center;
+          align-items: center;
+  gap: 0.3rem;
+  font-size: 0.76rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.c-secst.done {
+  color: var(--green);
+}
+
+.c-secst.doing {
+  color: var(--amber-deep);
+}
+
+.c-secst.todo {
+  color: var(--muted);
+}
+
+.c-sec-count {
+  margin-left: 0.6rem;
+  font-family: "Be Vietnam Pro", sans-serif;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--amber-deep);
+  background: var(--amber-bg);
+  padding: 0.12rem 0.5rem;
+  border-radius: 99px;
+}
+
+/* "done" section card / checklist row / leaf accents */
+.c-seccard.is-done {
+  border-color: color-mix(in srgb, var(--green) 45%, var(--border));
+}
+
+.c-seccard.is-done .c-sec-idx {
+  background: var(--green);
+}
+
+.c-rm-sec.is-done .c-rm-sec-n {
+  background: var(--green);
+  color: var(--on-amber);
+}
+
+.c-rmap-leaf.is-done {
+  border-color: var(--green);
+  background: var(--green-bg);
+}
+
+.c-rmap-leaf.is-locked {
+  opacity: 0.55;
+  cursor: default;
+}
+
+/* section detail status bar */
+.c-secbar {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+     -moz-box-align: center;
+          align-items: center;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+     -moz-box-pack: justify;
+          justify-content: space-between;
+  gap: 1rem;
+  -webkit-flex-wrap: wrap;
+          flex-wrap: wrap;
+  padding: 0.7rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--panel);
+  margin-bottom: 1.1rem;
+}
+
+.c-secbar.is-done {
+  border-color: color-mix(in srgb, var(--green) 45%, var(--border));
+  background: var(--green-bg);
+}
+
+.c-secbar-state {
+  font-weight: 700;
+  color: var(--text);
+}
+
+.c-secbar.is-done .c-secbar-state {
+  color: var(--green);
+}
+
+.c-secbar-state > i {
+  margin-right: 0.4rem;
+}
+
+.c-secbar-ex {
+  color: var(--text-2);
+  font-weight: 500;
+  margin-left: 0.35rem;
+}
+
+/* ============================================================
+   Inline "create problem" form (section editor)
+   ============================================================ */
+.c-secform input[type=number] {
+  width: 110px;
+  padding: 0.45rem 0.55rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--panel-2);
+  color: var(--text);
+}
+
+.c-np-area {
+  width: 100%;
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+  padding: 0.6rem 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: var(--panel-2);
+  color: var(--text);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.85rem;
+  resize: vertical;
+}
+
+.c-np-row {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: flex;
+  -webkit-flex-wrap: wrap;
+          flex-wrap: wrap;
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.c-np-row span {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+     -moz-box-orient: vertical;
+     -moz-box-direction: normal;
+          flex-direction: column;
+}
+
+.np-test {
+  border: 1px solid var(--border-soft);
+  border-radius: 10px;
+  background: var(--bg-soft);
+  padding: 0.6rem 0.7rem;
+  margin-bottom: 0.6rem;
+}
+
+.np-test-h {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--amber-deep);
+  margin-bottom: 0.4rem;
+}
+
+.np-test textarea {
+  width: 100%;
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+  margin-bottom: 0.4rem;
+  padding: 0.5rem 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--panel);
+  color: var(--text);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.82rem;
+  resize: vertical;
+}
+
+.np-test textarea:last-child {
+  margin-bottom: 0;
+}
+
+/* ============================================================
+   Course LIST page — centered column, inline search header,
+   one full-width row per course, theme-aware group tag
+   ============================================================ */
+.middle-right-content.course-fullwidth {
+  display: block;
+}
+
+/* the layout caps .middle-content at 75% to reserve room for a right sidebar;
+   this page has none, so let it use the full width (search then sits far-right) */
+.middle-right-content.course-fullwidth .middle-content {
+  -webkit-flex-basis: 100%;
+          flex-basis: 100%;
+  max-width: 100%;
+  width: 100%;
+}
+
+.course-list-page {
+  width: 100%;
+}
+
+/* level-path heading: stack eyebrow / title / sub left-aligned
+   (c-page-head's space-between was floating the h1 to the far right) */
+.c-levels-wrap .c-page-head {
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+     -moz-box-orient: vertical;
+     -moz-box-direction: normal;
+          flex-direction: column;
+  -webkit-box-align: start;
+  -webkit-align-items: flex-start;
+     -moz-box-align: start;
+          align-items: flex-start;
+  -webkit-box-pack: start;
+  -webkit-justify-content: flex-start;
+     -moz-box-pack: start;
+          justify-content: flex-start;
+  gap: 0;
+}
+
+/* section heading with the search integrated inline (replaces right sidebar) */
+.c-course-head {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: flex;
+  -webkit-box-align: end;
+  -webkit-align-items: flex-end;
+     -moz-box-align: end;
+          align-items: flex-end;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+     -moz-box-pack: justify;
+          justify-content: space-between;
+  gap: 0.9rem 1.25rem;
+  -webkit-flex-wrap: wrap;
+          flex-wrap: wrap;
+  margin: 2rem 0 1rem;
+}
+.c-course-head h1 {
+  margin: 0;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+
+.c-course-search {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+     -moz-box-align: center;
+          align-items: center;
+  gap: 0.5rem;
+  -webkit-flex-wrap: wrap;
+          flex-wrap: wrap;
+  margin: 0;
+}
+
+.c-course-search-field {
+  position: relative;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+     -moz-box-align: center;
+          align-items: center;
+}
+
+.c-course-search-field > i {
+  position: absolute;
+  left: 0.75rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+  pointer-events: none;
+}
+
+.c-course-search-field .c-inp {
+  width: 240px;
+  padding-left: 2rem;
+  margin: 0;
+}
+
+.c-course-search select.c-inp {
+  width: auto;
+  min-width: 160px;
+  margin: 0;
+}
+
+.c-course-search .c-btn {
+  margin: 0;
+  white-space: nowrap;
+}
+
+/* one full-width row per course */
+.course-list-page .c-grid-cards {
+  grid-template-columns: 1fr;
+  gap: 0.8rem;
+}
+
+/* group / organization tag inside a course card:
+   override the legacy hard-coded dark gradient with a subtle theme-aware pill */
+.c-ccard-meta .organization-tag,
+.c-cv-meta .organization-tag {
+  background: var(--panel-2);
+  color: var(--text-2);
+  border: 1px solid var(--border-soft);
+  -webkit-box-shadow: none;
+          box-shadow: none;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  font-weight: 500;
+}
+.c-ccard-meta .organization-tag a,
+.c-cv-meta .organization-tag a {
+  color: var(--text-2);
+}
+.c-ccard-meta .organization-tag a:hover,
+.c-cv-meta .organization-tag a:hover {
+  color: var(--amber-deep);
+}
+.c-ccard-meta .organization-tag .user-img,
+.c-cv-meta .organization-tag .user-img {
+  border-radius: 50%;
+}
+
+/* elegant, centered empty-state */
+.course-list-page .c-notice.is-empty {
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+     -moz-box-orient: vertical;
+     -moz-box-direction: normal;
+          flex-direction: column;
+  text-align: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+     -moz-box-pack: center;
+          justify-content: center;
+  gap: 0.4rem;
+  padding: 2.6rem 1.5rem;
+  max-width: 560px;
+  margin: 1rem auto 0;
+}
+.course-list-page .c-notice.is-empty h3 {
+  margin: 0;
+  font-family: "JetBrains Mono", monospace;
+  color: var(--text-2);
+}
+.course-list-page .c-notice.is-empty p {
+  margin: 0;
+}
+
+@media (max-width: 700px) {
+  .c-course-search {
+    width: 100%;
+  }
+  .c-course-search-field {
+    -webkit-box-flex: 1;
+    -webkit-flex: 1 1 auto;
+       -moz-box-flex: 1;
+            flex: 1 1 auto;
+  }
+  .c-course-search-field .c-inp {
+    width: 100%;
+  }
+  .c-course-search .c-btn {
+    -webkit-box-flex: 0;
+    -webkit-flex: 0 0 auto;
+       -moz-box-flex: 0;
+            flex: 0 0 auto;
+  }
+}
+/* ============================================================
+   Course catalog — vertical cards (cover image + rating stars)
+   ============================================================ */
+.c-cv-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 1.2rem;
+  margin-top: 0.5rem;
+}
+
+.c-cv {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+     -moz-box-orient: vertical;
+     -moz-box-direction: normal;
+          flex-direction: column;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--panel);
+  overflow: hidden;
+  -webkit-transition: border-color 0.15s ease, -webkit-box-shadow 0.15s ease, -webkit-transform 0.15s ease;
+  transition: border-color 0.15s ease, -webkit-box-shadow 0.15s ease, -webkit-transform 0.15s ease;
+  -moz-transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease, -moz-transform 0.15s ease;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease, -webkit-box-shadow 0.15s ease, -webkit-transform 0.15s ease, -moz-transform 0.15s ease;
+}
+
+.c-cv:hover {
+  border-color: var(--amber);
+  -webkit-box-shadow: var(--shadow);
+          box-shadow: var(--shadow);
+  -webkit-transform: translateY(-3px);
+     -moz-transform: translateY(-3px);
+      -ms-transform: translateY(-3px);
+          transform: translateY(-3px);
+}
+
+.c-cv-cover {
+  position: relative;
+  display: block;
+  aspect-ratio: 16/9;
+  background: -moz-linear-gradient(315deg, var(--amber), var(--amber-deep));
+  background: linear-gradient(135deg, var(--amber), var(--amber-deep));
+  overflow: hidden;
+}
+
+.c-cv-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.c-cv-cover-badge {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-family: "JetBrains Mono", monospace;
+  font-weight: 700;
+  font-size: 3.2rem;
+  color: var(--on-amber);
+  letter-spacing: -0.02em;
+}
+
+.c-cv-lvl {
+  position: absolute;
+  top: 0.6rem;
+  left: 0.6rem;
+  padding: 0.12rem 0.55rem;
+  border-radius: 999px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--on-amber);
+  background: color-mix(in srgb, var(--amber-deep) 70%, black 10%);
+  -webkit-backdrop-filter: blur(2px);
+          backdrop-filter: blur(2px);
+}
+
+.c-cv-body {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+     -moz-box-orient: vertical;
+     -moz-box-direction: normal;
+          flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem 1.1rem 1.1rem;
+  -webkit-box-flex: 1;
+  -webkit-flex: 1 1 auto;
+     -moz-box-flex: 1;
+          flex: 1 1 auto;
+}
+
+.c-cv-name {
+  font-family: "JetBrains Mono", monospace;
+  font-weight: 700;
+  font-size: 1.02rem;
+  line-height: 1.3;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.c-cv-name:hover {
+  color: var(--amber-deep);
+}
+
+.c-cv-stars {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+     -moz-box-align: center;
+          align-items: center;
+  gap: 2px;
+  font-size: 0.9rem;
+}
+.c-cv-stars i {
+  color: var(--amber);
+}
+.c-cv-stars i.empty {
+  color: var(--border);
+}
+
+.c-cv-rate {
+  margin-left: 0.45rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-2);
+}
+
+.c-cv-desc {
+  margin: 0;
+  color: var(--text-2);
+  font-size: 0.86rem;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.c-cv-meta {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: flex;
+  -webkit-flex-wrap: wrap;
+          flex-wrap: wrap;
+  gap: 0.3rem 0.9rem;
+  font-size: 0.8rem;
+  color: var(--text-2);
+}
+.c-cv-meta i {
+  color: var(--muted);
+  margin-right: 0.3rem;
+}
+.c-cv-meta a {
+  color: var(--text-2);
+  text-decoration: none;
+}
+.c-cv-meta a:hover {
+  color: var(--amber-deep);
+}
+
+.c-cv-foot {
+  margin-top: auto;
+  padding-top: 0.4rem;
+}
+.c-cv-foot .course-join-form {
+  margin: 0;
+}
+.c-cv-foot .c-btn.block {
+  width: 100%;
+}
+
+/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uL3Nhc3NfcHJvY2Vzc2VkL2NvdXJzZS5jc3MiLCIuLi9yZXNvdXJjZXMvY291cnNlLnNjc3MiLCIuLi9yZXNvdXJjZXMvdmFycy5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBLGdCQUFnQjtBQ0VoQjtFQUNJLGdCQUFBO0VBQ0EsY0FBQTtFQUNBLGFBQUE7QURBSjs7QUNHQTtFQUNJLGlCQUFBO0FEQUo7O0FDR0E7RUFDSSxXQUFBO0VBQ0EsY0FBQTtFQUNBLGdCQUFBO0VBQ0EsVUFBQTtBREFKO0FDRUk7RUFDSSxvQkFBQTtFQUFBLHFCQUFBO0VBQUEsaUJBQUE7RUFBQSxhQUFBO0VBQ0EseUJBQUE7RUFBQSwyQkFBQTtLQUFBLHNCQUFBO1VBQUEsbUJBQUE7RUFDQSwrQkFBQTtFQUNBLGFBQUE7RUFDQSxtQkFBQTtFQUNBLGtCQUFBO0VBQ0EsOEJBQUE7RUFDQSxnREFBQTtVQUFBLHdDQUFBO0VBQ0Esc0RBQUE7RUFBQSw4Q0FBQTtFQUFBLDRFQUFBO0VBQUEsc0NBQUE7RUFBQSwyR0FBQTtBREFSO0FDRUk7RUFDSSxtQ0FBQTtLQUFBLGdDQUFBO01BQUEsK0JBQUE7VUFBQSwyQkFBQTtFQUNBLGtEQUFBO1VBQUEsMENBQUE7QURBUjtBQ0VJO0VBQ0ksbUJBQUE7RUFBQSxzQkFBQTtLQUFBLGdCQUFBO1VBQUEsY0FBQTtFQUNBLFdBQUE7RUFDQSxZQUFBO0VBQ0Esa0JBQUE7RUFDQSxrQkFBQTtFQUNBLGdCQUFBO0FEQVI7QUNFSTtFQUNJLFdBQUE7RUFDQSxZQUFBO0VBQ0EsaUJBQUE7RUFDQSxrQkFBQTtBREFSO0FDRUk7RUFDSSxtQkFBQTtFQUFBLGVBQUE7S0FBQSxnQkFBQTtVQUFBLE9BQUE7QURBUjtBQ0VJO0VBQ0ksZ0JBQUE7RUFDQSxrQkFBQTtBREFSOztBQ0lBO0VBQ0ksZ0JBQUE7RUFDQSxVQUFBO0FEREo7QUNHSTtFQUNJLGtEQUFBO1VBQUEsMENBQUE7RUFDQSxtQkFBQTtBRERSO0FDSUk7RUFDSSx3QkFBQTtFQUNB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 */

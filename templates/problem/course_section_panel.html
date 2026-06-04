@@ -1,0 +1,55 @@
+{# Course-section nav panel shown on a problem opened from a course section
+   (carried via ?c=<slug>&s=<section_id>). Reuses the roadmap panel styling. #}
+<button type="button" class="rtp-toggle-btn" id="rtpToggleBtn" aria-label="Đóng/mở thanh điều hướng"
+        style="--rm-color: var(--amber); --rm-color2: var(--amber-deep);">
+  <i class="fa fa-chevron-left"></i>
+</button>
+<div class="roadmap-topic-panel" id="roadmapTopicPanel"
+     style="--rm-color: var(--amber); --rm-color2: var(--amber-deep);">
+  <div class="rtp-head">
+    <div class="rtp-crumbs">
+      <a href="{{ url('course_detail', course_nav.course.slug) }}">{{ course_nav.course.name }}</a>
+      <span class="sep">/</span>
+      <a href="{{ url('course_section_detail', course_nav.course.slug, course_nav.lesson.id, course_nav.section.id) }}">{{ course_nav.section.title }}</a>
+    </div>
+    <div class="rtp-progress">
+      <span class="rtp-count">{{ course_nav.solved }} / {{ course_nav.total }} {{ _('bài') }}</span>
+      <div class="rtp-bar"><div class="rtp-bar-fill" style="width: {{ course_nav.percent }}%;"></div></div>
+    </div>
+  </div>
+  <div class="rtp-list">
+    {% for row in course_nav.rows %}
+      <a class="rtp-pill {{ row.status }}{% if row.is_current %} current{% endif %}"
+         href="{{ url('problem_detail', row.problem.code) }}?{{ course_nav.cs_param }}"
+         title="{{ row.problem.name }}">
+        <span class="rtp-icon">
+          {% if row.status == 'solved' %}<i class="fa fa-check-circle"></i>
+          {% elif row.status == 'attempted' %}<i class="fa fa-minus-circle"></i>
+          {% else %}<i class="far fa-circle"></i>{% endif %}
+        </span>
+        <span class="rtp-name">{{ loop.index }}. {{ row.problem.name }}</span>
+      </a>
+    {% endfor %}
+  </div>
+  {% if course_nav.next_problem %}
+    <div class="rtp-next">
+      <a href="{{ url('problem_detail', course_nav.next_problem.problem.code) }}?{{ course_nav.cs_param }}">
+        {{ _('Bài tiếp theo') }}: {{ course_nav.next_problem.problem.name|truncate(28) }} <i class="fa fa-arrow-right"></i>
+      </a>
+    </div>
+  {% endif %}
+</div>
+<script>
+(function() {
+  var panel = document.getElementById('roadmapTopicPanel');
+  var btn = document.getElementById('rtpToggleBtn');
+  if (!panel || !btn) return;
+  if (localStorage.getItem('rtpCollapsed') === '1') {
+    document.body.classList.add('rtp-collapsed');
+  }
+  btn.addEventListener('click', function() {
+    var collapsed = document.body.classList.toggle('rtp-collapsed');
+    localStorage.setItem('rtpCollapsed', collapsed ? '1' : '0');
+  });
+})();
+</script>

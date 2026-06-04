@@ -12,9 +12,9 @@
     // 100vh - nav(50px) - sidebar-margin(20px) - container-padding(20px)
     height: calc(100vh - 90px);
     min-height: 300px;
-    border: 1px solid $border_gray;
+    border: 1px solid var(--border);
     border-radius: $widget_border_radius;
-    background: $background_light_gray;
+    background: var(--panel);
     overflow: hidden;
 }
 
@@ -36,7 +36,7 @@
             flex-direction: row-reverse;
 
             .message-avatar {
-                background: $theme_color;
+                background: var(--amber);
                 color: white;
 
                 img {
@@ -49,7 +49,7 @@
 
             .message-body {
                 .message-content {
-                    background: $theme_color;
+                    background: var(--amber);
                     color: white;
                     border-radius: 16px 16px 4px 16px;
 
@@ -82,14 +82,14 @@
             align-self: flex-start;
 
             .message-avatar {
-                background: $background_gray;
+                background: var(--panel-2);
             }
 
             .message-body {
                 .message-content {
-                    background: $background_gray;
+                    background: var(--panel-2);
                     border-radius: 16px 16px 16px 4px;
-                    border: 1px solid $border_gray;
+                    border: 1px solid var(--border);
                 }
             }
         }
@@ -121,9 +121,9 @@
             width: 22px;
             height: 22px;
             border-radius: 50%;
-            border: 1px solid $border_gray;
-            background: $background_light_gray;
-            color: $widget_black;
+            border: 1px solid var(--border);
+            background: var(--panel);
+            color: var(--text);
             cursor: pointer;
             padding: 0;
             font-size: 10px;
@@ -135,8 +135,8 @@
 
             &:hover {
                 opacity: 1;
-                color: $announcement_red;
-                border-color: $announcement_red;
+                color: var(--red);
+                border-color: var(--red);
             }
         }
     }
@@ -181,11 +181,11 @@
             display: inline-flex;
             align-items: center;
             gap: 4px;
-            background: $background_gray;
+            background: var(--panel-2);
             padding: 2px 8px;
             border-radius: 12px;
             font-size: 11px;
-            border: 1px solid $border_gray;
+            border: 1px solid var(--border);
             cursor: help;
 
             i {
@@ -225,7 +225,7 @@
         gap: 6px;
         margin-top: 8px;
         padding: 6px 0;
-        color: $theme_color;
+        color: var(--amber);
         font-size: 0.85em;
         opacity: 0.85;
 
@@ -261,7 +261,7 @@
 
     .welcome-icon {
         font-size: 48px;
-        color: $theme_color;
+        color: var(--amber);
         margin-bottom: 16px;
     }
 
@@ -288,7 +288,7 @@
             gap: 8px;
 
             i {
-                color: $theme_color;
+                color: var(--amber);
                 font-size: 12px;
             }
         }
@@ -303,8 +303,8 @@
 }
 
 .chatbot-input-area {
-    border-top: 1px solid $border_gray;
-    background: $background_gray;
+    border-top: 1px solid var(--border);
+    background: var(--panel-2);
     flex-shrink: 0;
 }
 
@@ -314,7 +314,7 @@
     padding: 8px;
     font-size: 13px;
     opacity: 0.7;
-    border-bottom: 1px solid $border_gray;
+    border-bottom: 1px solid var(--border);
 }
 
 .chatbot-input {
@@ -326,7 +326,7 @@
     textarea {
         flex: 1;
         resize: none;
-        border: 1px solid $border_gray;
+        border: 1px solid var(--border);
         border-radius: 20px;
         padding: 10px 16px;
         font-size: $base_font_size;
@@ -334,11 +334,11 @@
         line-height: 1.4;
         min-height: 40px;
         max-height: 150px;
-        background: $background_light_gray;
+        background: var(--panel);
 
         &:focus {
             outline: none;
-            border-color: $theme_color;
+            border-color: var(--amber);
         }
 
         &:disabled {
@@ -373,14 +373,14 @@
 
     #clear-chat-btn {
         background: transparent;
-        border: 1px solid $border_gray;
+        border: 1px solid var(--border);
         color: inherit;
         opacity: 0.6;
 
         &:hover {
             opacity: 1;
-            border-color: $announcement_red;
-            color: $announcement_red;
+            border-color: var(--red);
+            color: var(--red);
         }
     }
 
@@ -393,7 +393,7 @@
             padding: 0 12px;
             gap: 6px;
             background: transparent;
-            border: 1px solid $border_gray;
+            border: 1px solid var(--border);
             color: inherit;
             font-size: 12px;
 
@@ -410,8 +410,8 @@
             }
 
             &:hover {
-                border-color: $theme_color;
-                color: $theme_color;
+                border-color: var(--amber);
+                color: var(--amber);
             }
         }
 
@@ -421,8 +421,8 @@
             bottom: 100%;
             left: 0;
             margin-bottom: 4px;
-            background: $background_light_gray;
-            border: 1px solid $border_gray;
+            background: var(--panel);
+            border: 1px solid var(--border);
             border-radius: 8px;
             box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.15);
             min-width: 160px;
@@ -445,11 +445,11 @@
                 .fa-check {
                     width: 14px;
                     opacity: 0;
-                    color: $theme_color;
+                    color: var(--amber);
                 }
 
                 &:hover {
-                    background: $background_gray;
+                    background: var(--panel-2);
                 }
 
                 &.active {

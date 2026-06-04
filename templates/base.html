@@ -12,20 +12,20 @@
     {% endif %}
     <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1">
   <!-- Favicons-->
-    <link rel="icon" type="image/x-icon" href="{{ static('icons/favicon.ico') }}?v=2">
-    <link rel="apple-touch-icon" sizes="57x57" href="{{ static('icons/apple-touch-icon-57x57.png') }}?v=2">
-    <link rel="apple-touch-icon" sizes="60x60" href="{{ static('icons/apple-touch-icon-60x60.png') }}?v=2">
-    <link rel="apple-touch-icon" sizes="72x72" href="{{ static('icons/apple-touch-icon-72x72.png') }}?v=2">
-    <link rel="apple-touch-icon" sizes="76x76" href="{{ static('icons/apple-touch-icon-76x76.png') }}?v=2">
-    <link rel="apple-touch-icon" sizes="114x114" href="{{ static('icons/apple-touch-icon-114x114.png') }}?v=2">
-    <link rel="apple-touch-icon" sizes="120x120" href="{{ static('icons/apple-touch-icon-120x120.png') }}?v=2">
-    <link rel="apple-touch-icon" sizes="144x144" href="{{ static('icons/apple-touch-icon-144x144.png') }}?v=2">
-    <link rel="apple-touch-icon" sizes="152x152" href="{{ static('icons/apple-touch-icon-152x152.png') }}?v=2">
-    <link rel="apple-touch-icon" sizes="180x180" href="{{ static('icons/apple-touch-icon-180x180.png') }}?v=2">
-    <link rel="icon" type="image/png" href="{{ static('icons/favicon-32x32.png') }}?v=2" sizes="32x32">
-    <link rel="icon" type="image/png" href="{{ static('icons/android-chrome-192x192.png') }}?v=2" sizes="192x192">
-    <link rel="icon" type="image/png" href="{{ static('icons/favicon-96x96.png') }}?v=2" sizes="96x96">
-    <link rel="icon" type="image/png" href="{{ static('icons/favicon-16x16.png') }}?v=2" sizes="16x16">
+    <link rel="icon" type="image/x-icon" href="{{ static('icons/favicon.ico') }}?v=3">
+    <link rel="apple-touch-icon" sizes="57x57" href="{{ static('icons/apple-touch-icon-57x57.png') }}?v=3">
+    <link rel="apple-touch-icon" sizes="60x60" href="{{ static('icons/apple-touch-icon-60x60.png') }}?v=3">
+    <link rel="apple-touch-icon" sizes="72x72" href="{{ static('icons/apple-touch-icon-72x72.png') }}?v=3">
+    <link rel="apple-touch-icon" sizes="76x76" href="{{ static('icons/apple-touch-icon-76x76.png') }}?v=3">
+    <link rel="apple-touch-icon" sizes="114x114" href="{{ static('icons/apple-touch-icon-114x114.png') }}?v=3">
+    <link rel="apple-touch-icon" sizes="120x120" href="{{ static('icons/apple-touch-icon-120x120.png') }}?v=3">
+    <link rel="apple-touch-icon" sizes="144x144" href="{{ static('icons/apple-touch-icon-144x144.png') }}?v=3">
+    <link rel="apple-touch-icon" sizes="152x152" href="{{ static('icons/apple-touch-icon-152x152.png') }}?v=3">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ static('icons/apple-touch-icon-180x180.png') }}?v=3">
+    <link rel="icon" type="image/png" href="{{ static('icons/favicon-32x32.png') }}?v=3" sizes="32x32">
+    <link rel="icon" type="image/png" href="{{ static('icons/android-chrome-192x192.png') }}?v=3" sizes="192x192">
+    <link rel="icon" type="image/png" href="{{ static('icons/favicon-96x96.png') }}?v=3" sizes="96x96">
+    <link rel="icon" type="image/png" href="{{ static('icons/favicon-16x16.png') }}?v=3" sizes="16x16">
     <link rel="manifest" href="{{ static('icons/manifest.json') }}">
     <meta name="msapplication-TileColor" content="#FFBB33">
     <meta name="msapplication-TileImage" content="{{ static('icons/android-chrome-144x144.png') }}">
@@ -49,9 +49,14 @@
     {% if not INLINE_FONTAWESOME %}
       <link rel="stylesheet" href="{{ FONTAWESOME_CSS }}">
     {% endif %}
-    <link rel="stylesheet" type="text/css" href="{{ static('markdown.css') }}">
+    {# Compile design system: light mode only (dark mode disabled site-wide). #}
+    <script>
+      document.documentElement.setAttribute('data-theme', 'light');
+      try { localStorage.setItem('dana-theme', 'light'); } catch (e) {}
+    </script>
+    <link rel="stylesheet" type="text/css" href="{{ static('markdown.css') }}?v=3">
     {% compress css %}
-      <link rel="stylesheet" href="{{ static('style.css') }}?v=8">
+      <link rel="stylesheet" href="{{ static('style.css') }}?v=34">
       {% if INLINE_FONTAWESOME %}
         <link rel="stylesheet" href="{{ static('fontawesome/css/all.min.css') }}">
       {% endif %}
@@ -62,7 +67,7 @@
     {% endcompress %}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code&family=Noto+Sans&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700;800&family=Fira+Code&family=Noto+Sans&display=swap" rel="stylesheet">
     <link rel="canonical"
           href="{{ DMOJ_SCHEME }}://{{ DMOJ_CANONICAL|default(site.domain) }}{{ request.get_full_path() }}">
     {% if request.user.is_impersonate %}
@@ -73,10 +78,6 @@
       </style>
     {% endif %}
 
-    {% if use_darkmode %}
-      <link rel="stylesheet" href="{{ static('darkmode.min.css') }}">
-      <link rel="stylesheet" href="{{ static('darkmode-svg.css') }}">
-    {% endif %}
 
     <noscript>
       <style>
@@ -219,10 +220,7 @@
               <div class="popper-arrow" data-popper-arrow></div>
             </div>
           </span>
-          <span title="{{_('Dark Mode')}}">
-            <a class="far fa-moon navbar-icon black" id="nav-darkmode-icon" aria-hidden="true" href="?darkmode=1"
-               style="font-size: 22.5px;"></a>
-          </span>
+          {# Dark mode disabled site-wide — toggle hidden. #}
           {% if request.user.is_authenticated %}
             <span id="user-links">
               <img class="user-img" src="{{ gravatar(request.profile.id, 32) }}" height="24" width="24">
@@ -346,6 +344,8 @@
         <script src="{{ static('libs/clipboard/clipboard.js') }}"></script>
         {% include "extra_js.html" %}
         <script src="{{ static('common.js') }}"></script>
+        <script>window.TOGGLE_DARKMODE_URL = "{{ url('toggle_darkmode_ajax') }}";</script>
+        <script src="{{ static('theme-toggle.js') }}"></script>
         <script src="{{ static('libs/clipboard/tooltip.js') }}"></script>
         <script type="text/javascript" src="{{ static('libs/featherlight/featherlight.min.js') }}"></script>
         <script>
@@ -437,8 +437,7 @@
         <footer>
           <span id="footer-content">
             <br>
-            <a class="background-footer" target="_blank" href="https://dmoj.ca">proudly powered by <b>DMOJ</b></a>|<a
-              target="_blank" href="https://github.com/LQDJudge/online-judge"> developed by LQDJudge team</a>
+            <a class="background-footer" target="_blank" href="https://dmoj.ca">proudly powered by <b>DMOJ</b></a>
             {% if i18n_config.footer %}
               {{ i18n_config.footer|safe }} |
             {% endif %}

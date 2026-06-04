@@ -78,6 +78,12 @@
       <div class="block-header">{{ _('Default language') }}</div>
       <span class="fullwidth">{{ form.language }}</span>
 
+      <div class="block-header">Nhóm / Lớp <small>(không bắt buộc)</small></div>
+      <span class="fullwidth{% if form.organization.errors %}-error{% endif %}">{{ form.organization }}</span>
+      {% if form.organization.errors %}
+        <div class="form-field-error">{{ form.organization.errors }}</div>
+      {% endif %}
+
       {% if form.captcha %}
         <div style="margin-top: 0.5em">{{ form.captcha }}</div>
         {% if form.captcha.errors %}

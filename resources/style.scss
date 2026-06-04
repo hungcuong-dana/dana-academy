@@ -1,4 +1,6 @@
+@use "tokens" as *;
 @use "base" as *;
+@use "compile-components" as *;
 @use "table" as *;
 @use "status" as *;
 @use "blog" as *;

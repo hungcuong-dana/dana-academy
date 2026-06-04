@@ -3,8 +3,8 @@ div.dmmd-preview {
 }
 
 div.dmmd-preview-update {
-    background: #ccc;
-    color: #333;
+    background: var(--panel-2);
+    color: var(--text);
     text-align: center;
     cursor: pointer;
     border-radius: 4px;

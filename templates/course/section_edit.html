@@ -1,0 +1,141 @@
+{% extends "course/base.html" %}
+
+{% block two_col_media %}
+  {{ form.media }}
+  {{ formset.media }}
+{% endblock %}
+
+{% block js_media %}
+  <script>
+    (function () {
+      var wrap = document.getElementById('np-tests');
+      var countInput = document.getElementById('np_tc_count');
+      var n = 0;
+      function addRow() {
+        var i = n++;
+        var div = document.createElement('div');
+        div.className = 'np-test';
+        div.innerHTML =
+          '<div class="np-test-h">{{ _("Test") }} ' + (i + 1) + '</div>' +
+          '<textarea name="np_in_' + i + '" rows="3" placeholder="Input"></textarea>' +
+          '<textarea name="np_out_' + i + '" rows="3" placeholder="{{ _("Output mong đợi") }}"></textarea>';
+        wrap.appendChild(div);
+        countInput.value = n;
+      }
+      if (wrap) {
+        addRow(); addRow();
+        document.getElementById('np-add-test').addEventListener('click', addRow);
+      }
+    })();
+  </script>
+{% endblock %}
+
+{% block middle_content %}
+  <div class="course-detail-page">
+    <div class="c-page-head">
+      <span class="c-eyebrow">
+        <a href="{{ url('course_lesson_detail', course.slug, lesson.id) }}" class="c-back-link">{{ lesson.title }}</a>
+      </span>
+      <h1>{{ _('Chỉnh sửa phần') }}</h1>
+    </div>
+
+    <form method="post">
+      {% csrf_token %}
+
+      <div class="c-sec-block">
+        <div class="c-sec-head"><span class="c-sec-name">{{ _('Thông tin phần') }}</span></div>
+        <div class="c-sec-body c-secform">
+          <label class="c-secform-lbl">{{ _('Tiêu đề') }}</label>
+          {{ form.title }}
+          {{ form.title.errors }}
+
+          <label class="c-secform-lbl">{{ _('Lý thuyết (markdown)') }}</label>
+          {{ form.theory }}
+          {{ form.theory.errors }}
+
+          <label class="c-secform-check">{{ form.is_visible }} {{ _('Hiển thị cho học viên') }}</label>
+        </div>
+      </div>
+
+      <div class="c-sec-block">
+        <div class="c-sec-head"><span class="c-sec-name">{{ _('Bài tập của phần') }}</span></div>
+        <div class="c-sec-body">
+          {{ formset.management_form }}
+          {% if formset.forms %}
+            <table class="c-prob-edit">
+              <thead>
+                <tr>
+                  <th>{{ _('Bài tập') }}</th>
+                  <th class="c-prob-score">{{ _('Điểm') }}</th>
+                  <th class="c-prob-del">{{ _('Xoá') }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for pf in formset %}
+                  <tr>
+                    {{ pf.id }}
+                    <td>{{ pf.problem }}{{ pf.problem.errors }}</td>
+                    <td class="c-prob-score">{{ pf.score }}</td>
+                    <td class="c-prob-del">{{ pf.DELETE }}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          {% else %}
+            <p class="c-sec-empty">{{ _('Chưa có bài tập. Thêm bài bên dưới.') }}</p>
+          {% endif %}
+
+          <div class="c-prob-add">
+            <div class="c-secform-lbl">{{ _('Thêm bài có sẵn (từ danh sách công khai)') }}</div>
+            <table class="c-prob-edit">
+              <tbody>
+                <tr>
+                  <td>{{ add_form.problem }}</td>
+                  <td class="c-prob-score">{{ add_form.score }}</td>
+                </tr>
+              </tbody>
+            </table>
+            {{ add_form.problem.errors }}{{ add_form.score.errors }}
+            <p class="c-form-hint"><i class="fa fa-circle-info"></i> {{ _('Chọn bài + nhập điểm rồi bấm Lưu. Bài chọn từ danh sách vẫn hiển thị ở trang chủ.') }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Create a private problem inline -->
+      <div class="c-sec-block">
+        <div class="c-sec-head"><span class="c-sec-name"><i class="fa fa-flask"></i> {{ _('Tạo bài tập mới (private — ẩn khỏi danh sách)') }}</span></div>
+        <div class="c-sec-body c-secform">
+          <label class="c-secform-lbl">{{ _('Tên bài') }}</label>
+          <input type="text" name="np_name" placeholder="{{ _('Để trống nếu không tạo bài mới') }}">
+
+          <label class="c-secform-lbl">{{ _('Đề bài (markdown)') }}</label>
+          <textarea name="np_statement" rows="6" class="c-np-area" placeholder="{{ _('Mô tả đề, input/output, ràng buộc, ví dụ…') }}"></textarea>
+
+          <div class="c-np-row">
+            <span><label class="c-secform-lbl">{{ _('Điểm') }}</label><input type="number" name="np_score" value="100"></span>
+            <span><label class="c-secform-lbl">{{ _('Thời gian (s)') }}</label><input type="number" step="0.1" name="np_time" value="1"></span>
+            <span><label class="c-secform-lbl">{{ _('Bộ nhớ (MB)') }}</label><input type="number" name="np_memory" value="256"></span>
+          </div>
+
+          <div class="c-secform-lbl">{{ _('Test cases') }}</div>
+          <div id="np-tests"></div>
+          <input type="hidden" name="np_tc_count" id="np_tc_count" value="0">
+          <button type="button" class="c-btn ghost" id="np-add-test"><i class="fa fa-plus"></i> {{ _('Thêm test') }}</button>
+          <p class="c-form-hint"><i class="fa fa-circle-info"></i> {{ _('Nhập input + output mong đợi cho mỗi test, rồi bấm Lưu. Bài này sẽ private, chỉ học viên trong khoá làm được, không hiện ở danh sách bài tập trang chủ.') }}</p>
+        </div>
+      </div>
+
+      <div class="c-lesson-actions">
+        <button type="submit" class="c-btn primary"><i class="fa fa-floppy-disk"></i> {{ _('Lưu') }}</button>
+        <a href="{{ url('course_section_detail', course.slug, lesson.id, section.id) }}" class="c-btn ghost">{{ _('Xem phần') }}</a>
+      </div>
+    </form>
+
+    <form method="post" action="{{ url('course_section_delete', course.slug, lesson.id, section.id) }}"
+          class="c-sec-delform"
+          onsubmit="return confirm('{{ _('Xoá phần này? Hành động không thể hoàn tác.') }}')">
+      {% csrf_token %}
+      <button type="submit" class="c-btn ghost c-btn-danger"><i class="fa fa-trash"></i> {{ _('Xoá phần') }}</button>
+    </form>
+  </div>
+{% endblock %}

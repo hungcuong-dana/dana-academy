@@ -4,7 +4,7 @@
 }
 
 .AC {
-    background-color: green;
+    background-color: var(--green);
     color: white;
 }
 
@@ -14,7 +14,7 @@
 }
 
 .WA {
-    background-color: red;
+    background-color: var(--red);
     color: white;
 }
 
@@ -34,19 +34,19 @@
 }
 
 .IE {
-    background-color: red;
+    background-color: var(--red);
     color: black;
 }
 
 .QU, .G {
-    background: white;
-    color: black;
+    background: var(--panel);
+    color: var(--text);
 }
 
 .judge-online {
-    color:#44AD41;
+    color: var(--green);
 }
 
 .judge-offline {
-    color:#DE2121;
+    color: var(--red);
 }

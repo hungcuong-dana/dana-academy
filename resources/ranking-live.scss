@@ -115,13 +115,13 @@
         gap: 8px;
         padding: 8px 14px 8px 12px;
         flex: 1;
-        background: #fff;
+        background: var(--panel);
         font-size: 0.9em;
     }
 
     .toast-user {
         font-weight: 600;
-        color: #333;
+        color: var(--text);
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -129,7 +129,7 @@
     }
 
     .toast-score {
-        color: #555;
+        color: var(--text-2);
         font-size: 0.95em;
         margin-left: auto;
         white-space: nowrap;
@@ -148,7 +148,7 @@
             background: linear-gradient(135deg, #43a047, #2e7d32);
         }
         .toast-score {
-            color: #2e7d32;
+            color: var(--green);
             font-weight: 600;
         }
     }
@@ -170,7 +170,7 @@
             background: linear-gradient(135deg, #e53935, #c62828);
         }
         .toast-score {
-            color: #c62828;
+            color: var(--red);
             font-weight: 600;
         }
     }
@@ -181,11 +181,11 @@
             background: linear-gradient(135deg, #42a5f5, #1976d2);
         }
         .toast-score {
-            color: #1565c0;
+            color: var(--blue);
             font-weight: 600;
         }
     }
 }
 
-.toast-rank-up { color: #2e7d32; }
-.toast-rank-down { color: #c62828; }
+.toast-rank-up { color: var(--green); }
+.toast-rank-down { color: var(--red); }

@@ -67,18 +67,18 @@ th.header.rank {
 #users-table {
     border-collapse: collapse;
     border-spacing: 0;
-    background: white;
+    background: var(--panel);
 
     // Header styling - theme color
     thead th {
-        background: $theme_color;
-        color: white;
+        background: var(--amber);
+        color: var(--on-amber);
         font-weight: 600;
         padding: 0.5rem 0.6rem;
         vertical-align: middle;
 
         a, a:link, a:visited {
-            color: white;
+            color: var(--on-amber);
             text-decoration: none;
         }
 
@@ -90,7 +90,7 @@ th.header.rank {
     // Cell styling
     td {
         padding: 0.5rem 0.5rem;
-        border-bottom: 1px solid $border_gray;
+        border-bottom: 1px solid var(--border);
         vertical-align: middle;
     }
 
@@ -104,11 +104,11 @@ th.header.rank {
 
     // Row styling
     tbody tr {
-        background: white;
+        background: var(--panel);
         transition: background 0.15s ease;
 
         &:hover {
-            background: $background_light_gray;
+            background: var(--row-hover);
         }
 
         &.highlight, &:target {
@@ -140,7 +140,7 @@ th.header.rank {
         padding: 0.3em 0.5em;
         font-size: 0.75rem;
         line-height: 1.4;
-        color: #4b5563;
+        color: var(--text-2);
 
         // Override content-description styling for compact display
         .content-description {
@@ -172,7 +172,7 @@ th.header.rank {
     }
 
     .organization-column a {
-        color: #6b7280 !important;
+        color: var(--muted) !important;
         font-weight: 500;
     }
 
@@ -186,30 +186,30 @@ th.header.rank {
 
     .full-score, .full-score a {
         font-weight: bold;
-        color: green;
+        color: var(--green);
     }
 
     .partial-score, .partial-score a {
-        color: green;
+        color: var(--green);
     }
 
     .failed-score, .failed-score a {
         font-weight: bold;
-        color: red;
+        color: var(--red);
     }
 
     .pretest-full-score, .pretest-full-score a {
         font-weight: bold;
-        color: #2980b9;
+        color: var(--blue);
     }
 
     .pretest-partial-score, .pretest-partial-score a {
-        color: #2980b9;
+        color: var(--blue);
     }
 
     .pretest-failed-score, .pretest-failed-score a {
         font-weight: bold;
-        color: red;
+        color: var(--red);
     }
 
     .user-points {
@@ -218,13 +218,13 @@ th.header.rank {
     }
 
     .solving-time {
-        color: #6b7280;
+        color: var(--muted);
         font-weight: normal;
         font-size: 0.7rem;
     }
 
     .point-denominator {
-        border-top: 1px solid $border_gray;
+        border-top: 1px solid var(--border);
         font-size: 0.7em;
     }
 
@@ -234,7 +234,7 @@ th.header.rank {
     }
 
     .fullname-column span {
-        color: #6b7280 !important;
+        color: var(--muted) !important;
         font-weight: 500;
     }
 
@@ -266,7 +266,7 @@ th.header.rank {
     }
 
     .select2-results__option--highlighted {
-        background-color: #DEDEDE !important;
+        background-color: var(--row-hover) !important;
     }
 
     li.select2-results__option--highlighted a.user-redirect {
@@ -275,7 +275,7 @@ th.header.rank {
 }
 
 a.user-redirect {
-    color: #2980b9;
+    color: var(--blue);
     vertical-align: middle;
     font-size: 1.2em;
     position: absolute;
@@ -319,11 +319,11 @@ a.edit-profile {
 
 .user-info-cell {
     padding-left: 15px;
-    border-left: 1px solid #CCC;
+    border-left: 1px solid var(--border);
 }
 
 .contest-history-cell {
-    border-left: 1px solid #CCC;
+    border-left: 1px solid var(--border);
     padding: 0 0.5em;
 }
 
@@ -373,7 +373,7 @@ a.edit-profile {
 // Base user-img styles for img elements
 .user-img {
     flex-shrink: 0;
-    background-color: #ddd;
+    background-color: var(--panel-2);
     border-radius: 50%;
     object-fit: cover;
 }
@@ -404,7 +404,7 @@ a.edit-profile {
     }
 
     .pp-weighted {
-        color: #777;
+        color: var(--muted);
     }
 
     div.sub-pp {
@@ -431,7 +431,7 @@ a.edit-profile {
 
 #pp-load-link-wrapper {
     text-align: center;
-    border: 1px solid #ccc;
+    border: 1px solid var(--border);
 }
 
 #pp-load-more-link {
@@ -467,14 +467,14 @@ a.edit-profile {
 }
 
 .follow {
-    background: green;
+    background: var(--green);
     border-color: lightgreen;
 }
 .follow:hover {
     background: darkgreen;
 }
 .unfollow {
-    background: red;
+    background: var(--red);
     border-color: pink;
 }
 .unfollow:hover {
@@ -489,12 +489,12 @@ a.edit-profile {
         }
         #year {
             font-size: 1.25em;
-            color: #444;
+            color: var(--text-2);
         }
     }
 
     #submission-activity-display {
-        border: 1px solid $border_gray;
+        border: 1px solid var(--border);
         border-radius: $table_header_rounding;
 
         .info-bar {
@@ -515,7 +515,7 @@ a.edit-profile {
             font-size: 0.75em;
             line-height: 1;
             font-weight: 100;
-            color: #444;
+            color: var(--text-2);
         }
 
         #submission-total-count {
@@ -601,8 +601,8 @@ a.edit-profile {
     align-items: center;
     gap: 0.75rem;
     padding: 0.875rem 1rem;
-    background: white;
-    border: 1px solid $border_gray;
+    background: var(--panel);
+    border: 1px solid var(--border);
     border-radius: 10px;
     transition: all 0.2s ease;
 
@@ -641,7 +641,7 @@ a.edit-profile {
 
     .stat-label {
         font-size: 0.75rem;
-        color: #6b7280;
+        color: var(--muted);
         font-weight: 500;
         white-space: nowrap;
         overflow: hidden;
@@ -654,34 +654,34 @@ a.edit-profile {
     font-size: 1.25rem;
     font-weight: 500;
     text-align: center;
-    color: #374151;
+    color: var(--text);
 }
 
 // About Section
 .user-about-section {
     .admin-notes {
-        background: #fef3c7;
-        border: 1px solid #f59e0b;
+        background: var(--yellow-bg);
+        border: 1px solid var(--yellow);
         border-radius: 8px;
         padding: 0.75rem 1rem;
         margin-bottom: 1rem;
         font-size: 0.9rem;
 
-        i { color: #d97706; }
+        i { color: var(--yellow); }
     }
 
     .about-content {
-        background: $background_light_gray;
+        background: var(--bg-soft);
         border-radius: 10px;
         padding: 1rem 1.25rem;
     }
 
     .no-about-text {
-        color: #9ca3af;
+        color: var(--muted);
         font-style: italic;
         padding: 1rem;
         text-align: center;
-        background: $background_light_gray;
+        background: var(--bg-soft);
         border-radius: 10px;
 
         i {
@@ -695,14 +695,14 @@ a.edit-profile {
     .section-title {
         font-size: 1rem;
         font-weight: 600;
-        color: #374151;
+        color: var(--text);
         margin: 0 0 0.75rem 0;
         display: flex;
         align-items: center;
         gap: 0.5rem;
 
         i {
-            color: $theme_color;
+            color: var(--amber);
             font-size: 0.9rem;
         }
     }
@@ -760,7 +760,7 @@ a.edit-profile {
     .user-profile-img {
         width: 145px;
         height: 145px;
-        border: 3px solid white;
+        border: 3px solid var(--panel);
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     }
 
@@ -786,7 +786,7 @@ a.edit-profile {
         transition: all 0.2s ease;
 
         &.follow {
-            background: #22c55e;
+            background: var(--green);
             color: white;
 
             &:hover {
@@ -795,7 +795,7 @@ a.edit-profile {
         }
 
         &.unfollow {
-            background: #ef4444;
+            background: var(--red);
             color: white;
 
             &:hover {
@@ -804,7 +804,7 @@ a.edit-profile {
         }
 
         &.message {
-            background: #3b82f6;
+            background: var(--blue);
             color: white;
 
             &:hover {
@@ -814,7 +814,7 @@ a.edit-profile {
     }
 
     .sidebar-contest-stats {
-        background: $background_light_gray;
+        background: var(--bg-soft);
         border-radius: 10px;
         padding: 0.75rem;
         margin-top: 1rem;
@@ -826,12 +826,12 @@ a.edit-profile {
             padding: 0.4rem 0;
 
             &:not(:last-child) {
-                border-bottom: 1px solid $border_gray;
+                border-bottom: 1px solid var(--border);
             }
 
             .stat-label {
                 font-size: 0.8rem;
-                color: #6b7280;
+                color: var(--muted);
             }
 
             .stat-value {
@@ -895,7 +895,7 @@ a.edit-profile {
 
 
 .profile-card {
-    border: 1px solid #ddd;
+    border: 1px solid var(--border);
     border-radius: 8px;
     overflow: hidden;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -906,7 +906,7 @@ a.edit-profile {
     }
 
     .card-header {
-        background-color: #f7f7f7;
+        background-color: var(--panel-2);
         text-align: center;
         padding: 10px;
     }
@@ -957,7 +957,7 @@ a.edit-profile {
         background-color: hsla(30, 4%, 91%, .7);
         border-radius: 50%;
         bottom: .5rem;
-        color: black;
+        color: var(--text);
         font-size: 1em;
         line-height: 1;
         padding: 0.8em 0;

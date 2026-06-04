@@ -1,7 +1,8 @@
 {% extends "course/base.html" %}
+{% from "course/_section_badge.html" import section_badge %}
 
 {% block two_col_media %}
-  <link rel="stylesheet" href="{{ static('course.css') }}">
+  <link rel="stylesheet" href="{{ static('course.css') }}?v=8">
 {% endblock %}
 
 {% block js_media %}
@@ -10,92 +11,201 @@
       $('.time-remaining').each(function () {
         count_down($(this));
       });
+
+      // ---- Roadmap: show / hide the whole section ----
+      var map = document.getElementById('c-rmap-vp');
+      document.querySelectorAll('[data-rm="section"]').forEach(function (b) {
+        b.addEventListener('click', function () {
+          if (!map) return;
+          var hidden = map.classList.toggle('is-hidden');
+          b.innerHTML = hidden
+            ? '<i class="fa fa-chevron-down"></i> {{ _("Hiện") }}'
+            : '<i class="fa fa-chevron-up"></i> {{ _("Ẩn") }}';
+        });
+      });
     });
   </script>
 {% endblock %}
 
 {% block middle_content %}
   <div class="course-detail-page">
-    <center>
-      <h2>{{title}}</h2>
-    </center>
+    <div class="c-page-head">
+      {% if course.level %}<span class="c-eyebrow">{{ _('Level') }} {{ course.level }} · {{ _('Lộ trình') }}</span>{% endif %}
+      <h1>{{ title }}</h1>
+    </div>
 
-    {% if user_role == 'ST' %}
-      <div class="course-leave-form">
-        <form method="post" action="{{ url('course_leave', course.slug) }}">
+    {% set cst = course_section_total %}
+    <div class="c-course-hero">
+      {% if course.level %}<div class="c-course-hero-badge">{{ course.level }}</div>{% endif %}
+      <div class="c-course-ring" style="--pct: {{ cst['percentage']|floatformat(0) }}">
+        <span class="c-course-ring-val">{{ cst['percentage']|floatformat(0) }}<small>%</small></span>
+      </div>
+      <div class="c-course-hero-body">
+        <div class="c-course-hero-label">{{ _('Tiến độ tổng') }}</div>
+        <div class="c-course-hero-pts">
+          {{ cst['sections_done'] }} / {{ cst['sections_total'] }} {{ _('phần đã học') }}
+          <span class="c-course-hero-sub">· {{ lessons|length }} {{ _('module') }}</span>
+        </div>
+        <div class="c-rm-bar"><i style="width: {{ cst['percentage'] }}%"></i></div>
+      </div>
+      {% if user_role == 'ST' %}
+        <form method="post" action="{{ url('course_leave', course.slug) }}" class="c-course-hero-leave">
           {% csrf_token %}
-          <button type="submit" class="action-btn background-red"
+          <button type="submit" class="c-btn ghost"
                   onclick="return confirm('{{ _('Are you sure you want to leave this course?') }}')">
-            <i class="fa fa-sign-out"></i> {{ _('Leave Course') }}
+            <i class="fa fa-sign-out"></i> {{ _('Rời khoá') }}
           </button>
         </form>
-      </div>
+      {% endif %}
+    </div>
+
+    {% if course.about %}
+      <details class="c-course-about" open>
+        <summary><i class="fa fa-circle-info"></i> {{ _('Giới thiệu') }}</summary>
+        <div class="c-course-about-body content-description">{{ course.about|markdown(breaks=False)|reference|str|safe }}</div>
+      </details>
     {% endif %}
 
-    <h3 class="course-content-title">{{_("About")}}</h3>
-    <div>
-      {{ course.about|markdown|reference|str|safe }}
-    </div>
     {% if lessons %}
-      <br>
-      <h3 class="course-content-title">{{_("Lessons")}}</h3>
-      <ul class="lesson-list">
+      {# ---- Visual roadmap (tree graph, roadmap.sh style) ---- #}
+      <div class="c-rm-headrow">
+        <h3 class="c-rm-heading"><i class="fa fa-route"></i> {{ _('Lộ trình') }}</h3>
+        <button type="button" class="c-rmap-btn wide" data-rm="section"><i class="fa fa-chevron-up"></i> {{ _('Ẩn') }}</button>
+      </div>
+      <div class="c-rmap" id="c-rmap-vp">
         {% for lesson in lessons %}
           {% set is_locked = lesson_lock_status.get(lesson.id, false) %}
-          {% set progress = lesson_progress[lesson.id] %}
-          {% if is_locked %}
-            <li class="lesson-locked">
-              <div class="lesson-title">
-                <i class="fa fa-lock lesson-lock-icon"></i>
-                {{ lesson.title }}
-                <div class="lesson-points">
-                  <span class="locked-text">{{ _('Locked') }}</span>
-                </div>
-              </div>
-              <div class="prerequisite-info">
-                <i class="fa fa-info-circle"></i>
-                {{ _('Prerequisites:') }}
-                {% set prereqs = lesson_prerequisites_info.get(lesson.id, []) %}
-                {% if prereqs %}
-                  {% for source_order, source_title, required_pct in prereqs %}
-                    <span class="prereq-item">
-                      {{ source_title }} ({{ required_pct|floatformat(0) }}%){% if not loop.last %}, {% endif %}
-                    </span>
+          {% set pct = module_progress[lesson.id]['percentage'] %}
+          {% set state = 'locked' if is_locked else ('done' if pct >= 100 else ('active' if pct > 0 else 'open')) %}
+          {% set sections = lesson.get_sections() %}
+          {% set on_right = loop.index0 % 2 == 0 %}
+          <div class="c-rmap-row {{ 'right' if on_right else 'left' }}">
+            <div class="c-rmap-side a">
+              {% if sections and not on_right %}
+                <div class="c-rmap-group">
+                  {% for sec in sections %}
+                    {% set st = section_status.get(sec.id) %}
+                    <a class="c-rmap-leaf{{ ' is-done' if st and st.done }}{{ ' is-locked' if is_locked }}"
+                       href="{% if is_locked %}#mod-{{ lesson.id }}{% else %}{{ url('course_section_detail', course.slug, lesson.id, sec.id) }}{% endif %}">{{ sec.title }}</a>
                   {% endfor %}
-                {% else %}
-                  {{ _('Complete prerequisites first') }}
-                {% endif %}
-              </div>
-            </li>
-          {% else %}
-            <a href="{{url('course_lesson_detail', course.slug, lesson.id)}}">
-              <li>
-                <div class="lesson-title">
-                  {{ lesson.title }}
-                  <div class="lesson-points">
-                    {% if progress['total_points'] %}
-                      {{(progress['achieved_points'] / progress['total_points'] * lesson.points) | floatformat(1)}} /
-                      {{lesson.points}}
-                    {% else %}
-                      0 / {{lesson.points}}
-                    {% endif %}
-                  </div>
                 </div>
-                <div class="progress-container">
-                  <div class="progress-bar" style="width: {{progress['percentage']}}%;">
-                    {{progress['percentage']|floatformat(0)}}%</div>
+              {% endif %}
+            </div>
+            <div class="c-rmap-spine">
+              <a class="c-rmap-node {{ state }}" href="#mod-{{ lesson.id }}">
+                <span class="c-rmap-num">
+                  {% if state == 'done' %}<i class="fa fa-check"></i>
+                  {% elif state == 'locked' %}<i class="fa fa-lock"></i>
+                  {% else %}{{ loop.index }}{% endif %}
+                </span>
+                <span class="c-rmap-t">{{ lesson.title.split('—')|last|trim }}</span>
+              </a>
+            </div>
+            <div class="c-rmap-side b">
+              {% if sections and on_right %}
+                <div class="c-rmap-group">
+                  {% for sec in sections %}
+                    {% set st = section_status.get(sec.id) %}
+                    <a class="c-rmap-leaf{{ ' is-done' if st and st.done }}{{ ' is-locked' if is_locked }}"
+                       href="{% if is_locked %}#mod-{{ lesson.id }}{% else %}{{ url('course_section_detail', course.slug, lesson.id, sec.id) }}{% endif %}">{{ sec.title }}</a>
+                  {% endfor %}
                 </div>
-              </li>
-            </a>
-          {% endif %}
+              {% endif %}
+            </div>
+          </div>
         {% endfor %}
-      </ul>
+      </div>
+
+      {# ---- Checklist (modules + expandable sections) ---- #}
+      <h3 class="c-rm-heading"><i class="fa fa-list-check"></i> {{ _('Danh sách bài học') }}</h3>
+      <ol class="c-roadmap">
+        {% for lesson in lessons %}
+          {% set is_locked = lesson_lock_status.get(lesson.id, false) %}
+          {% set mp = module_progress[lesson.id] %}
+          {% set pct = mp['percentage'] %}
+          {% set state = 'locked' if is_locked else ('done' if pct >= 100 else ('active' if pct > 0 else 'open')) %}
+          {% set sections = lesson.get_sections() %}
+          <li class="c-rm-node {{ state }}" id="mod-{{ lesson.id }}">
+            <div class="c-rm-rail">
+              <span class="c-rm-dot">
+                {% if state == 'done' %}<i class="fa fa-check"></i>
+                {% elif state == 'locked' %}<i class="fa fa-lock"></i>
+                {% else %}{{ loop.index }}{% endif %}
+              </span>
+            </div>
+
+            {% if is_locked %}
+              <div class="c-rm-card">
+                <div class="c-rm-top">
+                  <span class="c-rm-title">{{ lesson.title }}</span>
+                  <span class="c-rm-state"><i class="fa fa-lock"></i> {{ _('Đã khoá') }}</span>
+                </div>
+                <div class="c-rm-prereq">
+                  <i class="fa fa-info-circle"></i> {{ _('Cần hoàn thành trước:') }}
+                  {% set prereqs = lesson_prerequisites_info.get(lesson.id, []) %}
+                  {% if prereqs %}
+                    {% for source_order, source_title, required_pct in prereqs %}
+                      <b>{{ source_title }}</b> ({{ required_pct|floatformat(0) }}%){% if not loop.last %}, {% endif %}
+                    {% endfor %}
+                  {% else %}{{ _('các module tiên quyết') }}{% endif %}
+                </div>
+              </div>
+            {% else %}
+              <details class="c-rm-card{% if loop.first %} open{% endif %}"{% if loop.first %} open{% endif %}>
+                <summary class="c-rm-summary">
+                  <div class="c-rm-top">
+                    <span class="c-rm-title">{{ lesson.title }}</span>
+                    <span class="c-rm-pts">{{ mp['sections_done'] }} / {{ mp['sections_total'] }} {{ _('phần') }}</span>
+                    <i class="fa fa-chevron-down c-rm-chev"></i>
+                  </div>
+                  <div class="c-rm-bar"><i style="width: {{ pct }}%"></i></div>
+                  <div class="c-rm-pct">{{ pct|floatformat(0) }}% · {{ mp['sections_done'] }}/{{ mp['sections_total'] }} {{ _('phần đã học') }}</div>
+                </summary>
+
+                <div class="c-rm-body">
+                  {% if lesson.content %}<p class="c-rm-intro">{{ lesson.content }}</p>{% endif %}
+                  {% if sections %}
+                    <div class="c-rm-secs">
+                      {% for sec in sections %}
+                        {% set st = section_status.get(sec.id) %}
+                        <div class="c-rm-sec {{ 'is-done' if st and st.done }}">
+                          <a class="c-rm-sec-h" href="{{ url('course_section_detail', course.slug, lesson.id, sec.id) }}"
+                             title="{{ _('Mở phần này') }}">
+                            <span class="c-rm-sec-n">{% if st and st.done %}<i class="fa fa-check"></i>{% else %}{{ loop.index }}{% endif %}</span>
+                            <span class="c-rm-sec-t">{{ sec.title }}</span>
+                            {{ section_badge(st) }}
+                            <i class="fa fa-arrow-right c-rm-sec-go"></i>
+                          </a>
+                          <div class="c-rm-sec-actions">
+                            {% if sec.theory %}
+                              <details class="c-rm-theory">
+                                <summary><i class="fa fa-book-open"></i> {{ _('Lý thuyết') }}</summary>
+                                <div class="content-description">{{ sec.theory|markdown(breaks=False)|reference|str|safe }}</div>
+                              </details>
+                            {% else %}
+                              <span class="c-rm-soon"><i class="fa fa-book-open"></i> {{ _('Lý thuyết: đang biên soạn') }}</span>
+                            {% endif %}
+                            <a class="c-rm-ex" href="{{ url('course_lesson_detail', course.slug, lesson.id) }}">
+                              <i class="fa fa-dumbbell"></i> {{ _('Bài tập') }}
+                            </a>
+                          </div>
+                        </div>
+                      {% endfor %}
+                    </div>
+                  {% endif %}
+                  <a class="c-btn ghost c-rm-open" href="{{ url('course_lesson_detail', course.slug, lesson.id) }}">
+                    {{ _('Mở bài học đầy đủ') }} <i class="fa fa-arrow-right"></i>
+                  </a>
+                </div>
+              </details>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ol>
     {% endif %}
     {% if course_contests %}
-      <br>
-      <h3 class="course-content-title">{{_("Contests")}}</h3>
-      <br>
-      <table class="table striped">
+      <h3 class="c-rm-heading">{{_("Contests")}}</h3>
+      <div class="c-tbl-wrap"><table class="c-tbl">
         <thead>
           <tr>
             <th>{{_("Name")}}</th>
@@ -147,17 +257,7 @@
             </tr>
           {% endfor %}
         </tbody>
-      </table>
+      </table></div>
     {% endif %}
-    <br>
-    <h3 class="course-content-title">
-      {% set achieved_points = total_progress['achieved_points'] %}
-      {% set total_points = total_progress['total_points'] %}
-      {% set percentage = total_progress['percentage'] %}
-      {{_("Total achieved points")}}:
-      <span class="course-total-points">
-        {{ achieved_points | floatformat(2) }} / {{ total_points }} ({{percentage|floatformat(1)}}%)
-      </span>
-    </h3>
   </div>
 {% endblock %}

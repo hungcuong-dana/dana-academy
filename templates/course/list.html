@@ -1,7 +1,7 @@
 {% extends "three-column-content.html" %}
 
 {% block three_col_media %}
-  <link rel="stylesheet" href="{{ static('course.css') }}">
+  <link rel="stylesheet" href="{{ static('course.css') }}?v=7">
 {% endblock %}
 
 {% block js_media %}
@@ -25,8 +25,7 @@
       });
 
       $('#go').click(clean_submit);
-
-      $('#role_filter').select2();
+      $('#role_filter').on('change', clean_submit);
     });
   </script>
 {% endblock %}
@@ -35,83 +34,119 @@
   {% include "course/list_left_sidebar.html" %}
 {% endblock %}
 
-{% block right_sidebar %}
-  <div id="content-right" class="courses right-sidebar">
-    {% include "course/search-form.html" %}
-  </div>
-{% endblock %}
+{# search moved inline into the section header below; drop the empty right column #}
+{% block middle_right_extra_class %} course-fullwidth{% endblock %}
 
 {% block middle_content %}
   <div class="course-list-page">
+    {% if level_courses %}
+      <section class="c-levels-wrap">
+        <div class="c-page-head">
+          <span class="c-eyebrow">{{ _('Learning path') }}</span>
+          <h1>{{ _('Lộ trình theo cấp độ') }}</h1>
+          <p class="sub">{{ _('Hệ cấp độ kiểu bida: K → C → B → A → Pro. Mỗi cấp là một khoá học riêng.') }}</p>
+        </div>
+        <div class="c-levels">
+          {% for course in level_courses %}
+            {% set enrolled = course.id in enrolled_course_ids %}
+            {% if course.is_coming_soon %}
+              <div class="c-level-card is-soon" aria-disabled="true">
+                <div class="c-level-top">
+                  <div class="c-level-badge">{{ course.level }}</div>
+                  <div class="c-level-name">{{ course.name }}</div>
+                </div>
+                <div class="c-level-desc">{{ course.about|markdown(breaks=False)|striptags|truncate(170) }}</div>
+                <span class="c-level-state"><i class="fa fa-lock"></i> {{ _('Sắp ra mắt') }}</span>
+              </div>
+            {% else %}
+              <a href="{{ url('course_detail', course.slug) }}" class="c-level-card is-live">
+                <div class="c-level-top">
+                  <div class="c-level-badge">{{ course.level }}</div>
+                  <div class="c-level-name">{{ course.name }}</div>
+                </div>
+                <div class="c-level-desc">{{ course.about|markdown(breaks=False)|striptags|truncate(170) }}</div>
+                <span class="c-level-state ok">
+                  {% if enrolled %}<i class="fa fa-play"></i> {{ _('Tiếp tục') }}
+                  {% else %}{{ _('Vào học') }} <i class="fa fa-arrow-right"></i>{% endif %}
+                </span>
+              </a>
+            {% endif %}
+          {% endfor %}
+        </div>
+      </section>
+    {% endif %}
+
+    <div class="c-course-head">
+      <h1>{% if current_tab == 'my' %}{{ _('Khoá của tôi') }}{% else %}{{ _('Khoá có thể tham gia') }}{% endif %}</h1>
+      <form id="filter-form" name="form" action="" method="get" class="c-course-search">
+        {% if current_tab %}<input type="hidden" name="tab" value="{{ current_tab }}">{% endif %}
+        <div class="c-course-search-field">
+          <i class="fa fa-search"></i>
+          <input id="search" class="c-inp" type="text" name="search" value="{{ search_query or '' }}"
+                 placeholder="{{ _('Tìm khoá học…') }}">
+        </div>
+        {% if current_tab == 'my' and request.user.is_authenticated %}
+          <select id="role_filter" class="c-inp" name="role_filter">
+            <option value="">{{ _('Tất cả vai trò') }}</option>
+            <option value="teaching" {% if role_filter=='teaching' %}selected{% endif %}>{{ _('Giảng dạy + Trợ giảng') }}</option>
+            <option value="student" {% if role_filter=='student' %}selected{% endif %}>{{ _('Học viên') }}</option>
+          </select>
+        {% endif %}
+        <button id="go" type="submit" class="c-btn primary">{{ _('Tìm kiếm') }}</button>
+      </form>
+    </div>
+
     {% if courses %}
-      <div class="course-list">
+      <div class="c-cv-grid">
         {% for course in courses %}
-          <div class="course-item">
-            <div class="course-image">
+          <div class="c-cv">
+            <a href="{{ url('course_detail', course.slug) }}" class="c-cv-cover {{ 'has-img' if course.course_image }}">
               {% if course.course_image %}
                 <img src="{{ course.course_image.url }}" alt="{{ course.name }}" loading="lazy">
               {% else %}
-                {{ course.name|first|upper }}
+                <span class="c-cv-cover-badge">{{ course.level or course.name|first|upper }}</span>
               {% endif %}
-            </div>
+              {% if course.level %}<span class="c-cv-lvl">{{ course.level }}</span>{% endif %}
+            </a>
+            <div class="c-cv-body">
+              <a href="{{ url('course_detail', course.slug) }}" class="c-cv-name">{{ course.name }}</a>
 
-            <div class="course-content">
-              <div class="course-header">
-                <div class="course-title">
-                  <a href="{{ url('course_detail', course.slug) }}" class="course-name">
-                    {{ course.name }}
-                  </a>
-                </div>
-
-                <div class="course-badges">
-                  {% if current_tab == 'joinable' and request.user.is_authenticated %}
-                    <div class="course-join-form">
-                      <form method="post" action="{{ url('course_join', course.slug) }}">
-                        {% csrf_token %}
-                        <button type="submit" class="action-btn background-green">
-                          {{ _('Join') }}
-                        </button>
-                      </form>
-                    </div>
-                  {% else %}
-                    {% if course.is_open %}
-                      <span class="badge badge-open">{{ _('Open') }}</span>
-                    {% else %}
-                      <span class="badge badge-closed">{{ _('Closed') }}</span>
-                    {% endif %}
-                  {% endif %}
-                </div>
+              {% set r = course.rating|float %}
+              <div class="c-cv-stars" title="{{ '%.1f'|format(r) }}/5">
+                {% for i in range(1, 6) %}
+                  {% if r >= i %}<i class="fa fa-star"></i>
+                  {% elif r >= i - 0.5 %}<i class="fa fa-star-half-alt"></i>
+                  {% else %}<i class="fa fa-star empty"></i>{% endif %}
+                {% endfor %}
+                <span class="c-cv-rate">{{ '%.1f'|format(r) }}</span>
               </div>
 
               {% if course.about %}
-                <div class="course-description">
-                  {{ course.about|truncatewords(25) }}
-                </div>
+                <p class="c-cv-desc">{{ course.about|markdown(breaks=False)|striptags|truncatewords(20) }}</p>
               {% endif %}
 
-              <div class="course-meta">
+              <div class="c-cv-meta">
                 {% set teachers = course.get_teachers() %}
                 {% if teachers %}
-                  <div class="course-meta-item">
-                    <i class="fa fa-user-tie"></i>
-                    <span>
-                      {{ link_users(teachers[:2]) }}
-                      {% if teachers|length > 2 %}
-                        {{ _('and %(count)d more', count=teachers|length - 2) }}
-                      {% endif %}
-                    </span>
-                  </div>
+                  <span><i class="fa fa-user-tie"></i>{{ link_users(teachers[:1]) }}{% if teachers|length > 1 %} +{{ teachers|length - 1 }}{% endif %}</span>
                 {% endif %}
-
                 {% if course.organizations.exists() %}
-                  <div class="course-meta-item">
-                    <i class="fa fa-building"></i>
-                    <div class="course-organizations">
-                      {% for org in course.organizations.all() %}
-                        {% include "organization/tag.html" %}
-                      {% endfor %}
-                    </div>
-                  </div>
+                  <span><i class="fa fa-building"></i>{% for org in course.organizations.all() %}{% include "organization/tag.html" %}{% endfor %}</span>
+                {% endif %}
+              </div>
+
+              <div class="c-cv-foot">
+                {% if course.id in pending_course_ids %}
+                  <span class="c-tag amber"><i class="fa fa-user-clock"></i> {{ _('Chờ duyệt') }}</span>
+                {% elif current_tab == 'joinable' and request.user.is_authenticated and course.is_open and not course.is_coming_soon %}
+                  <form method="post" action="{{ url('course_join', course.slug) }}" class="course-join-form">
+                    {% csrf_token %}
+                    <button type="submit" class="c-btn green block">{{ _('Đăng ký') }}</button>
+                  </form>
+                {% elif course.is_open %}
+                  <span class="c-tag amber">{{ _('Mở') }}</span>
+                {% else %}
+                  <span class="c-tag">{{ _('Đóng') }}</span>
                 {% endif %}
               </div>
             </div>
@@ -125,7 +160,7 @@
         </div>
       {% endif %}
     {% else %}
-      <div class="no-courses">
+      <div class="c-notice is-empty">
         {% if current_tab == 'my' %}
           <h3>{{ _('No courses enrolled') }}</h3>
           <p>{{ _('You are not enrolled in any courses yet. Browse available courses and join to start learning!') }}</p>

@@ -1,7 +1,7 @@
 @use "vars" as *;
 
 .quiz-import-page {
-    background: white;
+    background: var(--panel);
     padding: 1.5em 2em;
     border-radius: 0.5em;
 
@@ -10,7 +10,7 @@
     }
 
     .import-upload-area {
-        border: 2px dashed $border_gray;
+        border: 2px dashed var(--border);
         border-radius: 8px;
         padding: 20px;
         text-align: center;
@@ -18,7 +18,7 @@
         transition: border-color 0.2s;
 
         &:hover {
-            border-color: $theme_color;
+            border-color: var(--amber);
         }
 
         input[type="file"] {
@@ -40,22 +40,22 @@
         padding: 12px 15px;
         border-radius: 6px;
         display: none;
-        border: 1px solid $border_gray;
+        border: 1px solid var(--border);
 
         &.show {
             display: block;
         }
 
         &.analyzing {
-            border-left: 4px solid $theme_color;
+            border-left: 4px solid var(--amber);
         }
 
         &.done {
-            border-left: 4px solid green;
+            border-left: 4px solid var(--green);
         }
 
         &.error {
-            border-left: 4px solid $announcement_red;
+            border-left: 4px solid var(--red);
         }
     }
 
@@ -68,7 +68,7 @@
     }
 
     .import-summary-box {
-        border: 1px solid $border_gray;
+        border: 1px solid var(--border);
         border-radius: 6px;
         padding: 15px;
         margin-bottom: 15px;
@@ -84,7 +84,7 @@
         align-items: center;
         gap: 15px;
         padding: 10px 15px;
-        border: 1px solid $border_gray;
+        border: 1px solid var(--border);
         border-radius: 6px;
         margin-bottom: 15px;
         flex-wrap: wrap;
@@ -104,7 +104,7 @@
 
     // Question cards
     .import-question-card {
-        border: 1px solid $border_gray;
+        border: 1px solid var(--border);
         border-radius: 6px;
         margin: 8px 0;
         overflow: hidden;
@@ -118,7 +118,7 @@
         cursor: pointer;
 
         &:hover {
-            background: $background_light_gray;
+            background: var(--row-hover);
         }
     }
 
@@ -138,7 +138,7 @@
 
     .import-question-title {
         flex: 1;
-        border: 1px solid $border_gray;
+        border: 1px solid var(--border);
         border-radius: 4px;
         padding: 4px 8px;
         font-size: 0.95em;
@@ -149,7 +149,7 @@
     .import-question-body {
         display: none;
         padding: 10px 15px 15px;
-        border-top: 1px solid $border_gray;
+        border-top: 1px solid var(--border);
         color: inherit;
 
         &.show {
@@ -178,7 +178,7 @@
         select,
         textarea {
             width: 100%;
-            border: 1px solid $border_gray;
+            border: 1px solid var(--border);
             border-radius: 4px;
             padding: 6px 8px;
             background: transparent;
@@ -225,7 +225,7 @@
         .dmmd-preview-content {
             min-height: 40px;
             padding: 8px;
-            border: 1px solid $border_gray;
+            border: 1px solid var(--border);
             border-radius: 4px;
             max-height: 400px;
             overflow-y: auto;
@@ -254,7 +254,7 @@
 
     .import-sa-answer-input {
         padding: 4px 10px;
-        border: 1px solid $border_gray;
+        border: 1px solid var(--border);
         border-radius: 4px;
         font-family: monospace;
         font-size: 0.9em;
@@ -265,7 +265,7 @@
 
     .import-sa-add-btn {
         padding: 4px 10px;
-        border: 1px dashed $border_gray;
+        border: 1px dashed var(--border);
         border-radius: 4px;
         background: transparent;
         color: inherit;
@@ -274,7 +274,7 @@
 
         &:hover {
             opacity: 1;
-            border-color: $theme_color;
+            border-color: var(--amber);
         }
     }
 
@@ -284,7 +284,7 @@
     }
 
     .import-created-link {
-        color: $color-success;
+        color: var(--green);
         font-weight: bold;
         font-size: 0.9em;
         white-space: nowrap;
@@ -309,7 +309,7 @@
 
     // Quiz creation section
     .import-quiz-section {
-        border: 1px solid $border_gray;
+        border: 1px solid var(--border);
         border-radius: 6px;
         margin-top: 20px;
     }
@@ -322,7 +322,7 @@
         cursor: pointer;
 
         &:hover {
-            background: $background_light_gray;
+            background: var(--row-hover);
         }
 
         i {
@@ -335,7 +335,7 @@
     .import-quiz-body {
         display: none;
         padding: 12px 15px 15px;
-        border-top: 1px solid $border_gray;
+        border-top: 1px solid var(--border);
 
         &.show {
             display: block;
@@ -353,14 +353,14 @@
         }
 
         .required {
-            color: $announcement_red;
+            color: var(--red);
         }
 
         input[type="text"],
         input[type="number"],
         textarea {
             width: 100%;
-            border: 1px solid $border_gray;
+            border: 1px solid var(--border);
             border-radius: 4px;
             padding: 6px 10px;
             background: transparent;
@@ -386,7 +386,7 @@
     }
 
     .import-field-error {
-        border-color: $announcement_red !important;
+        border-color: var(--red) !important;
     }
 
     #quiz-create-status {

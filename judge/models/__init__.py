@@ -70,8 +70,11 @@ from judge.models.bookmark import BookMark
 from judge.models.course import (
     Course,
     CourseRole,
+    CourseJoinRequest,
     CourseLesson,
     CourseLessonProblem,
+    CourseLessonSection,
+    CourseSectionProgress,
     CourseContest,
     CourseLessonPrerequisite,
     CourseLessonProgress,

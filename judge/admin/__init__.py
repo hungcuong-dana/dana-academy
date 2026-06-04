@@ -33,6 +33,10 @@ from judge.admin.course import (
     CourseAdmin,
     CourseLessonPrerequisiteAdmin,
     CourseLessonProgressAdmin,
+    CourseLessonSectionAdmin,
+    CourseJoinRequestAdmin,
+    CourseLessonProblemAdmin,
+    CourseSectionProgressAdmin,
 )
 from judge.admin.quiz import (
     QuizQuestionAdmin,
@@ -66,6 +70,10 @@ from judge.models import (
     Course,
     CourseLessonPrerequisite,
     CourseLessonProgress,
+    CourseLessonSection,
+    CourseJoinRequest,
+    CourseLessonProblem,
+    CourseSectionProgress,
     ContestsSummary,
     OfficialContestCategory,
     OfficialContestLocation,
@@ -117,6 +125,10 @@ admin.site.register(Ticket, TicketAdmin)
 admin.site.register(Course, CourseAdmin)
 admin.site.register(CourseLessonPrerequisite, CourseLessonPrerequisiteAdmin)
 admin.site.register(CourseLessonProgress, CourseLessonProgressAdmin)
+admin.site.register(CourseLessonSection, CourseLessonSectionAdmin)
+admin.site.register(CourseJoinRequest, CourseJoinRequestAdmin)
+admin.site.register(CourseLessonProblem, CourseLessonProblemAdmin)
+admin.site.register(CourseSectionProgress, CourseSectionProgressAdmin)
 admin.site.unregister(User)
 admin.site.register(User, UserAdmin)
 admin.site.register(ContestsSummary, ContestsSummaryAdmin)

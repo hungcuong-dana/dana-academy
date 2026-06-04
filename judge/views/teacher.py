@@ -1,4 +1,4 @@
-"""Teacher Portal views — class management for Dana Academy.
+"""Teacher Portal views — class management for Koddy Academy.
 
 Teachers (Profile.display_rank == "teacher") and staff users access /teacher/
 (non-staff teachers get redirected here by middleware).

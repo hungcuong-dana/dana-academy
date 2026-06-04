@@ -8,7 +8,7 @@
     width: 100%;
     box-sizing: border-box;
     display: flex;
-    background: white;
+    background: var(--panel);
 
     .info-contest:first-child, .info-contest:nth-child(2) {
         margin-right: 15px;
@@ -30,35 +30,35 @@
     width: 100%;
 
     th {
-        border-bottom: 1px solid $border_gray;
+        border-bottom: 1px solid var(--border);
 
         &.sun {
-            border-left: 1px solid $border_gray;
+            border-left: 1px solid var(--border);
         }
 
         &.sun, &.mon, &.tue, &.wed, &.thu, &.fri, &.sat {
             font-size: 0.95em;
-            border-right: 1px solid $border_gray;
-            background: $background_light_gray;
+            border-right: 1px solid var(--border);
+            background: var(--bg-soft);
         }
     }
 
     td {
         height: 110px;
         width: 170px;
-        color: #000;
+        color: var(--text);
         vertical-align: top;
         text-align: right;
         font-size: 0.75em;
-        border-right: 1px solid $border_gray;
-        border-bottom: 1px solid $border_gray;
+        border-right: 1px solid var(--border);
+        border-bottom: 1px solid var(--border);
         transition-duration: 0.2s;
 
         .num {
             font-size: 1.1em;
             font-weight: bold;
             display: block;
-            border-bottom: 1px dashed $border_gray;
+            border-bottom: 1px dashed var(--border);
             padding-right: 0.2em;
             margin-bottom: 0.4em;
         }
@@ -79,7 +79,7 @@
 
                 a {
                     text-decoration: none;
-                    color: #222;
+                    color: var(--text);
 
                     &:hover {
                         text-decoration: underline;
@@ -103,7 +103,7 @@
     }
 
     .noday {
-        background: #f1f1f1;
+        background: var(--bg-soft);
     }
 
     .today {
@@ -111,7 +111,7 @@
     }
 
     tr td:first-child {
-        border-left: 1px solid #aaa;
+        border-left: 1px solid var(--border);
     }
 }
 
@@ -120,22 +120,22 @@
     text-align: center;
     padding: 1em 1.5em;
     margin-bottom: 1em;
-    background: $background_light_gray;
+    background: var(--panel-2);
     border-radius: 8px;
-    border-left: 4px solid $theme_color;
+    border-left: 4px solid var(--amber);
 
     .contest-title {
         font-size: 1.4em;
         font-weight: 700;
         margin: 0 0 0.5em 0;
-        color: #111;
+        color: var(--text);
 
         a {
             color: inherit;
             text-decoration: none;
 
             &:hover {
-                color: $theme_color;
+                color: var(--amber);
             }
         }
     }
@@ -146,16 +146,16 @@
         .status-text {
             font-size: 1.15em;
             font-weight: 600;
-            color: #111;
+            color: var(--text);
         }
 
         .status-ended::before {
             content: '✓ ';
-            color: #6b7280;
+            color: var(--muted);
         }
 
         .status-active {
-            color: $theme_color;
+            color: var(--amber);
 
             &::before {
                 content: '● ';
@@ -164,7 +164,7 @@
         }
 
         .status-upcoming {
-            color: #2563eb;
+            color: var(--blue);
 
             &::before {
                 content: '◷ ';
@@ -174,12 +174,12 @@
 
     .contest-time-info {
         font-size: 0.9em;
-        color: #4b5563;
+        color: var(--text-2);
     }
 
     .contest-freeze-info {
         font-size: 0.85em;
-        color: $announcement_red;
+        color: var(--red);
         margin-top: 0.4em;
         font-weight: 500;
     }
@@ -203,11 +203,11 @@
         padding-bottom: 0.15em;
 
         &:link, &:visited {
-            color: #5B80B9;
+            color: var(--blue);
         }
 
         &:hover {
-            color: #0645AD;
+            color: var(--blue);
         }
     }
 
@@ -248,7 +248,7 @@
         top: 2px;
         right: 10%;
         font-size: 0.6rem;
-        color: #f59e0b;
+        color: var(--amber);
     }
 }
 
@@ -262,7 +262,7 @@
     #users-table {
         border-collapse: collapse;
         border-spacing: 0;
-        background: white;
+        background: var(--panel);
 
         a {
             display: block;
@@ -270,7 +270,7 @@
 
         td {
             padding: 0.45rem 0.4rem;
-            border-bottom: 1px solid $border_gray;
+            border-bottom: 1px solid var(--border);
             vertical-align: middle;
         }
 
@@ -281,7 +281,7 @@
         // Header styling - theme color
         // Header is sticky within the scroll container (top: 0)
         thead th {
-            background: $theme_color;
+            background: var(--amber);
             color: white;
             font-weight: 600;
             padding: 0.5rem 0.4rem;
@@ -324,12 +324,12 @@
 
         // Row styling
         tbody tr {
-            background: white;
+            background: var(--panel);
             transition: background 0.15s ease;
         }
 
         tbody tr:hover {
-            background: $background_light_gray;
+            background: var(--row-hover);
         }
 
         // Last row no border
@@ -355,7 +355,7 @@
 
             td {
                 text-decoration: line-through;
-                color: #9ca3af;
+                color: var(--muted);
             }
         }
     }
@@ -432,7 +432,7 @@
 
     .start-time {
         font-size: 0.7rem;
-        color: #9ca3af;
+        color: var(--muted);
     }
 
     // Username column
@@ -443,7 +443,7 @@
 
         .user-img {
             border-radius: 50%;
-            border: 1px solid $border_gray;
+            border: 1px solid var(--border);
         }
 
         a.user-name {
@@ -452,7 +452,7 @@
             font-size: 0.85rem;
 
             &:hover {
-                color: $theme_color;
+                color: var(--amber);
             }
         }
 
@@ -481,13 +481,13 @@
             width: 1.4em;
             height: 1.4em;
             padding: 0;
-            color: #666;
+            color: var(--text-2);
             opacity: 0.6;
             transition: opacity 0.15s;
 
             &:hover {
                 opacity: 1;
-                color: $theme_color;
+                color: var(--amber);
             }
 
             i.fa {
@@ -496,11 +496,11 @@
         }
 
         .disqualify-participation:hover {
-            color: $announcement_red;
+            color: var(--red);
         }
 
         .un-disqualify-participation:hover {
-            color: #28a745;
+            color: var(--green);
         }
     }
 
@@ -535,7 +535,7 @@
     .solving-time {
         font-size: 0.7rem;
         font-weight: 400;
-        color: #6b7280;
+        color: var(--muted);
         line-height: 1.2;
     }
 
@@ -544,7 +544,7 @@
     .user-table-fullname {
         display: block;
         font-size: 0.8rem;
-        color: #4b5563;
+        color: var(--text-2);
         line-height: 1.3;
         margin-top: 2px;
         font-weight: 400;
@@ -553,7 +553,7 @@
     .school {
         display: block;
         font-size: 0.75rem;
-        color: #6b7280;
+        color: var(--muted);
         line-height: 1.2;
     }
 
@@ -625,19 +625,19 @@
     // Pinned "my row" at top of ranking table
     tr.pinned-row {
         font-weight: 600;
-        border-bottom: 2px solid $border_gray;
+        border-bottom: 2px solid var(--border);
     }
 
     .ranking-search-input {
         width: 200px;
         height: 2em;
         border-radius: 4px;
-        border: 1px solid $border_gray;
+        border: 1px solid var(--border);
         padding: 0 0.5em;
         font-size: 0.8rem;
 
         &:focus {
-            border-color: $theme_color;
+            border-color: var(--amber);
             outline: none;
         }
     }
@@ -648,12 +648,12 @@
         width: 180px;
         height: 2em;
         border-radius: 4px;
-        border: 1px solid $border_gray;
+        border: 1px solid var(--border);
         padding: 0 0.5em;
         font-size: 0.8rem;
 
         &:focus {
-            border-color: $theme_color;
+            border-color: var(--amber);
             outline: none;
         }
     }
@@ -773,7 +773,7 @@
 .no-participations-message {
     text-align: center;
     padding: 2em;
-    color: #6b7280;
+    color: var(--muted);
     font-size: 0.95rem;
 }
 
@@ -816,7 +816,7 @@
 }
 
 .contest-list-sort {
-    color: #7dc7ff;
+    color: var(--blue);
 }
 
 form.contest-join-pseudotab {
@@ -830,7 +830,7 @@ form.contest-join-pseudotab {
     margin-left: auto;
 
     .fa {
-        color: #444;
+        color: var(--text-2);
     }
 
     a + a {
@@ -883,7 +883,7 @@ form.contest-join-pseudotab {
     }
 
     .modal-content {
-        background: white;
+        background: var(--panel);
         border-radius: 8px;
         max-width: 500px;
         width: 90%;
@@ -896,14 +896,14 @@ form.contest-join-pseudotab {
         justify-content: space-between;
         align-items: center;
         padding: 1rem 1.25rem;
-        border-bottom: 1px solid $border_gray;
-        background: $background_light_gray;
+        border-bottom: 1px solid var(--border);
+        background: var(--panel-2);
 
         h3 {
             margin: 0;
             font-size: 1.1rem;
             font-weight: 600;
-            color: $widget_black;
+            color: var(--text);
         }
 
         .modal-close {
@@ -911,12 +911,12 @@ form.contest-join-pseudotab {
             border: none;
             font-size: 1.5rem;
             cursor: pointer;
-            color: #666;
+            color: var(--text-2);
             line-height: 1;
             padding: 0;
 
             &:hover {
-                color: $announcement_red;
+                color: var(--red);
             }
         }
     }
@@ -927,13 +927,13 @@ form.contest-join-pseudotab {
         p {
             margin: 0 0 0.75rem 0;
             font-size: 0.9rem;
-            color: $widget_black;
+            color: var(--text);
         }
 
         textarea {
             width: 100%;
             padding: 0.75rem;
-            border: 1px solid $border_gray;
+            border: 1px solid var(--border);
             border-radius: 4px;
             font-size: 0.9rem;
             resize: vertical;
@@ -943,7 +943,7 @@ form.contest-join-pseudotab {
 
             &:focus {
                 outline: none;
-                border-color: $theme_color;
+                border-color: var(--amber);
             }
         }
     }
@@ -953,19 +953,19 @@ form.contest-join-pseudotab {
         justify-content: flex-end;
         gap: 0.5rem;
         padding: 1rem 1.25rem;
-        border-top: 1px solid $border_gray;
-        background: $background_light_gray;
+        border-top: 1px solid var(--border);
+        background: var(--panel-2);
 
         .btn-default {
             padding: 0.5rem 1rem;
-            border: 1px solid $border_gray;
+            border: 1px solid var(--border);
             border-radius: 4px;
-            background: white;
+            background: var(--panel);
             cursor: pointer;
             font-size: 0.9rem;
 
             &:hover {
-                background: $background_gray;
+                background: var(--bg-soft);
             }
         }
     }
@@ -1027,7 +1027,7 @@ form.contest-join-pseudotab {
 
     hr {
         border: 0;
-        border-top: 1px solid $border_gray;
+        border-top: 1px solid var(--border);
         margin: 1.4em 0 1em;
     }
 

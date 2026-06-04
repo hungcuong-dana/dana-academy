@@ -214,18 +214,25 @@ def _sanitize_iframe_autoplay(soup):
 _markdown_local = threading.local()
 
 
-def _get_markdown_instance():
-    inst = getattr(_markdown_local, "instance", None)
+# Same extensions but WITHOUT nl2br — single newlines do NOT become <br>, so
+# prose (course about / lesson theory) wraps naturally instead of breaking early.
+EXTENSIONS_NO_BR = [e for e in EXTENSIONS if e != "nl2br"]
+
+
+def _get_markdown_instance(breaks=True):
+    attr = "instance" if breaks else "instance_nobr"
+    inst = getattr(_markdown_local, attr, None)
     if inst is None:
         inst = _markdown.Markdown(
-            extensions=EXTENSIONS, extension_configs=EXTENSION_CONFIGS
+            extensions=EXTENSIONS if breaks else EXTENSIONS_NO_BR,
+            extension_configs=EXTENSION_CONFIGS,
         )
-        _markdown_local.instance = inst
+        setattr(_markdown_local, attr, inst)
     return inst
 
 
-def markdown(value, lazy_load=False):
-    md = _get_markdown_instance()
+def markdown(value, lazy_load=False, breaks=True):
+    md = _get_markdown_instance(breaks)
     html = md.reset().convert(value)
 
     html = bleach.clean(html, tags=ALLOWED_TAGS, attributes=ALLOWED_ATTRS)

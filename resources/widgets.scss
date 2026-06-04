@@ -34,7 +34,7 @@
     transition: .3s all ease;
     align-items: center;
     background-clip: padding-box;
-    background-color: $theme_color;
+    background-color: var(--amber);
     border: 1px solid transparent;
     border-radius: .25rem;
     box-shadow: rgba(0, 0, 0, 0.02) 0 1px 3px 0;
@@ -105,7 +105,7 @@
     }
 
     &.btn-darkGreen {
-        background: $theme_color;
+        background: var(--amber);
     }
 
     // class = "unselectable button full small" only appear in online-judge/templates/contest/list.html
@@ -116,18 +116,18 @@
 }
 
 .button:hover {
-    background-color: $theme_color;
+    background-color: var(--amber);
     box-shadow: rgba(0, 0, 0, 0.1) 0 4px 12px;
     transform: translateY(-1px);
 }
 
 .button:focus {
-    background-color: $theme_color;
+    background-color: var(--amber);
     box-shadow: rgba(0, 0, 0, 0.1) 0 4px 12px;
 }
 
 .button:active {
-    background-color: $theme_color;
+    background-color: var(--amber);
     box-shadow: rgba(0, 0, 0, .06) 0 2px 4px;
     transform: translateY(0);
 }
@@ -218,10 +218,10 @@ input {
 
 // Bootstrap-y tabs
 .ul_tab_a_active {
-    color: $theme_color;
+    color: var(--amber);
     cursor: default;
     font-weight: bold;
-    border-bottom: 3px solid $theme_color;
+    border-bottom: 3px solid var(--amber);
     background: transparent;
 }
 
@@ -338,9 +338,9 @@ ul.pagination {
                     font-weight: bold;
                     line-height: 1.42857;
                     text-decoration: none;
-                    color: $theme_color;
+                    color: var(--amber);
                     background-color: $surface-primary;
-                    border: 2px solid $theme_color;
+                    border: 2px solid var(--amber);
                     border-radius: $radius-lg;
                 }
             }
@@ -364,7 +364,7 @@ ul.pagination {
             a {
                 z-index: 2;
                 color: $text-on-primary;
-                background-color: $theme_color;
+                background-color: var(--amber);
                 border-color: transparent;
                 cursor: default;
             }
@@ -506,7 +506,7 @@ ul.select2-selection__rendered {
     display: flex;
 
     .fa {
-        background: $theme_color;
+        background: var(--amber);
         color: $text-on-primary;
         padding: $space-xs;
         margin-right: 8px;
@@ -830,7 +830,7 @@ ul.errorlist {
     }
 
     &:hover {
-        color: $theme_color;
+        color: var(--amber);
         background-color: $color-interactive-hover-bg;
     }
 }
@@ -1075,12 +1075,12 @@ button:hover, button:focus {
         margin: 0;
 
         &:hover {
-            border-color: $theme_color;
+            border-color: var(--amber);
             background: $color-soft-accent-bg;
         }
 
         i {
-            color: $theme_color;
+            color: var(--amber);
             font-size: 1.1em;
         }
 
@@ -1142,11 +1142,11 @@ button:hover, button:focus {
         transition: border-color 0.2s, background 0.2s;
 
         &:hover {
-            border-color: $theme_color;
+            border-color: var(--amber);
             background: $color-soft-accent-bg;
 
             i {
-                color: $theme_color;
+                color: var(--amber);
             }
         }
 
@@ -1381,12 +1381,12 @@ button:hover, button:focus {
         margin: 0;
 
         &:hover {
-            border-color: $theme_color;
+            border-color: var(--amber);
             background: $color-soft-accent-bg;
         }
 
         i {
-            color: $theme_color;
+            color: var(--amber);
             font-size: 1.1em;
         }
 
@@ -1446,13 +1446,13 @@ button:hover, button:focus {
         text-align: center;
 
         &:hover {
-            border-color: $theme_color;
+            border-color: var(--amber);
             background: $color-soft-accent-bg;
         }
 
         i {
             font-size: 2em;
-            color: $theme_color;
+            color: var(--amber);
         }
 
         span {
@@ -1480,7 +1480,7 @@ button:hover, button:focus {
 
         .progress-bar-fill {
             height: 100%;
-            background: $theme_color;
+            background: var(--amber);
             border-radius: $radius-sm;
             width: 0%;
             transition: width 0.2s ease;

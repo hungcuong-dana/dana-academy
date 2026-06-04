@@ -8,8 +8,8 @@
 }
 
 .theme-section {
-    background: $background_light_gray;
-    border: 1px solid $border_gray;
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
     border-radius: $widget_border_radius;
     padding: 20px;
     margin-bottom: 20px;
@@ -17,8 +17,8 @@
     h3 {
         margin-top: 0;
         margin-bottom: 15px;
-        color: $widget_black;
-        border-bottom: 1px solid $border_gray;
+        color: var(--text);
+        border-bottom: 1px solid var(--border);
         padding-bottom: 10px;
 
         i {
@@ -29,7 +29,7 @@
     .section-label {
         font-weight: bold;
         margin-bottom: 10px;
-        color: $widget_black;
+        color: var(--text);
     }
 
     .section-description {
@@ -50,29 +50,29 @@
         flex-direction: column;
         align-items: center;
         padding: 20px 40px;
-        border: 2px solid $border_gray;
+        border: 2px solid var(--border);
         border-radius: $widget_border_radius;
         cursor: pointer;
         transition: all 0.2s ease;
         background: $surface-primary;
 
         &:hover {
-            border-color: $theme_color;
+            border-color: var(--amber);
         }
 
         &.active {
-            border-color: $theme_color;
+            border-color: var(--amber);
             background: color.adjust($theme_color, $lightness: 45%);
         }
 
         i {
             font-size: 2em;
             margin-bottom: 10px;
-            color: $widget_black;
+            color: var(--text);
         }
 
         span {
-            color: $widget_black;
+            color: var(--text);
         }
 
         // Smaller variant for mode buttons
@@ -99,7 +99,7 @@
         max-width: 300px;
         max-height: 150px;
         border-radius: $widget_border_radius;
-        border: 1px solid $border_gray;
+        border: 1px solid var(--border);
         object-fit: cover;
     }
 }
@@ -143,7 +143,7 @@
 .background-card {
     display: block;
     width: 100%;
-    border: 2px solid $border_gray;
+    border: 2px solid var(--border);
     border-radius: $widget_border_radius;
     overflow: hidden;
     cursor: pointer;
@@ -153,7 +153,7 @@
     text-align: left;
 
     &:hover {
-        border-color: $theme_color;
+        border-color: var(--amber);
         transform: scale(1.02);
     }
 
@@ -167,9 +167,9 @@
     .bg-name {
         padding: 8px;
         text-align: center;
-        background: $background_gray;
+        background: var(--panel-2);
         font-size: 0.85em;
-        color: $widget_black;
+        color: var(--text);
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -184,7 +184,7 @@
     align-items: center;
     margin-top: 15px;
     padding-top: 15px;
-    border-top: 1px dashed $border_gray;
+    border-top: 1px dashed var(--border);
 
     input[type="file"] {
         padding: 5px;
@@ -192,8 +192,8 @@
     }
 
     .secondary-btn {
-        background: $background_gray;
-        color: $widget_black;
+        background: var(--panel-2);
+        color: var(--text);
 
         &:hover {
             background: color.adjust($background_gray, $lightness: -5%);
@@ -231,7 +231,7 @@
             position: absolute;
             top: 5px;
             right: 5px;
-            background: $announcement_red;
+            background: var(--red);
             color: $text-on-primary;
             border: none;
             padding: 5px 8px;
@@ -250,7 +250,7 @@
 .custom-upload-section {
     margin-top: 20px;
     padding-top: 15px;
-    border-top: 1px solid $border_gray;
+    border-top: 1px solid var(--border);
 
     .custom-upload-form {
         margin-top: 10px;
@@ -283,7 +283,7 @@
     flex-direction: column;
     align-items: center;
     padding: 12px;
-    border: 2px solid $border_gray;
+    border: 2px solid var(--border);
     border-radius: $widget_border_radius;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -291,18 +291,18 @@
     width: 100%;
 
     &:hover {
-        border-color: $theme_color;
+        border-color: var(--amber);
     }
 
     &.selected {
-        border-color: $theme_color;
+        border-color: var(--amber);
         background: color.adjust($theme_color, $lightness: 45%);
     }
 
     .effect-icon {
         width: 40px;
         height: 40px;
-        background: $background_gray;
+        background: var(--panel-2);
         border-radius: 50%;
         display: flex;
         align-items: center;
@@ -311,12 +311,12 @@
 
         i {
             font-size: 1.2em;
-            color: $widget_black;
+            color: var(--text);
         }
     }
 
     span {
-        color: $widget_black;
+        color: var(--text);
         font-size: 0.85em;
         text-align: center;
     }

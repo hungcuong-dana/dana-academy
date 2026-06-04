@@ -831,6 +831,31 @@ urlpatterns = [
                     name="course_lesson_detail",
                 ),
                 re_path(
+                    r"^/lesson/(?P<id>\d+)/section/add$",
+                    course.CourseSectionAdd.as_view(),
+                    name="course_section_add",
+                ),
+                re_path(
+                    r"^/lesson/(?P<id>\d+)/section/(?P<sid>\d+)$",
+                    course.CourseSectionDetail.as_view(),
+                    name="course_section_detail",
+                ),
+                re_path(
+                    r"^/lesson/(?P<id>\d+)/section/(?P<sid>\d+)/edit$",
+                    course.CourseSectionEdit.as_view(),
+                    name="course_section_edit",
+                ),
+                re_path(
+                    r"^/lesson/(?P<id>\d+)/section/(?P<sid>\d+)/delete$",
+                    course.CourseSectionDelete.as_view(),
+                    name="course_section_delete",
+                ),
+                re_path(
+                    r"^/lesson/(?P<id>\d+)/section/(?P<sid>\d+)/toggle-done$",
+                    course.CourseSectionToggleDone.as_view(),
+                    name="course_section_toggle_done",
+                ),
+                re_path(
                     r"^/lesson/create$",
                     course.CreateCourseLesson.as_view(),
                     name="course_lesson_create",
@@ -859,6 +884,11 @@ urlpatterns = [
                     r"^/members/remove$",
                     course.CourseRemoveMember.as_view(),
                     name="course_remove_member",
+                ),
+                re_path(
+                    r"^/members/request$",
+                    course.CourseManageJoinRequest.as_view(),
+                    name="course_manage_join_request",
                 ),
                 re_path(
                     r"^/members/update_role$",

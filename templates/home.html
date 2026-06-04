@@ -5,48 +5,11 @@
   {% endif %}
 {% endblock %}
 
-{% block left_sidebar %}
-  <div class="left-sidebar {% if request.user.is_authenticated %}home-sidebar-loggedin{% endif %}">
-    {% if request.user.is_authenticated %}
-      {% if recent_organizations %}
-        <div class="left-sidebar-header">{{ _('Recent groups') }}</div>
-        {% for org in recent_organizations %}
-          <a class="left-sidebar-item" href="{{ url('organization_home', org.pk, org.slug) }}">
-            {% if org.get_organization_image_url() %}
-              <img class="org-logo user-img" loading="lazy" src="{{ org.get_organization_image_url() }}">
-            {% else %}
-              <img class="org-logo" loading="lazy" src="{{ static('icons/icon.svg') }}">
-            {% endif %}
-            <span class="sidebar-text">{{ org.name }}</span>
-          </a>
-        {% endfor %}
-      {% endif %}
-      {% if my_organizations %}
-        <div class="left-sidebar-header">{{ _('My groups') }}</div>
-        {% for org in my_organizations %}
-          <a class="left-sidebar-item" href="{{ url('organization_home', org.pk, org.slug) }}">
-            {% if org.get_organization_image_url() %}
-              <img class="org-logo user-img" loading="lazy" src="{{ org.get_organization_image_url() }}">
-            {% else %}
-              <img class="org-logo" loading="lazy" src="{{ static('icons/icon.svg') }}">
-            {% endif %}
-            <span class="sidebar-text">{{ org.name }}</span>
-          </a>
-        {% endfor %}
-      {% endif %}
-      <a class="left-sidebar-item" href="{{ url('organization_list') }}">
-        <span class="sidebar-icon"><i class="fa fa-compass"></i></span>
-        <span class="sidebar-text">{{ _('Explore groups') }}</span>
-      </a>
-    {% else %}
-      {{ make_tab_item('about', 'fa fa-info-circle', url('about'), _('About')) }}
-      {{ make_tab_item('problems', 'fa fa-puzzle-piece', url('problem_list'), _('Problems')) }}
-      {{ make_tab_item('contests', 'fa fa-trophy', url('contest_list'), _('Contests')) }}
-      {{ make_tab_item('courses', 'fa fa-book', url('course_list'), _('Courses')) }}
-      {{ make_tab_item('groups', 'fa fa-building-columns', url('organization_list'), _('Groups')) }}
-    {% endif %}
-  </div>
-{% endblock %}
+{# Homepage left sidebar removed — it duplicated the top nav. Home is now
+   top nav + feed + right ranking rail. Group nav stays reachable via the
+   top "Groups" item. (Other list pages keep their own contextual sidebars.) #}
+{% block left_sidebar %}{% endblock %}
+{% block middle_right_extra_class %} no-left-sidebar{% endblock %}
 
 {# Simplified homepage: no tabs, no sort dropdown, just the feed #}
 {% block js_media %}
@@ -63,7 +26,112 @@
 {% endblock %}
 
 {% block middle_content %}
+  <style>
+    .home-hero {
+      position: relative; overflow: hidden;
+      border: 1px solid var(--border); border-radius: 18px;
+      background: var(--panel); box-shadow: var(--shadow);
+      padding: 38px 40px; margin-bottom: 22px;
+    }
+    .home-hero::before {
+      content: ""; position: absolute; inset: 0; pointer-events: none;
+      background:
+        radial-gradient(420px 220px at 88% -10%, var(--amber-bg), transparent 70%),
+        radial-gradient(360px 200px at -5% 120%, var(--green-bg), transparent 70%);
+    }
+    .home-hero > * { position: relative; }
+    .home-hero h1 {
+      font-family: "JetBrains Mono", monospace; font-size: 34px; line-height: 1.15;
+      letter-spacing: -.02em; margin: 8px 0 12px; color: var(--text);
+    }
+    .home-hero h1 b { color: var(--amber); }
+    .home-hero p { color: var(--text-2); font-size: 16px; max-width: 60ch; margin-bottom: 22px; }
+    .home-hero .cta { display: flex; gap: 12px; flex-wrap: wrap; }
+    .home-stats {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 22px;
+    }
+    .home-stat {
+      border: 1px solid var(--border); border-radius: 14px; background: var(--panel);
+      padding: 18px; box-shadow: var(--shadow);
+    }
+    .home-stat .v { font-family: "JetBrains Mono", monospace; font-weight: 800; font-size: 26px; line-height: 1; color: var(--text); }
+    .home-stat .k { font-size: 13px; color: var(--muted); margin-top: 6px; }
+    .home-stat .ic { color: var(--amber); font-size: 15px; margin-bottom: 10px; }
+    .home-quick { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 22px; }
+    .home-qcard {
+      display: flex; align-items: center; gap: 14px; text-decoration: none;
+      border: 1px solid var(--border); border-radius: 14px; background: var(--panel);
+      padding: 16px 18px; transition: .16s;
+    }
+    .home-qcard:hover { border-color: var(--amber); transform: translateY(-3px); box-shadow: var(--shadow); }
+    .home-qcard .qic {
+      width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center;
+      background: var(--amber-bg); color: var(--amber); font-size: 19px; flex-shrink: 0;
+    }
+    .home-qcard .qt { font-family: "JetBrains Mono", monospace; font-weight: 700; font-size: 15px; color: var(--text); }
+    .home-qcard .qd { font-size: 13px; color: var(--muted); margin-top: 2px; }
+    .home-qcard .qa { margin-left: auto; color: var(--muted); transition: .16s; }
+    .home-qcard:hover .qa { color: var(--amber); transform: translateX(3px); }
+    .home-feed-head {
+      font-family: "JetBrains Mono", monospace; font-weight: 700; font-size: 15px;
+      color: var(--text); margin: 4px 0 14px; display: flex; align-items: center; gap: 9px;
+    }
+    .home-feed-head::before { content: ""; width: 18px; height: 2px; background: var(--amber); border-radius: 2px; }
+    @media (max-width: 799px) {
+      .home-stats { grid-template-columns: repeat(2, 1fr); }
+      .home-quick { grid-template-columns: 1fr; }
+      .home-hero { padding: 28px 22px; }
+      .home-hero h1 { font-size: 26px; }
+    }
+  </style>
+
+  <section class="home-hero">
+    <div class="c-eyebrow">// {{ SITE_NAME|default('Dana Academy') }} · online judge</div>
+    <h1>Luyện <b>lập trình</b>,<br>chinh phục thuật toán.</h1>
+    <p>Kho bài tập đồ sộ từ HSG Quốc gia, ICPC, Olympic Duyên hải… cùng các kỳ thi xếp hạng định kỳ giúp bạn theo dõi sự tiến bộ của mình.</p>
+    <div class="cta">
+      <a class="c-btn primary" href="{{ url('problem_list') }}"><i class="fa fa-puzzle-piece"></i> Bắt đầu luyện tập</a>
+      <a class="c-btn ghost" href="{{ url('contest_list') }}"><i class="fa fa-ranking-star"></i> Xem kỳ thi</a>
+      {% if not request.user.is_authenticated %}
+        <a class="c-btn ghost" href="{{ url('registration_register') }}"><i class="fa fa-user-plus"></i> Đăng ký</a>
+      {% endif %}
+    </div>
+  </section>
+
+  {% if problem_count %}
+    <div class="home-stats">
+      <div class="home-stat"><div class="ic"><i class="fa fa-puzzle-piece"></i></div><div class="v">{{ problem_count }}</div><div class="k">Bài tập</div></div>
+      <div class="home-stat"><div class="ic"><i class="fa fa-users"></i></div><div class="v">{{ user_count }}</div><div class="k">Thành viên</div></div>
+      <div class="home-stat"><div class="ic"><i class="fa fa-paper-plane"></i></div><div class="v">{{ submission_count }}</div><div class="k">Lượt nộp</div></div>
+      <div class="home-stat"><div class="ic"><i class="fa fa-code"></i></div><div class="v">{{ language_count }}</div><div class="k">Ngôn ngữ</div></div>
+    </div>
+  {% endif %}
+
+  <div class="home-quick">
+    <a class="home-qcard" href="{{ url('problem_list') }}">
+      <span class="qic"><i class="fa fa-puzzle-piece"></i></span>
+      <span><span class="qt">Bài tập</span><span class="qd">Duyệt và giải bài luyện tập</span></span>
+      <span class="qa"><i class="fa fa-arrow-right"></i></span>
+    </a>
+    <a class="home-qcard" href="{{ url('contest_list') }}">
+      <span class="qic"><i class="fa fa-ranking-star"></i></span>
+      <span><span class="qt">Kỳ thi</span><span class="qd">Thi đấu và lên hạng rating</span></span>
+      <span class="qa"><i class="fa fa-arrow-right"></i></span>
+    </a>
+    <a class="home-qcard" href="{{ url('course_list') }}">
+      <span class="qic"><i class="fa fa-graduation-cap"></i></span>
+      <span><span class="qt">Khóa học</span><span class="qd">Lộ trình học có hệ thống</span></span>
+      <span class="qa"><i class="fa fa-arrow-right"></i></span>
+    </a>
+    <a class="home-qcard" href="{{ url('organization_list') }}">
+      <span class="qic"><i class="fa fa-building-columns"></i></span>
+      <span><span class="qt">Nhóm</span><span class="qd">Tham gia lớp hoặc câu lạc bộ</span></span>
+      <span class="qa"><i class="fa fa-arrow-right"></i></span>
+    </a>
+  </div>
+
   {% if feed_items %}
+    <div class="home-feed-head">Bài viết mới nhất</div>
     {% include "home/feed-content.html" %}
   {% else %}
     {% include "blog/content.html" %}

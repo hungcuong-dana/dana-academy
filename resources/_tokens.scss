@@ -1,0 +1,41 @@
+/* ============================================================
+   DANA·OJ — design tokens  ("Compile" design system)
+   Runtime CSS custom properties driving BOTH light & dark.
+   Theme is selected by `data-theme="light|dark"` on <html>
+   (set by the FOUC-init script in base.html + theme-toggle.js).
+   Ported from redesign/oj.css — keep in sync.
+   ============================================================ */
+
+:root[data-theme="dark"] {
+  --bg: #0B0D0F; --bg-soft: #101317; --panel: #14181C; --panel-2: #1A1F25;
+  --elev: #20262D; --border: #272E36; --border-soft: #1E242B;
+  --text: #ECEFF1; --text-2: #AEB7BF; --muted: #6E7882;
+  --amber: #FFA21F; --amber-hi: #FFC061; --amber-deep: #E07B00;
+  --green: #2FD968; --red: #FF4D54; --yellow: #FFC53D; --blue: #4DA3FF; --purple: #B07CFF; --cyan: #33D6C3;
+  --green-bg: rgba(47, 217, 104, .14); --red-bg: rgba(255, 77, 84, .14); --yellow-bg: rgba(255, 197, 61, .16);
+  --blue-bg: rgba(77, 163, 255, .14); --purple-bg: rgba(176, 124, 255, .16); --amber-bg: rgba(255, 162, 31, .14);
+  --grid: rgba(255, 255, 255, .035); --glow: 0 0 0 1px rgba(255, 162, 31, .35), 0 10px 30px -8px rgba(255, 123, 0, .45);
+  --shadow: 0 18px 44px -22px rgba(0, 0, 0, .8);
+  --code-bg: #0E1216; --row-hover: rgba(255, 255, 255, .025);
+  --hm-0: #1A1F25; --hm-1: #16432a; --hm-2: #1f7a44; --hm-3: #27a857; --hm-4: #2FD968;
+  --on-amber: #1a0f00;
+  color-scheme: dark;
+}
+
+/* Light is the default; a bare :root keeps an unset data-theme readable. */
+:root,
+:root[data-theme="light"] {
+  --bg: #F4F2EE; --bg-soft: #FBFAF7; --panel: #FFFFFF; --panel-2: #FAF8F4;
+  --elev: #FFFFFF; --border: #E6E1D8; --border-soft: #EFEBE3;
+  --text: #16191C; --text-2: #48535C; --muted: #8A8F96;
+  --amber: #E07B00; --amber-hi: #FF9A2E; --amber-deep: #B85F00;
+  --green: #15A24F; --red: #DE3A41; --yellow: #C68A00; --blue: #1F74D6; --purple: #7B45D1; --cyan: #0C9E90;
+  --green-bg: rgba(21, 162, 79, .10); --red-bg: rgba(222, 58, 65, .10); --yellow-bg: rgba(198, 138, 0, .12);
+  --blue-bg: rgba(31, 116, 214, .10); --purple-bg: rgba(123, 69, 209, .10); --amber-bg: rgba(224, 123, 0, .10);
+  --grid: rgba(0, 0, 0, .03); --glow: 0 0 0 1px rgba(224, 123, 0, .25), 0 10px 26px -10px rgba(224, 123, 0, .4);
+  --shadow: 0 18px 40px -26px rgba(40, 30, 10, .4);
+  --code-bg: #1A1F25; --row-hover: rgba(0, 0, 0, .018);
+  --hm-0: #EAE7E0; --hm-1: #bfe6c8; --hm-2: #74cf90; --hm-3: #33a85e; --hm-4: #15A24F;
+  --on-amber: #1a0f00;
+  color-scheme: light;
+}

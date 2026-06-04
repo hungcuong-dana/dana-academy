@@ -44,7 +44,8 @@ class CourseAdmin(admin.ModelAdmin):
     inlines = [
         CourseRoleInline,
     ]
-    list_display = ("name", "is_public", "is_open")
+    list_display = ("name", "level", "rating", "is_public", "is_open")
+    list_editable = ("rating",)
     search_fields = ("name",)
     form = CourseForm
 
@@ -72,3 +73,34 @@ class CourseLessonProgressAdmin(admin.ModelAdmin):
     search_fields = ("user__user__username", "lesson__title")
     ordering = ("lesson__course", "lesson__order", "user")
     raw_id_fields = ("user", "lesson")
+
+
+class CourseLessonSectionAdmin(admin.ModelAdmin):
+    list_display = ("lesson", "title", "order", "is_visible")
+    list_filter = ("lesson__course", "is_visible")
+    search_fields = ("title", "lesson__title", "lesson__course__name")
+    ordering = ("lesson__course", "lesson__order", "order")
+    raw_id_fields = ("lesson",)
+
+
+class CourseJoinRequestAdmin(admin.ModelAdmin):
+    list_display = ("course", "user", "created")
+    list_filter = ("course",)
+    search_fields = ("course__name", "user__user__username")
+    ordering = ("course", "created")
+    raw_id_fields = ("user",)
+
+
+class CourseLessonProblemAdmin(admin.ModelAdmin):
+    list_display = ("lesson", "section", "problem", "order", "score")
+    list_filter = ("lesson__course",)
+    search_fields = ("lesson__title", "problem__name", "problem__code")
+    ordering = ("lesson__course", "lesson__order", "order")
+    raw_id_fields = ("lesson", "problem", "section")
+
+
+class CourseSectionProgressAdmin(admin.ModelAdmin):
+    list_display = ("user", "section", "completed", "updated")
+    list_filter = ("completed", "section__lesson__course")
+    search_fields = ("user__user__username", "section__title")
+    raw_id_fields = ("user", "section")

@@ -234,7 +234,7 @@
         }
 
         &.ac {
-            background: #43a047;
+            background: var(--green);
             color: #fff;
         }
 
@@ -244,7 +244,7 @@
         }
 
         &.wrong {
-            background: #d32f2f;
+            background: var(--red);
             color: #fff;
         }
 

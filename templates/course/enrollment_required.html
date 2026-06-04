@@ -5,41 +5,93 @@
 {% endblock %}
 
 {% block middle_content %}
-  <div class="course-enrollment-page">
-    <center><h2>{{ title }}</h2></center>
-
-    <div class="enrollment-message">
-      <h2><i class="fa fa-lock"></i> {{ _('Enrollment Required') }}</h2>
-      <p>{{ _('You need to enroll in this course to access its content.') }}</p>
-
-      {% if request.user.is_authenticated %}
-        {% if can_join %}
-          <p>{{ _('This course is open for enrollment. Click the button below to join.') }}</p>
-          <center>
-            <div class="enrollment-form">
-              <form method="post" action="{{ url('course_join', course.slug) }}">
-                {% csrf_token %}
-                <button type="submit" class="action-btn background-green">
-                  <i class="fa fa-plus"></i> {{ _('Join Course') }}
-                </button>
-              </form>
-            </div>
-          </center>
-        {% else %}
-          <p>{{ _('This course is not open for public enrollment. Please contact the course instructor for access.') }}</p>
-        {% endif %}
-      {% else %}
-        <p>{{ _('Please log in to enroll in this course.') }}</p>
-      {% endif %}
+  <div class="course-detail-page">
+    <div class="c-page-head">
+      {% if course.level %}<span class="c-eyebrow">{{ _('Level') }} {{ course.level }}</span>{% endif %}
+      <h1>{{ course.name }}</h1>
     </div>
 
-    {% if course.about %}
-      <div class="course-info">
-        <h3>{{ _('About This Course') }}</h3>
-        <div>
-          {{ course.about|markdown|reference|str|safe }}
-        </div>
+    {% if has_pending_request %}
+      <div class="c-enroll c-enroll--pending">
+        <div class="c-enroll-ico"><i class="fa fa-hourglass-half"></i></div>
+        <h2>{{ _('Đã gửi yêu cầu — đang đợi duyệt') }}</h2>
+        <p>{{ _('Bạn đã đăng ký khoá học này. Vui lòng đợi admin/giáo viên duyệt để vào học.') }}</p>
+        <button type="button" class="c-btn ghost" disabled>
+          <i class="fa fa-hourglass-half"></i> {{ _('Đang đợi duyệt') }}
+        </button>
       </div>
+    {% elif request.user.is_authenticated and can_join %}
+      <div class="c-enroll">
+        <div class="c-enroll-ico"><i class="fa fa-lock"></i></div>
+        <h2>{{ _('Yêu cầu đăng ký') }}</h2>
+        <p>{{ _('Bạn cần đăng ký khoá học này để truy cập nội dung. Sau khi đăng ký, admin sẽ duyệt yêu cầu của bạn.') }}</p>
+        <form method="post" action="{{ url('course_join', course.slug) }}">
+          {% csrf_token %}
+          <button type="submit" class="c-btn green">
+            <i class="fa fa-plus"></i> {{ _('Đăng ký khoá học') }}
+          </button>
+        </form>
+      </div>
+    {% else %}
+      <div class="c-enroll">
+        <div class="c-enroll-ico"><i class="fa fa-lock"></i></div>
+        <h2>{{ _('Yêu cầu đăng ký') }}</h2>
+        {% if request.user.is_authenticated %}
+          <p>{{ _('Khoá học này chưa mở đăng ký công khai. Vui lòng liên hệ giáo viên để được cấp quyền.') }}</p>
+        {% else %}
+          <p>{{ _('Vui lòng đăng nhập để đăng ký khoá học này.') }}</p>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    {% if course.about %}
+      <details class="c-course-about" open>
+        <summary><i class="fa fa-circle-info"></i> {{ _('Về khoá học này') }}</summary>
+        <div class="c-course-about-body content-description">{{ course.about|markdown(breaks=False)|reference|str|safe }}</div>
+      </details>
+    {% endif %}
+
+    {% if preview_lessons %}
+      <h3 class="c-rm-heading"><i class="fa fa-list-check"></i> {{ _('Nội dung khoá học') }}</h3>
+      <ol class="c-roadmap">
+        {% for lesson in preview_lessons %}
+          {% set sections = lesson.get_sections() %}
+          {% if loop.first %}
+            <li class="c-rm-node open">
+              <div class="c-rm-rail"><span class="c-rm-dot">{{ loop.index }}</span></div>
+              <div class="c-rm-card">
+                <div class="c-rm-top">
+                  <span class="c-rm-title">{{ lesson.title }}</span>
+                  <span class="c-rm-state"><i class="fa fa-eye"></i> {{ _('Xem trước') }}</span>
+                </div>
+                {% if lesson.content %}<p class="c-rm-intro">{{ lesson.content }}</p>{% endif %}
+                {% if sections %}
+                  <div class="c-rm-secs c-rm-secs--preview">
+                    {% for sec in sections %}
+                      <div class="c-rm-sec">
+                        <div class="c-rm-sec-h">
+                          <span class="c-rm-sec-n">{{ loop.index }}</span>
+                          <span class="c-rm-sec-t">{{ sec.title }}</span>
+                        </div>
+                      </div>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+              </div>
+            </li>
+          {% else %}
+            <li class="c-rm-node locked">
+              <div class="c-rm-rail"><span class="c-rm-dot"><i class="fa fa-lock"></i></span></div>
+              <div class="c-rm-card">
+                <div class="c-rm-top">
+                  <span class="c-rm-title">{{ lesson.title }}</span>
+                  <span class="c-rm-state"><i class="fa fa-lock"></i> {{ _('Đăng ký để mở') }}</span>
+                </div>
+              </div>
+            </li>
+          {% endif %}
+        {% endfor %}
+      </ol>
     {% endif %}
   </div>
 {% endblock %}

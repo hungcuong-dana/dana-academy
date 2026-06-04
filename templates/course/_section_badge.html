@@ -1,0 +1,9 @@
+{% macro section_badge(st) %}
+  {% if st and st.done %}
+    <span class="c-secst done"><i class="fa fa-circle-check"></i> {{ _('Đã học') }}{% if st.total %} · {{ st.solved }}/{{ st.total }}{% endif %}</span>
+  {% elif st and st.started %}
+    <span class="c-secst doing"><i class="fa fa-circle-half-stroke"></i> {{ _('Đang học') }}{% if st.total %} · {{ st.solved }}/{{ st.total }}{% endif %}</span>
+  {% else %}
+    <span class="c-secst todo"><i class="fa fa-circle"></i> {{ _('Chưa học') }}</span>
+  {% endif %}
+{% endmacro %}

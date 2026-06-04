@@ -1,3 +1,14 @@
+// ============================================================
+//  THEMING NOTE (Compile design system, see resources/_tokens.scss)
+//  Vars below that hold `var(--token)` theme automatically in both
+//  light & dark wherever they're used as a plain property value.
+//  The vars kept as literal hex (theme_color, background_light_gray,
+//  background_gray, border_gray, announcement_red, widget_black,
+//  color-success/danger/warning/info/bookmark/share) are consumed
+//  inside compile-time Sass color functions (rgba()/darken()/...),
+//  which CANNOT take a var(); their flat usages are swept to tokens
+//  per-file. Do not convert those to var() here — it breaks the build.
+// ============================================================
 $highlight_blue: white;
 $widget_black: #00007d;//68BBE3, add8e6
 $border_gray: #ccc;
@@ -7,9 +18,11 @@ $announcement_red: #ae0000;
 $theme_color:  #9c3706;
 
 // Core design tokens
-$surface-primary: #fff;
+$surface-primary: var(--panel);
 $surface-disabled: #9e9e9e;
 $surface-disabled-alt: #7f7f7f;
+// Text that sits on a primary/brand colored surface ($theme_color brown,
+// amber buttons, etc.) — these surfaces are dark/saturated, so keep WHITE.
 $text-on-primary: #fff;
 
 $radius-sm: 4px;
@@ -104,10 +117,10 @@ $color-brand-twitter: #55acee;
 $color-brand-facebook: #133783;
 $color-brand-google: #dd4b38;
 
-$border-light: #e1e1e8;
-$border-light-2: #eee;
+$border-light: var(--border);
+$border-light-2: var(--border-soft);
 
-$text-strong: #212529;
+$text-strong: var(--text);
 
 $color-message-debug-text: #383d41;
 $color-message-debug-bg: #e2e3e5;
@@ -136,8 +149,8 @@ $color-spoiler-bg: #def;
 
 $color-error: #ff0000;
 
-// Text semantic tokens
-$text-primary: #333;    // main dark text
-$text-secondary: #555;  // medium text
-$text-muted: #666;      // muted labels, secondary info
-$text-lighter: #999;    // very muted, placeholders, disabled
+// Text semantic tokens (theme-aware via Compile tokens)
+$text-primary: var(--text);    // main text
+$text-secondary: var(--text-2);  // medium text
+$text-muted: var(--muted);      // muted labels, secondary info
+$text-lighter: var(--muted);    // very muted, placeholders, disabled

@@ -62,6 +62,36 @@ class Course(models.Model):
         null=True,
         blank=True,
     )
+    level = models.CharField(
+        max_length=8,
+        blank=True,
+        default="",
+        verbose_name=_("skill level"),
+        help_text=_(
+            "Optional billiards-style level label (e.g. K, C, B, A, H). "
+            "Used to render the level roadmap on the course list."
+        ),
+    )
+    level_order = models.IntegerField(
+        default=0,
+        verbose_name=_("level order"),
+        help_text=_("Sort position of this level in the roadmap (lower = earlier)."),
+    )
+    is_coming_soon = models.BooleanField(
+        default=False,
+        verbose_name=_("coming soon"),
+        help_text=_(
+            "Show as a locked “coming soon” placeholder; the course cannot be opened or joined."
+        ),
+    )
+    rating = models.DecimalField(
+        max_digits=2,
+        decimal_places=1,
+        default=5,
+        validators=[MinValueValidator(0), MaxValueValidator(5)],
+        verbose_name=_("rating"),
+        help_text=_("Star rating (0–5) shown on the course card."),
+    )
 
     def __str__(self):
         return self.name
@@ -102,6 +132,10 @@ class Course(models.Model):
 
         if profile.user.is_superuser:
             return False  # Admins don't need to join courses
+
+        # Coming-soon placeholders cannot be joined
+        if course.is_coming_soon:
+            return False
 
         # User must not already be enrolled
         if CourseRole.objects.filter(course=course, user=profile).exists():
@@ -252,6 +286,33 @@ class CourseRole(models.Model):
         unique_together = ("course", "user")
 
 
+class CourseJoinRequest(models.Model):
+    """A pending enrolment request awaiting teacher/assistant approval."""
+
+    course = models.ForeignKey(
+        Course,
+        verbose_name=_("course"),
+        on_delete=models.CASCADE,
+        related_name="join_requests",
+    )
+    user = models.ForeignKey(
+        Profile,
+        verbose_name=_("user"),
+        on_delete=models.CASCADE,
+        related_name="course_join_requests",
+    )
+    created = models.DateTimeField(auto_now_add=True, verbose_name=_("requested at"))
+
+    class Meta:
+        unique_together = ("course", "user")
+        ordering = ["created"]
+        verbose_name = _("course join request")
+        verbose_name_plural = _("course join requests")
+
+    def __str__(self):
+        return f"{self.user} → {self.course}"
+
+
 class CourseLesson(models.Model):
     MAX_LESSONS_PER_COURSE = 100
 
@@ -299,6 +360,10 @@ class CourseLesson(models.Model):
         return Problem.get_cached_instances(
             *[p["problem_id"] for p in self.get_problems_and_scores()]
         )
+
+    def get_sections(self):
+        """Visible sub-sections of this module, ordered."""
+        return self.sections.filter(is_visible=True).order_by("order", "id")
 
     @cache_wrapper(prefix="CLgps", expected_type=list)
     def get_problems_and_scores(self):
@@ -355,6 +420,15 @@ class CourseLessonProblem(models.Model):
     lesson = models.ForeignKey(
         CourseLesson, on_delete=models.CASCADE, related_name="lesson_problems"
     )
+    section = models.ForeignKey(
+        "CourseLessonSection",
+        verbose_name=_("section"),
+        on_delete=models.SET_NULL,
+        related_name="problems",
+        null=True,
+        blank=True,
+        help_text=_("Section (chủ đề con) chứa bài tập này. Để trống = bài tập chung."),
+    )
     problem = models.ForeignKey(
         Problem, verbose_name=_("problem"), on_delete=models.CASCADE
     )
@@ -375,6 +449,58 @@ class CourseLessonProblem(models.Model):
         from judge.utils.course_prerequisites import mark_course_for_recalculation
 
         mark_course_for_recalculation(course)
+
+
+class CourseLessonSection(models.Model):
+    """A sub-section inside a module (lesson): theory + (later) exercises."""
+
+    lesson = models.ForeignKey(
+        CourseLesson,
+        on_delete=models.CASCADE,
+        related_name="sections",
+        verbose_name=_("lesson"),
+    )
+    title = models.CharField(max_length=255, verbose_name=_("section title"))
+    theory = models.TextField(
+        blank=True,
+        default="",
+        verbose_name=_("theory"),
+        help_text=_("Lý thuyết của section (markdown). Để trống nếu đang biên soạn."),
+    )
+    order = models.IntegerField(verbose_name=_("order"), default=0)
+    is_visible = models.BooleanField(verbose_name=_("publicly visible"), default=True)
+
+    class Meta:
+        ordering = ["order", "id"]
+        verbose_name = _("lesson section")
+        verbose_name_plural = _("lesson sections")
+
+    def __str__(self):
+        return f"{self.lesson.title} · {self.title}"
+
+
+class CourseSectionProgress(models.Model):
+    """Per-student completion of a section (manual 'mark as learned')."""
+
+    user = models.ForeignKey(
+        Profile,
+        verbose_name=_("user"),
+        on_delete=models.CASCADE,
+        related_name="section_progress",
+    )
+    section = models.ForeignKey(
+        CourseLessonSection,
+        verbose_name=_("section"),
+        on_delete=models.CASCADE,
+        related_name="user_progress",
+    )
+    completed = models.BooleanField(default=False, verbose_name=_("completed"))
+    updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ("user", "section")
+        verbose_name = _("section progress")
+        verbose_name_plural = _("section progress")
 
 
 class CourseContest(models.Model):

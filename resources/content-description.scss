@@ -227,11 +227,11 @@ pre {
             }
 
             &::-webkit-scrollbar-thumb {
-                background: #ccc;
+                background: var(--border);
                 border-radius: 2px;
 
                 &:hover {
-                    background: #aaa;
+                    background: var(--muted);
                 }
             }
         }
@@ -273,7 +273,7 @@ a.view-pdf {
 }
 
 .info-float .fa {
-    color: #000;
+    color: var(--text);
     padding-right: 0.2em;
 }
 details summary {

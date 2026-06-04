@@ -73,16 +73,6 @@
         {% endif %}
       {% endfor %}
 
-      <!-- Problems Table -->
-      {% if problem_formset %}
-        <h4>{{_("Problems")}}</h4>
-        {{ sortable_formset(problem_formset, {
-        'order_field': 'order',
-        'add_text': _('Add Problem'),
-        'empty_text': _('No problems added yet.')
-        }) }}
-      {% endif %}
-
       <!-- Quizzes Table -->
       {% if quiz_formset %}
         <h4 style="display: flex; align-items: center; gap: 0.5em;">
@@ -113,4 +103,49 @@
       {% endif %}
     </div>
   </form>
+
+  {# ---- Sections of this module (theory + exercises live here) ---- #}
+  <div class="course-detail-page" style="margin-top:1.5em">
+    <div class="c-rm-headrow">
+      <h3 class="c-rm-heading">
+        <i class="fa fa-layer-group"></i> {{ _('Các phần (section)') }}
+        <span class="c-sec-count">{{ sections|length }} {{ _('phần') }}</span>
+      </h3>
+      <form method="post" action="{{ url('course_section_add', course.slug, lesson.id) }}">
+        {% csrf_token %}
+        <button type="submit" class="c-btn primary"><i class="fa fa-plus"></i> {{ _('Thêm phần') }}</button>
+      </form>
+    </div>
+    <p class="c-form-hint"><i class="fa fa-circle-info"></i> {{ _('Mỗi phần chứa lý thuyết và bài tập riêng. Bấm “Sửa” để soạn nội dung.') }}</p>
+
+    {% if sections %}
+      <div class="c-seclist">
+        {% for sec in sections %}
+          <div class="c-seccard">
+            <a class="c-seccard-main" href="{{ url('course_section_detail', course.slug, lesson.id, sec.id) }}">
+              <span class="c-sec-idx">{{ loop.index }}</span>
+              <span class="c-seccard-body">
+                <span class="c-seccard-title">{{ sec.title }}{% if not sec.is_visible %} <small>({{ _('ẩn') }})</small>{% endif %}</span>
+                <span class="c-seccard-meta">
+                  {% if sec.theory %}<span class="ok"><i class="fa fa-book-open"></i> {{ _('Có lý thuyết') }}</span>
+                  {% else %}<span class="muted"><i class="fa fa-book-open"></i> {{ _('Chưa có lý thuyết') }}</span>{% endif %}
+                  <span><i class="fa fa-dumbbell"></i> {{ sec.problems.count() }} {{ _('bài tập') }}</span>
+                </span>
+              </span>
+            </a>
+            <div class="c-seccard-admin">
+              <a class="c-btn primary" href="{{ url('course_section_edit', course.slug, lesson.id, sec.id) }}">
+                <i class="fa fa-edit"></i> {{ _('Sửa') }}
+              </a>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="c-sec-empty-block">
+        <i class="fa fa-layer-group"></i>
+        <p>{{ _('Module này chưa có phần nào. Bấm “Thêm phần” để tạo phần đầu tiên.') }}</p>
+      </div>
+    {% endif %}
+  </div>
 {% endblock %}

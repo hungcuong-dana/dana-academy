@@ -11,11 +11,11 @@ from django.forms import (
 )
 from django.core.files.uploadedfile import UploadedFile
 from django.http import Http404, HttpResponseRedirect, JsonResponse
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy, reverse
 from django.utils.html import mark_safe
 from django.utils.translation import gettext_lazy as _
-from django.views.generic import ListView, DetailView, View, CreateView
+from django.views.generic import ListView, DetailView, View, CreateView, TemplateView
 from django.views.generic.edit import FormView
 from reversion import revisions
 
@@ -28,11 +28,18 @@ from judge.models import (
     Contest,
     CourseLesson,
     Profile,
+    Problem,
+    ProblemGroup,
+    ProblemType,
+    Language,
     CourseLessonProblem,
     CourseContest,
     ContestProblem,
     ContestParticipation,
     CourseRole,
+    CourseJoinRequest,
+    CourseLessonSection,
+    CourseSectionProgress,
     Organization,
     CourseLessonQuiz,
     QuizAttempt,
@@ -411,6 +418,31 @@ class CourseList(CoursePermissionMixin, DiggPaginatorMixin, ListView):
             context["page_prefix"] = "?page="
             context["page_suffix"] = ""
 
+        # Billiards-style level roadmap (K → C → B → A → H), shown on every tab.
+        profile = self.request.profile if self.request.user.is_authenticated else None
+        enrolled_ids = set()
+        if profile:
+            enrolled_ids = set(
+                CourseRole.objects.filter(user=profile).values_list(
+                    "course_id", flat=True
+                )
+            )
+        context["level_courses"] = (
+            Course.objects.filter(is_public=True)
+            .exclude(level="")
+            .order_by("level_order", "id")
+        )
+        context["enrolled_course_ids"] = enrolled_ids
+        context["pending_course_ids"] = (
+            set(
+                CourseJoinRequest.objects.filter(user=profile).values_list(
+                    "course_id", flat=True
+                )
+            )
+            if profile
+            else set()
+        )
+
         # Add course permission context using mixin
         context = self.get_course_context_data(context)
 
@@ -652,6 +684,15 @@ class CourseDetail(CourseDetailMixin, DetailView):
 
             # Check if user can join this course
             context["can_join"] = Course.is_joinable(self.course, self.request.profile)
+            context["has_pending_request"] = (
+                self.request.user.is_authenticated
+                and CourseJoinRequest.objects.filter(
+                    course=self.course, user=self.request.profile
+                ).exists()
+            )
+            # Preview of the roadmap: first module's sections are visible,
+            # the rest are shown locked.
+            context["preview_lessons"] = self.course.get_lessons()
 
             return context
 
@@ -702,6 +743,56 @@ class CourseDetail(CourseDetailMixin, DetailView):
             context["lesson_progress"],
             context["contest_progress"],
         )
+
+        # Per-section learned/not-learned status for the student
+        section_status = get_course_section_status(
+            self.course, self.request.profile
+        )
+        context["section_status"] = section_status
+
+        # Section-based module progress: every section weighs equally, so the
+        # module % is the average of its sections' progress (an empty / unfinished
+        # section keeps the module below 100%). Falls back to the legacy
+        # problem-based grade for modules that have no sections yet.
+        module_progress = {}
+        total_pct = 0.0
+        sec_done_total = sec_count_total = 0
+        for lesson in lessons:
+            secs = list(lesson.get_sections())
+            if secs:
+                fracs = []
+                done = 0
+                for s in secs:
+                    st = section_status.get(s.id, {})
+                    total = st.get("total", 0)
+                    if total > 0:
+                        fracs.append(st.get("solved", 0) / total)
+                    else:
+                        fracs.append(1.0 if st.get("marked") else 0.0)
+                    if st.get("done"):
+                        done += 1
+                pct = sum(fracs) / len(secs) * 100.0
+            else:
+                pct = context["lesson_progress"].get(lesson.id, {}).get(
+                    "percentage", 0
+                )
+                done = 0
+            module_progress[lesson.id] = {
+                "percentage": pct,
+                "achieved_points": pct / 100.0 * lesson.points,
+                "points": lesson.points,
+                "sections_done": done,
+                "sections_total": len(secs),
+            }
+            total_pct += pct
+            sec_done_total += done
+            sec_count_total += len(secs)
+        context["module_progress"] = module_progress
+        context["course_section_total"] = {
+            "percentage": (total_pct / len(lessons)) if lessons else 0,
+            "sections_done": sec_done_total,
+            "sections_total": sec_count_total,
+        }
 
         # Add lesson lock status for prerequisites feature
         from judge.utils.course_prerequisites import (
@@ -789,6 +880,29 @@ class CourseLessonDetail(CourseDetailMixin, DetailView):
                 self.lesson.get_problems(), self.lesson.get_problems_and_scores()
             )
         ]
+
+        # Group the lesson into sections (each = theory + its own exercises).
+        sections = list(self.lesson.get_sections())
+        section_problems = {s.id: [] for s in sections}
+        ungrouped_problems = []
+        for lp in self.lesson.lesson_problems.select_related(
+            "problem", "section"
+        ).order_by("order"):
+            item = {"problem": lp.problem, "score": lp.score}
+            if lp.section_id in section_problems:
+                section_problems[lp.section_id].append(item)
+            else:
+                ungrouped_problems.append(item)
+        context["section_blocks"] = [
+            {"section": s, "problems": section_problems[s.id]} for s in sections
+        ]
+        context["ungrouped_problems"] = ungrouped_problems
+        context["section_status"] = get_course_section_status(
+            self.course, profile, solved_ids=set(context["completed_problem_ids"])
+        )
+        context["sections_done"] = sum(
+            1 for s in sections if context["section_status"].get(s.id, {}).get("done")
+        )
 
         # Get quizzes for this lesson
         lesson_quizzes = self.lesson.lesson_quizzes.filter(
@@ -879,6 +993,32 @@ CourseLessonProblemFormSet = modelformset_factory(
 )
 
 
+class CourseSectionForm(forms.ModelForm):
+    class Meta:
+        model = CourseLessonSection
+        fields = ["title", "theory", "is_visible"]
+        widgets = {
+            "title": forms.TextInput(attrs={"style": "width: 100%"}),
+            "theory": HeavyPreviewPageDownWidget(preview=reverse_lazy("blog_preview")),
+        }
+
+
+class CourseSectionProblemForm(ModelForm):
+    class Meta:
+        model = CourseLessonProblem
+        fields = ["problem", "score"]
+        widgets = {
+            "problem": HeavySelect2Widget(
+                data_view="problem_select2", attrs={"style": "width: 100%"}
+            ),
+        }
+
+
+CourseSectionProblemFormSet = modelformset_factory(
+    CourseLessonProblem, form=CourseSectionProblemForm, extra=0, can_delete=True
+)
+
+
 class CourseLessonQuizForm(ModelForm):
     class Meta:
         model = CourseLessonQuiz
@@ -894,6 +1034,361 @@ class CourseLessonQuizForm(ModelForm):
 CourseLessonQuizFormSet = modelformset_factory(
     CourseLessonQuiz, form=CourseLessonQuizForm, extra=0, can_delete=True
 )
+
+
+def get_course_section_status(course, profile, solved_ids=None):
+    """Return {section_id: {total, solved, done, started, marked}} for a student."""
+    from collections import defaultdict
+
+    if profile is None:
+        return {}
+    if solved_ids is None:
+        solved_ids = set(user_completed_ids(profile))
+    sec_probs = defaultdict(list)
+    for sid, pid in CourseLessonProblem.objects.filter(
+        lesson__course=course, section__isnull=False
+    ).values_list("section_id", "problem_id"):
+        sec_probs[sid].append(pid)
+    marked_ids = set(
+        CourseSectionProgress.objects.filter(
+            user=profile, section__lesson__course=course, completed=True
+        ).values_list("section_id", flat=True)
+    )
+    status = {}
+    for s in CourseLessonSection.objects.filter(lesson__course=course):
+        pids = sec_probs.get(s.id, [])
+        total = len(pids)
+        nsolved = sum(1 for p in pids if p in solved_ids)
+        done = (s.id in marked_ids) or (total > 0 and nsolved == total)
+        status[s.id] = {
+            "total": total,
+            "solved": nsolved,
+            "done": done,
+            "started": done or nsolved > 0,
+            "marked": s.id in marked_ids,
+        }
+    return status
+
+
+def create_course_problem(
+    course, lesson, section, author, name, statement, time_limit, memory_mb, cases, score, order
+):
+    """Create a PRIVATE problem (hidden from public list) with loose test data,
+    attach it to a section, and notify judges (no restart needed)."""
+    import os
+    from django.conf import settings
+    from django.utils import timezone
+    from judge.judgeapi import notify_problem_update
+
+    base = f"crs{section.id}p"
+    n = 1
+    while Problem.objects.filter(code=f"{base}{n}").exists():
+        n += 1
+    code = f"{base}{n}"
+
+    problem = Problem(
+        code=code,
+        name=name[:100],
+        description=statement or name,
+        time_limit=time_limit,
+        memory_limit=int(memory_mb * 1024),
+        points=100.0,
+        partial=True,
+        is_public=False,  # private: stays out of the public problem list
+        is_manually_managed=False,
+        date=timezone.now(),
+    )
+    problem.group = (
+        ProblemGroup.objects.filter(name="lv2").first() or ProblemGroup.objects.first()
+    )
+    problem.save()
+    problem.allowed_languages.set(
+        Language.objects.filter(key__in=["C", "CPP17", "CPP20", "JAVA8", "PY3"])
+    )
+    if author:
+        problem.authors.set([author])
+    ptype = (
+        ProblemType.objects.filter(name="uncategorized").first()
+        or ProblemType.objects.first()
+    )
+    if ptype:
+        problem.types.set([ptype])
+
+    pdir = os.path.join(settings.DMOJ_PROBLEM_DATA_ROOT, code)
+    os.makedirs(pdir, exist_ok=True)
+    yml = ["test_cases:"]
+    per = max(1, 100 // len(cases))
+    rem = 100 - per * len(cases)
+    for i, (inp, outp) in enumerate(cases, start=1):
+        inp = inp.replace("\r\n", "\n")
+        outp = outp.replace("\r\n", "\n")
+        if not inp.endswith("\n"):
+            inp += "\n"
+        if not outp.endswith("\n"):
+            outp += "\n"
+        with open(os.path.join(pdir, f"{i:02d}.in"), "w") as f:
+            f.write(inp)
+        with open(os.path.join(pdir, f"{i:02d}.out"), "w") as f:
+            f.write(outp)
+        pts = per + (1 if i <= rem else 0)
+        yml += [f"  - in: {i:02d}.in", f"    out: {i:02d}.out", f"    points: {pts}"]
+    with open(os.path.join(pdir, "init.yml"), "w") as f:
+        f.write("\n".join(yml) + "\n")
+    notify_problem_update()
+
+    CourseLessonProblem.objects.create(
+        lesson=lesson, section=section, problem=problem, score=score, order=order
+    )
+    return problem
+
+
+class CourseSectionMixin:
+    """Resolve self.lesson + self.section from the URL (course set by CourseDetailMixin)."""
+
+    def setup_section(self):
+        self.lesson = get_object_or_404(
+            CourseLesson, course=self.course, id=self.kwargs["id"]
+        )
+        self.section = get_object_or_404(
+            CourseLessonSection, lesson=self.lesson, id=self.kwargs["sid"]
+        )
+
+
+class CourseSectionDetail(CourseSectionMixin, CourseAccessibleMixin, TemplateView):
+    template_name = "course/section.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        self.setup_section()
+
+        # Lock check (teachers/assistants bypass).
+        if not self.is_editable:
+            lock = get_lesson_lock_status(self.request.profile, self.course)
+            if lock.get(self.lesson.id, False):
+                raise PermissionDenied(
+                    _("This lesson is locked. Complete prerequisites first.")
+                )
+
+        profile = self.request.profile
+        problems_qs = self.section.problems.select_related("problem").order_by("order")
+        problem_list = [lp.problem for lp in problems_qs]
+        problem_points = bulk_max_case_points_per_problem(
+            [profile], problem_list
+        ).get(profile.id, {})
+
+        sections = list(self.lesson.get_sections())
+        ids = [s.id for s in sections]
+        idx = ids.index(self.section.id) if self.section.id in ids else 0
+
+        completed_ids = user_completed_ids(profile)
+        solved_in_section = sum(
+            1 for lp in problems_qs if lp.problem_id in set(completed_ids)
+        )
+        is_marked = CourseSectionProgress.objects.filter(
+            user=profile, section=self.section, completed=True
+        ).exists()
+        total_in_section = len(problem_list)
+        context.update(
+            lesson=self.lesson,
+            section=self.section,
+            title=self.section.title,
+            sections=sections,
+            section_status=get_course_section_status(
+                self.course, profile, solved_ids=set(completed_ids)
+            ),
+            section_index=idx + 1,
+            prev_section=sections[idx - 1] if idx > 0 else None,
+            next_section=sections[idx + 1] if idx + 1 < len(sections) else None,
+            problems=[{"problem": lp.problem, "score": lp.score} for lp in problems_qs],
+            problem_points=problem_points,
+            completed_problem_ids=completed_ids,
+            attempted_problems=user_attempted_ids(profile),
+            section_marked=is_marked,
+            section_solved=solved_in_section,
+            section_total=total_in_section,
+            section_done=is_marked or (total_in_section > 0 and solved_in_section == total_in_section),
+        )
+        return context
+
+
+class CourseSectionEdit(CourseSectionMixin, CourseEditableMixin, View):
+    template_name = "course/section_edit.html"
+
+    def render_page(self, form=None, formset=None, add_form=None):
+        form = form or CourseSectionForm(instance=self.section)
+        formset = formset or CourseSectionProblemFormSet(
+            queryset=self.section.problems.order_by("order"), prefix="prob"
+        )
+        add_form = add_form or CourseSectionProblemForm(prefix="add")
+        return render(
+            self.request,
+            self.template_name,
+            {
+                "course": self.course,
+                "lesson": self.lesson,
+                "section": self.section,
+                "form": form,
+                "formset": formset,
+                "add_form": add_form,
+                "is_editable": True,
+                "title": _("Chỉnh sửa: %(t)s") % {"t": self.section.title},
+            },
+        )
+
+    def get(self, request, *args, **kwargs):
+        self.setup_section()
+        return self.render_page()
+
+    def post(self, request, *args, **kwargs):
+        self.setup_section()
+        form = CourseSectionForm(request.POST, instance=self.section)
+        formset = CourseSectionProblemFormSet(
+            request.POST, queryset=self.section.problems.order_by("order"), prefix="prob"
+        )
+        # Optional: a single new problem to add to this section.
+        add_form = None
+        if request.POST.get("add-problem"):
+            add_form = CourseSectionProblemForm(request.POST, prefix="add")
+
+        valid = form.is_valid() and formset.is_valid()
+        if add_form is not None:
+            valid = valid and add_form.is_valid()
+
+        if valid:
+            with revisions.create_revision():
+                form.save()
+                for obj in formset.save(commit=False):
+                    obj.lesson = self.lesson
+                    obj.section = self.section
+                    obj.save()
+                for obj in formset.deleted_objects:
+                    obj.delete()
+                if add_form is not None:
+                    new = add_form.save(commit=False)
+                    new.lesson = self.lesson
+                    new.section = self.section
+                    new.order = (
+                        self.section.problems.aggregate(Max("order"))["order__max"] or 0
+                    ) + 1
+                    new.save()
+
+                # Inline-created PRIVATE problem with uploaded test cases.
+                np_name = (request.POST.get("np_name") or "").strip()
+                if np_name:
+                    try:
+                        tc_count = int(request.POST.get("np_tc_count") or 0)
+                    except ValueError:
+                        tc_count = 0
+                    cases = []
+                    for i in range(tc_count):
+                        inp = request.POST.get(f"np_in_{i}", "")
+                        outp = request.POST.get(f"np_out_{i}", "")
+                        if inp.strip() != "":
+                            cases.append((inp, outp))
+                    if cases:
+                        def _num(key, default):
+                            try:
+                                return type(default)(request.POST.get(key) or default)
+                            except (TypeError, ValueError):
+                                return default
+
+                        order = (
+                            self.section.problems.aggregate(Max("order"))["order__max"]
+                            or 0
+                        ) + 1
+                        create_course_problem(
+                            self.course,
+                            self.lesson,
+                            self.section,
+                            request.profile,
+                            np_name,
+                            request.POST.get("np_statement", ""),
+                            _num("np_time", 1.0),
+                            _num("np_memory", 256),
+                            cases,
+                            _num("np_score", 100),
+                            order,
+                        )
+                        messages.success(
+                            request,
+                            _(
+                                "Đã tạo bài tập “%(n)s” (private). Bài có thể cần ít "
+                                "phút để máy chấm đồng bộ trước khi nộp được."
+                            )
+                            % {"n": np_name},
+                        )
+                    else:
+                        messages.warning(
+                            request, _("Tạo bài tập cần ít nhất 1 test có input.")
+                        )
+                revisions.set_comment(
+                    _("Edited section '{}' of course '{}'").format(
+                        self.section.title, self.course.name
+                    )
+                )
+                revisions.set_user(request.user)
+            messages.success(request, _("Đã lưu phần."))
+            return redirect(
+                "course_section_edit", self.course.slug, self.lesson.id, self.section.id
+            )
+        return self.render_page(form, formset, add_form)
+
+
+class CourseSectionAdd(CourseSectionMixin, CourseEditableMixin, View):
+    def post(self, request, *args, **kwargs):
+        self.lesson = get_object_or_404(
+            CourseLesson, course=self.course, id=self.kwargs["id"]
+        )
+        order = (self.lesson.sections.aggregate(Max("order"))["order__max"] or 0) + 1
+        section = CourseLessonSection.objects.create(
+            lesson=self.lesson, title=_("Phần mới"), order=order
+        )
+        return redirect(
+            "course_section_edit", self.course.slug, self.lesson.id, section.id
+        )
+
+    def get(self, request, *args, **kwargs):
+        return redirect("course_lesson_detail", self.course.slug, self.kwargs["id"])
+
+
+class CourseSectionDelete(CourseSectionMixin, CourseEditableMixin, View):
+    def post(self, request, *args, **kwargs):
+        self.setup_section()
+        self.section.delete()
+        messages.info(request, _("Đã xoá phần."))
+        return redirect("course_lesson_detail", self.course.slug, self.lesson.id)
+
+    def get(self, request, *args, **kwargs):
+        return redirect("course_lesson_detail", self.course.slug, self.kwargs["id"])
+
+
+class CourseSectionToggleDone(CourseSectionMixin, CourseAccessibleMixin, View):
+    """Student marks a section as learned / un-learned."""
+
+    def post(self, request, *args, **kwargs):
+        self.setup_section()
+        prog, created = CourseSectionProgress.objects.get_or_create(
+            user=request.profile, section=self.section
+        )
+        prog.completed = not prog.completed
+        prog.save()
+        messages.success(
+            request,
+            _("Đã đánh dấu hoàn thành phần này.")
+            if prog.completed
+            else _("Đã bỏ đánh dấu hoàn thành."),
+        )
+        return redirect(
+            "course_section_detail", self.course.slug, self.lesson.id, self.section.id
+        )
+
+    def get(self, request, *args, **kwargs):
+        return redirect(
+            "course_section_detail",
+            self.course.slug,
+            self.kwargs["id"],
+            self.kwargs["sid"],
+        )
 
 
 class CreateCourseLesson(CourseEditableMixin, FormView):
@@ -1106,6 +1601,7 @@ class EditCourseLessonsViewNewWindow(CourseEditableMixin, FormView):
 
         context["lesson"] = self.lesson
         context["current_user_role"] = self.get_user_role_in_course()
+        context["sections"] = self.lesson.sections.order_by("order")
 
         return context
 
@@ -1161,17 +1657,20 @@ class EditCourseLessonsViewNewWindow(CourseEditableMixin, FormView):
                     )
                     revisions.set_user(request.user)
 
-                    problem_formsets = self.get_problem_formset(
-                        post=True, lesson=self.lesson
-                    )
-                    if problem_formsets.is_valid():
-                        instances = problem_formsets.save(commit=False)
-                        for instance in instances:
-                            instance.lesson = self.lesson
-                            instance.save()
-                        for obj in problem_formsets.deleted_objects:
-                            if obj.pk is not None:
-                                obj.delete()
+                    # Problems are now managed per-section, not on the module.
+                    # Only process the legacy module-level formset if it was submitted.
+                    if f"problems_{self.lesson.id}-TOTAL_FORMS" in request.POST:
+                        problem_formsets = self.get_problem_formset(
+                            post=True, lesson=self.lesson
+                        )
+                        if problem_formsets.is_valid():
+                            instances = problem_formsets.save(commit=False)
+                            for instance in instances:
+                                instance.lesson = self.lesson
+                                instance.save()
+                            for obj in problem_formsets.deleted_objects:
+                                if obj.pk is not None:
+                                    obj.delete()
 
                     quiz_formsets = self.get_quiz_formset(post=True, lesson=self.lesson)
                     if quiz_formsets.is_valid():
@@ -2299,6 +2798,11 @@ class CourseMembers(CourseAdminMixin, FormView):
         )
 
         context["members"] = members
+        context["pending_requests"] = (
+            CourseJoinRequest.objects.filter(course=self.course)
+            .select_related("user__user")
+            .order_by("created")
+        )
         context["title"] = _("Manage members for %(course_name)s") % {
             "course_name": self.course.name
         }
@@ -2739,27 +3243,60 @@ class CourseJoin(LoginRequiredMixin, View):
             messages.warning(request, _("You are already enrolled in this course."))
             return redirect("course_detail", slug=course.slug)
 
-        # Join the course as a student
-        with revisions.create_revision():
-            CourseRole.objects.create(
-                course=course, user=profile, role=RoleInCourse.STUDENT
+        # Already requested → waiting for approval
+        if CourseJoinRequest.objects.filter(course=course, user=profile).exists():
+            messages.info(
+                request,
+                _("Your request to join '{}' is awaiting approval.").format(course.name),
             )
+            return redirect("course_detail", slug=course.slug)
 
-            revisions.set_comment(
-                _("User '{}' joined course '{}'").format(
-                    profile.user.username, course.name
-                )
-            )
-            revisions.set_user(request.user)
-
+        # Create a pending join request — a teacher/assistant must approve it.
+        CourseJoinRequest.objects.create(course=course, user=profile)
         messages.success(
-            request, _("Successfully joined course: {}").format(course.name)
+            request,
+            _("Request sent. You'll join '{}' once an admin approves it.").format(
+                course.name
+            ),
         )
         return redirect("course_detail", slug=course.slug)
 
     def get(self, request, slug):
         # Redirect GET requests to course list
         return redirect("course_list")
+
+
+class CourseManageJoinRequest(CourseAdminMixin, View):
+    """Teacher/assistant approves or rejects a pending join request."""
+
+    def post(self, request, *args, **kwargs):
+        action = request.POST.get("action")
+        req_id = request.POST.get("request_id")
+        join_request = get_object_or_404(
+            CourseJoinRequest, id=req_id, course=self.course
+        )
+        username = join_request.user.user.username
+
+        if action == "approve":
+            with revisions.create_revision():
+                CourseRole.objects.get_or_create(
+                    course=self.course,
+                    user=join_request.user,
+                    defaults={"role": RoleInCourse.STUDENT},
+                )
+                revisions.set_comment(
+                    _("Approved join request of '{}' for course '{}'").format(
+                        username, self.course.name
+                    )
+                )
+                revisions.set_user(request.user)
+            join_request.delete()
+            messages.success(request, _("Approved %(user)s.") % {"user": username})
+        elif action == "reject":
+            join_request.delete()
+            messages.info(request, _("Rejected %(user)s.") % {"user": username})
+
+        return redirect("course_members", slug=self.course.slug)
 
 
 class CourseLeave(LoginRequiredMixin, View):

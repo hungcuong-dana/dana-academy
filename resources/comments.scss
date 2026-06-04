@@ -65,7 +65,7 @@
         opacity: 0.7;
 
         a {
-            color: $theme_color;
+            color: var(--amber);
             text-decoration: none;
             padding: 0 4px;
 
@@ -77,7 +77,7 @@
 
     // Comment body container - modern bubble style
     .body-header {
-        background: #eeeeee;
+        background: var(--panel-2);
         border-radius: 18px;
         border: none;
         padding: 10px 14px;
@@ -130,13 +130,13 @@
         font-size: 1rem;
         cursor: pointer;
         transition: all 0.15s ease;
-        color: #6b7280;
+        color: var(--muted);
         border-radius: 50%;
         text-decoration: none;
 
         &:hover {
             background: rgba(0, 0, 0, 0.05);
-            color: #374151;
+            color: var(--text-2);
         }
 
         i {
@@ -192,7 +192,7 @@
         display: inline-flex;
         align-items: center;
         gap: 5px;
-        color: #6b7280;
+        color: var(--muted);
         font-weight: 600;
         font-size: 0.8rem;
         text-decoration: none;
@@ -207,7 +207,7 @@
 
         &:hover {
             background: rgba(0, 0, 0, 0.05);
-            color: #374151;
+            color: var(--text-2);
 
             i {
                 transform: scale(1.1);
@@ -221,7 +221,7 @@
 
     // Specific action link colors on hover
     .action-bar .reply-link:hover {
-        color: $theme_color;
+        color: var(--amber);
         background: rgba($theme_color, 0.08);
     }
 
@@ -231,7 +231,7 @@
     }
 
     .action-bar .edit-link:hover {
-        color: #16a34a;
+        color: var(--green);
         background: rgba(22, 163, 74, 0.08);
     }
 
@@ -254,7 +254,7 @@
         font-size: 0.9rem;
 
         a {
-            color: $theme_color;
+            color: var(--amber);
         }
     }
 
@@ -265,7 +265,7 @@
         gap: 6px;
         margin-top: 8px;
         margin-left: 4px;
-        color: $theme_color;
+        color: var(--amber);
         font-weight: 600;
         font-size: 0.85rem;
         text-decoration: none;
@@ -300,7 +300,7 @@
         z-index: 1;
 
         &:hover {
-            background: $theme_color;
+            background: var(--amber);
         }
     }
 
@@ -319,7 +319,7 @@
             top: 0;
             bottom: 0;
             width: 2px;
-            background: #d1d5db;
+            background: var(--border);
             transition: background-color 0.2s ease;
             cursor: pointer;
             border-radius: 1px;
@@ -327,7 +327,7 @@
 
         // Hover effect on thread line - highlight the line
         &:hover::before {
-            background: darkgray;
+            background: var(--muted);
         }
 
         .comment {
@@ -417,7 +417,7 @@
         display: inline-flex;
         align-items: center;
         gap: 8px;
-        color: $theme_color;
+        color: var(--amber);
         font-weight: 600;
         font-size: 0.9rem;
         padding: 10px 16px;
@@ -547,8 +547,8 @@
             cursor: pointer;
 
             option {
-                background: $theme_color;
-                color: white;
+                background: var(--amber);
+                color: var(--on-amber);
                 padding: 0.3em;
             }
         }
@@ -766,11 +766,11 @@
                 color: white;
 
                 &.positive {
-                    background-color: #16a34a;
+                    background-color: var(--green);
                 }
 
                 &.negative {
-                    background-color: #dc2626;
+                    background-color: var(--red);
                 }
             }
         }
@@ -852,7 +852,7 @@
 .inline-comments-error {
     text-align: center;
     padding: 16px;
-    color: #6b7280;
+    color: var(--muted);
 
     i {
         margin-right: 8px;
@@ -866,7 +866,7 @@
 .inline-comments-empty {
     text-align: center;
     padding: 16px;
-    color: #6b7280;
+    color: var(--muted);
     font-style: italic;
 
     p {
@@ -913,7 +913,7 @@
         }
 
         .time {
-            color: #6b7280;
+            color: var(--muted);
             font-size: 0.8rem;
 
             &::before {
@@ -940,7 +940,7 @@
         gap: 12px;
         margin-top: 4px;
         font-size: 0.8rem;
-        color: #6b7280;
+        color: var(--muted);
 
         .inline-comment-score,
         .inline-comment-replies {
@@ -965,7 +965,7 @@
         display: inline-flex;
         align-items: center;
         gap: 6px;
-        color: $theme_color;
+        color: var(--amber);
         font-weight: 500;
         font-size: 0.9rem;
         text-decoration: none;
@@ -985,7 +985,7 @@
 
 // Active state for Comment button in actionbar
 .actionbar-comment.active {
-    color: $theme_color;
+    color: var(--amber);
 }
 
 // Dark mode for inline comments
@@ -1128,7 +1128,7 @@
     // New user notice
     .inline-new-user-notice {
         font-size: 0.8rem;
-        color: #6b7280;
+        color: var(--muted);
         padding: 8px;
         font-style: italic;
     }
@@ -1157,17 +1157,17 @@
     font-family: inherit;
     resize: none;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
-    background: white;
+    background: var(--panel);
 
     &:focus {
         outline: none;
-        border-color: $theme_color;
+        border-color: var(--amber);
         box-shadow: 0 0 0 2px rgba($theme_color, 0.1);
         border-radius: 12px;
     }
 
     &::placeholder {
-        color: #9ca3af;
+        color: var(--muted);
     }
 }
 
@@ -1179,8 +1179,8 @@
     border-radius: 16px;
     cursor: pointer;
     transition: background-color 0.2s ease;
-    background-color: $theme_color;
-    color: white;
+    background-color: var(--amber);
+    color: var(--on-amber);
     border: none;
 
     &:hover {
@@ -1212,7 +1212,7 @@
     border: 1px solid $border_gray;
     border-radius: 16px;
     cursor: pointer;
-    color: #6b7280;
+    color: var(--muted);
 
     &:hover {
         background: rgba(0, 0, 0, 0.05);
@@ -1243,7 +1243,7 @@
     font-weight: 500;
     border: 1px solid $border_gray;
     border-radius: 16px;
-    background: white;
+    background: var(--panel);
     cursor: pointer;
     appearance: none;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M3 5l3 3 3-3'/%3E%3C/svg%3E");
@@ -1252,11 +1252,11 @@
 
     &:focus {
         outline: none;
-        border-color: $theme_color;
+        border-color: var(--amber);
     }
 
     &:hover {
-        border-color: #9ca3af;
+        border-color: var(--muted);
     }
 }
 
@@ -1271,7 +1271,7 @@
     margin-top: 8px;
     font-size: 0.85rem;
     font-weight: 500;
-    color: $theme_color;
+    color: var(--amber);
     background: transparent;
     border: 1px solid $border_gray;
     border-radius: 8px;
@@ -1280,7 +1280,7 @@
 
     &:hover {
         background: rgba($theme_color, 0.08);
-        border-color: $theme_color;
+        border-color: var(--amber);
     }
 
     i {

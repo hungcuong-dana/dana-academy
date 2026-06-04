@@ -72,7 +72,7 @@ body:has(.chat-page) {
   }
 
   ::-webkit-scrollbar-thumb {
-    background-color: #c1c9cc;
+    background-color: var(--muted);
     border-radius: 14px;
     border: 4px solid transparent;
     background-clip: content-box;
@@ -80,7 +80,7 @@ body:has(.chat-page) {
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background-color: #9aa6ab;
+    background-color: var(--text-2);
   }
 
   .chat-input::-webkit-scrollbar {
@@ -97,7 +97,7 @@ body:has(.chat-page) {
   .chat-container {
     display: flex;
     width: 100%;
-    background: #ffffff;
+    background: var(--panel);
     overflow: hidden;
   }
 
@@ -105,14 +105,14 @@ body:has(.chat-page) {
   // Sidebar - User List
   // ============================================
   .chat-sidebar {
-    border-right: 1px solid #e4e6eb;
+    border-right: 1px solid var(--border);
     padding-bottom: 0 !important;
     border-bottom: 0;
     font-size: 1rem;
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    background: #ffffff;
+    background: var(--panel);
   }
 
   .chat-sidebar-content {
@@ -128,7 +128,7 @@ body:has(.chat-page) {
   // Search container
   .chat-search-container {
     padding: 12px;
-    border-bottom: 1px solid #e4e6eb;
+    border-bottom: 1px solid var(--border);
   }
 
   #search-form {
@@ -143,13 +143,13 @@ body:has(.chat-page) {
     h4 {
       margin: 0;
       font-size: 0.9rem;
-      color: #65676b;
+      color: var(--muted);
       font-weight: 600;
     }
 
     hr {
       margin: 8px 0 0;
-      border-color: #e4e6eb;
+      border-color: var(--border);
     }
   }
 
@@ -171,11 +171,11 @@ body:has(.chat-page) {
     transition: background-color 0.15s ease;
 
     &:hover {
-      background-color: #f2f2f2;
+      background-color: var(--row-hover);
     }
 
     &.selected {
-      background-color: #e7f3ff;
+      background-color: var(--panel-2);
     }
   }
 
@@ -204,14 +204,14 @@ body:has(.chat-page) {
     width: 10px;
     height: 10px;
     border-radius: 50%;
-    border: 2px solid #ffffff;
+    border: 2px solid var(--panel);
 
     &.online {
-      background-color: #31a24c;
+      background-color: var(--green);
     }
 
     &.offline {
-      background-color: #bcc0c4;
+      background-color: var(--muted);
     }
   }
 
@@ -220,7 +220,7 @@ body:has(.chat-page) {
     cx: 32px;
     cy: 32px;
     r: 5px;
-    stroke: white;
+    stroke: var(--panel);
     stroke-width: 2;
   }
 
@@ -238,7 +238,7 @@ body:has(.chat-page) {
   }
 
   .status-last-message {
-    color: #65676b;
+    color: var(--muted);
     font-size: 0.85rem;
     overflow: hidden;
     white-space: nowrap;
@@ -254,7 +254,7 @@ body:has(.chat-page) {
   // Unread badge
   .unread-count {
     color: #ffffff;
-    background-color: #0084ff;
+    background-color: var(--blue);
     border-radius: 50%;
     min-width: 20px;
     height: 20px;
@@ -273,7 +273,7 @@ body:has(.chat-page) {
     transition: background-color 0.15s ease, opacity 0.15s ease;
 
     &:hover {
-      background-color: #e4e6eb;
+      background-color: var(--row-hover);
     }
   }
 
@@ -297,7 +297,7 @@ body:has(.chat-page) {
   .setting-content {
     display: none;
     position: absolute;
-    background-color: #ffffff;
+    background-color: var(--panel);
     min-width: 140px;
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
     border-radius: 8px;
@@ -312,19 +312,19 @@ body:has(.chat-page) {
       display: block;
       font-weight: 500;
       font-size: 0.9rem;
-      color: #050505;
+      color: var(--text);
       transition: background-color 0.1s ease;
 
       &:hover {
-        background-color: #f2f2f2;
+        background-color: var(--row-hover);
       }
 
       &.red {
-        color: #e41e3f;
+        color: var(--red);
       }
 
       &.green {
-        color: #31a24c;
+        color: var(--green);
       }
     }
   }
@@ -336,7 +336,7 @@ body:has(.chat-page) {
     display: flex;
     flex-direction: column;
     flex-grow: 1;
-    background: #ffffff;
+    background: var(--panel);
   }
 
   // Chat header
@@ -344,7 +344,7 @@ body:has(.chat-page) {
     display: flex;
     align-items: center;
     padding: 6px 12px;
-    border-bottom: 1px solid #e4e6eb;
+    border-bottom: 1px solid var(--border);
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
     position: relative;
     z-index: 100;
@@ -378,14 +378,14 @@ body:has(.chat-page) {
     width: 12px;
     height: 12px;
     border-radius: 50%;
-    border: 2px solid #ffffff;
+    border: 2px solid var(--panel);
 
     &.online {
-      background-color: #31a24c;
+      background-color: var(--green);
     }
 
     &.offline {
-      background-color: #bcc0c4;
+      background-color: var(--muted);
     }
   }
 
@@ -394,7 +394,7 @@ body:has(.chat-page) {
     cx: 6px;
     cy: 6px;
     r: 5px;
-    stroke: white;
+    stroke: var(--panel);
     stroke-width: 2;
   }
 
@@ -413,7 +413,7 @@ body:has(.chat-page) {
   }
 
   .active-span {
-    color: #65676b;
+    color: var(--muted);
     font-size: 0.85rem;
     margin-left: auto;
     margin-right: 12px;
@@ -427,14 +427,14 @@ body:has(.chat-page) {
     display: none;
     margin-right: 12px;
     font-size: 1.25rem;
-    color: #0084ff;
+    color: var(--blue);
     cursor: pointer;
     padding: 8px;
     border-radius: 50%;
     transition: background-color 0.15s ease;
 
     &:hover {
-      background-color: #f2f2f2;
+      background-color: var(--row-hover);
     }
   }
 
@@ -461,13 +461,13 @@ body:has(.chat-page) {
     text-align: center;
     padding: 20px;
     font-size: 1.5rem;
-    color: #65676b;
+    color: var(--muted);
   }
 
   // Empty state
   .chat-empty-message {
     text-align: center;
-    color: #65676b;
+    color: var(--muted);
     padding: 40px 20px;
     font-size: 0.95rem;
   }
@@ -533,7 +533,7 @@ body:has(.chat-page) {
 
     .message-time {
       font-size: 0.75rem;
-      color: #65676b;
+      color: var(--muted);
     }
   }
 
@@ -576,13 +576,13 @@ body:has(.chat-page) {
 
   .message-bubble-other,
   .message-text-other {
-    background-color: #f0f0f0;
-    color: #050505;
+    background-color: var(--panel-2);
+    color: var(--text);
   }
 
   .message-bubble-self,
   .message-text-myself {
-    background-color: #0084ff;
+    background-color: var(--blue);
     color: #ffffff;
 
     a {
@@ -603,7 +603,7 @@ body:has(.chat-page) {
       padding: 2px 6px;
       border-radius: 4px;
       background: rgba(0, 0, 0, 0.06);
-      color: #65676b;
+      color: var(--muted);
       cursor: pointer;
       white-space: nowrap;
 
@@ -637,7 +637,7 @@ body:has(.chat-page) {
 
     .time {
       font-size: 0.75rem;
-      color: #65676b;
+      color: var(--muted);
     }
   }
 
@@ -659,7 +659,7 @@ body:has(.chat-page) {
     padding: 2px 6px;
     border-radius: 4px;
     background: rgba(0, 0, 0, 0.06);
-    color: #65676b;
+    color: var(--muted);
     cursor: pointer;
     white-space: nowrap;
     opacity: 0;
@@ -704,7 +704,7 @@ body:has(.chat-page) {
     min-width: 0;
 
     &:focus-within {
-      border-color: #0084ff;
+      border-color: var(--blue);
       box-shadow: 0 0 0 2px rgba(0, 132, 255, 0.1);
     }
   }
@@ -732,7 +732,7 @@ body:has(.chat-page) {
     }
 
     &::placeholder {
-      color: #65676b;
+      color: var(--muted);
     }
   }
 
@@ -750,13 +750,13 @@ body:has(.chat-page) {
     border: none;
     flex-shrink: 0;
     background: transparent;
-    color: #65676b;
+    color: var(--muted);
     font-size: 1.2rem;
     margin: 2px 4px 2px 0;
     transition: color 0.15s ease;
 
     &:hover {
-      color: #0084ff;
+      color: var(--blue);
     }
   }
 
@@ -773,7 +773,7 @@ body:has(.chat-page) {
     transition: background-color 0.15s ease, transform 0.1s ease;
     border: none;
     flex-shrink: 0;
-    background: #0084ff;
+    background: var(--blue);
     color: #ffffff;
     font-size: 0.9rem;
 
@@ -831,7 +831,7 @@ body:has(.chat-page) {
     bottom: 8px;
     left: 50%;
     transform: translateX(-50%);
-    background-color: $theme_color;
+    background-color: var(--amber);
     color: #ffffff;
     padding: 6px 16px;
     border-radius: 20px;
@@ -891,10 +891,10 @@ body:has(.chat-page) {
   .user-redirect {
     float: right;
     padding: 4px 8px;
-    color: #65676b;
+    color: var(--muted);
 
     &:hover {
-      color: #0084ff;
+      color: var(--blue);
     }
   }
 
@@ -904,7 +904,7 @@ body:has(.chat-page) {
   @media (min-width: 800px) {
     .chat-container {
       height: calc(100vh - #{$navbar_height});
-      border: 1px solid #e4e6eb;
+      border: 1px solid var(--border);
       border-bottom: 0;
     }
 
@@ -922,7 +922,7 @@ body:has(.chat-page) {
       display: flex;
       width: 100%;
       height: calc(100vh - #{$navbar_height});
-      border: 1px solid #e4e6eb;
+      border: 1px solid var(--border);
       border-bottom: 0;
     }
 
@@ -1056,7 +1056,7 @@ body:has(.chat-page) {
     .active-span-mobile {
       display: block;
       font-size: 0.7rem;
-      color: #65676b;
+      color: var(--muted);
       font-weight: normal;
       white-space: nowrap;
       overflow: hidden;
@@ -1196,7 +1196,7 @@ body:has(.chat-page) {
   }
 
   #chat-online {
-    border-right: 1px solid #e4e6eb;
+    border-right: 1px solid var(--border);
     padding-bottom: 0 !important;
     border-bottom: 0;
     font-size: 1rem;
@@ -1242,11 +1242,11 @@ body:has(.chat-page) {
   }
 
   .selected-status-row {
-    background-color: #e7f3ff;
+    background-color: var(--panel-2);
   }
 
   .status_last_message {
-    color: #65676b;
+    color: var(--muted);
     font-size: 0.85rem;
   }
 

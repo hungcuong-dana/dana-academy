@@ -414,7 +414,89 @@ class ProblemDetail(
             )
             context["roadmap_rm_param"] = "{}/{}".format(level_key, topic_slug)
 
+        # In-flow course-section panel (carried via ?c=<slug>&s=<section_id>)
+        context["course_nav"] = self.build_course_section_nav()
+
         return context
+
+    def build_course_section_nav(self):
+        """Sidebar describing the course section the user is solving through."""
+        slug = self.request.GET.get("c")
+        sid = self.request.GET.get("s")
+        if not (slug and sid):
+            return None
+        user = self.request.user
+        if not user.is_authenticated:
+            return None
+        from judge.models.course import (
+            Course,
+            CourseLessonSection,
+            CourseLessonProblem,
+            CourseRole,
+        )
+        from judge.utils.problems import user_completed_ids, user_attempted_ids
+
+        try:
+            section = CourseLessonSection.objects.select_related(
+                "lesson", "lesson__course"
+            ).get(id=sid, lesson__course__slug=slug)
+        except (CourseLessonSection.DoesNotExist, ValueError):
+            return None
+        course = section.lesson.course
+        if not (
+            user.is_superuser
+            or Course.is_editable_by(course, user.profile)
+            or CourseRole.objects.filter(course=course, user=user.profile).exists()
+        ):
+            return None
+
+        lps = list(
+            CourseLessonProblem.objects.filter(section=section)
+            .select_related("problem")
+            .order_by("order")
+        )
+        if not lps:
+            return None
+        completed = set(user_completed_ids(user.profile))
+        attempted = set(user_attempted_ids(user.profile))
+        rows, solved, current_index, next_after = [], 0, None, None
+        for i, lp in enumerate(lps):
+            p = lp.problem
+            if p.id in completed:
+                status = "solved"
+                solved += 1
+            elif p.id in attempted:
+                status = "attempted"
+            else:
+                status = "unsolved"
+            is_current = p.id == self.object.id
+            if is_current:
+                current_index = i
+            rows.append({"problem": p, "status": status, "is_current": is_current})
+        for i, row in enumerate(rows):
+            if (
+                current_index is not None
+                and i > current_index
+                and row["status"] != "solved"
+                and next_after is None
+            ):
+                next_after = row
+        next_problem = next_after or next(
+            (r for r in rows if r["status"] != "solved" and not r["is_current"]), None
+        )
+        total = len(rows)
+        return {
+            "course": course,
+            "lesson": section.lesson,
+            "section": section,
+            "rows": rows,
+            "solved": solved,
+            "total": total,
+            "percent": int(solved * 100 / total) if total else 0,
+            "current_index": current_index,
+            "next_problem": next_problem,
+            "cs_param": "c={}&s={}".format(course.slug, section.id),
+        }
 
 
 class LatexError(Exception):

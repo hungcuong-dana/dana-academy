@@ -8,9 +8,9 @@
     width: 100%;
 
     .post {
-        border: 1px dotted grey;
+        border: 1px dotted var(--border);
         border-radius: 1em;
-        border-top: 0.125rem solid #9b9b9b;
+        border-top: 0.125rem solid var(--border);
         padding: 1.25rem 1.25rem 1.563rem;
         margin-bottom: 2em;
 
@@ -34,12 +34,12 @@
 }
 
 .left-sidebar-item.active {
-    color: white;
+    color: var(--on-amber);
     font-weight: bold;
-    background-color: $theme_color;
+    background-color: var(--amber);
 
     .sidebar-icon {
-        color: white;
+        color: var(--on-amber);
     }
 }
 
@@ -47,6 +47,12 @@
     h3 {
         padding-bottom: 0.25em;
         padding-left: 0.5em;
+
+        // Compile: card-header icons use the amber accent (were dark/black)
+        i.fa, i.fas, i.far {
+            color: var(--amber);
+            margin-right: 0.5em;
+        }
     }
 
     ul {
@@ -72,10 +78,10 @@
             font-weight: 500;
 
             a {
-                color: #5b80b9 !important;
+                color: var(--blue) !important;
 
                 &:hover {
-                    color: #0645ad !important;
+                    color: var(--blue) !important;
                 }
             }
         }
@@ -103,13 +109,13 @@
     select {
         padding: 0.3em 0.5em;
         border-radius: 4px;
-        background-color: #fff;
-        border: 1px solid #ccc;
+        background-color: var(--panel);
+        border: 1px solid var(--border);
         font-size: 0.9em;
 
         &:focus {
             outline: none;
-            border-color: $theme_color;
+            border-color: var(--amber);
         }
     }
 }
@@ -124,7 +130,7 @@
         height: 1em;
         padding: 0.1em;
         font-size: 0.8em;
-        color: white;
+        color: var(--on-amber);
         border-radius: 0.2em;
         display: inline-block;
         margin-right: 0.2em;
@@ -140,11 +146,11 @@
 }
 
 .blog-box {
-    border-bottom: 1.4px solid lightgray;
-    border-top: 1.4px solid lightgray;
+    border-bottom: 1.4px solid var(--border);
+    border-top: 1.4px solid var(--border);
     margin-bottom: 1.5em;
     padding: 1em 1.25em 0.5em 1.25em;
-    background-color: white;
+    background-color: var(--panel);
     margin-left: auto;
     margin-right: auto;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
@@ -156,7 +162,7 @@
 }
 
 .blog-box:hover, .blog-box:not(.pre-expand-blog) {
-    border-color: #8a8a8a;
+    border-color: var(--border);
     box-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
 }
 
@@ -175,7 +181,7 @@
 }
 
 .problem-feed-name a {
-    color: #0645ad;
+    color: var(--blue);
 }
 
 .problem-feed-info-entry {
@@ -184,7 +190,7 @@
 }
 
 .problem-feed-types {
-    color: gray;
+    color: var(--muted);
 }
 
 .feed-table {
@@ -198,7 +204,7 @@
 
 .show-more {
     display: flex;
-    color: black;
+    color: var(--text);
     font-size: 16px;
     font-weight: 700;
     padding: 0px 12px;
@@ -294,7 +300,7 @@
         padding: 0.4rem 0.75rem;
         font-size: 0.85rem;
         font-weight: 500;
-        color: #6b7280;
+        color: var(--text-2);
         background: $background_light_gray;
         border-radius: 6px;
         text-decoration: none;
@@ -306,12 +312,12 @@
 
         &:hover {
             background: rgba(0, 0, 0, 0.08);
-            color: #374151;
+            color: var(--text);
         }
 
         .badge {
-            background: $theme_color;
-            color: white;
+            background: var(--amber);
+            color: var(--on-amber);
             font-size: 0.7rem;
             font-weight: 600;
             padding: 0.15rem 0.4rem;
@@ -324,7 +330,7 @@
 
 .middle-right-content.wrapper {
     padding: 1em 0;
-    background: white;
+    background: var(--panel);
     border-radius: 1em;
 }
 
@@ -367,8 +373,8 @@
     }
 
     .blog-box {
-        border-left: 1.4px solid lightgray;
-        border-right: 1.4px solid lightgray;
+        border-left: 1.4px solid var(--border);
+        border-right: 1.4px solid var(--border);
         border-radius: 16px;
     }
 
@@ -398,7 +404,7 @@
     color: $text-primary;
 
     i {
-        color: $theme_color;
+        color: var(--amber);
         font-size: 1.1em;
     }
 
@@ -406,7 +412,7 @@
         margin-left: auto;
         font-size: 0.75em;
         font-weight: 500;
-        color: $theme_color;
+        color: var(--amber);
         text-decoration: none;
     }
 }
@@ -431,7 +437,7 @@
     transition: $transition-fast;
 
     &:hover {
-        border-color: $theme_color;
+        border-color: var(--amber);
     }
 }
 
@@ -463,7 +469,7 @@
     margin-bottom: 0.5em;
 
     i {
-        color: $theme_color;
+        color: var(--amber);
         margin-right: 0.3em;
     }
 }
@@ -507,7 +513,7 @@
     }
 
     &:hover {
-        color: $theme_color;
+        color: var(--amber);
     }
 }
 
@@ -619,8 +625,8 @@
     transition: $transition-fast;
 
     &:hover {
-        border-color: $theme_color;
-        color: $theme_color;
+        border-color: var(--amber);
+        color: var(--amber);
     }
 
     i {
@@ -658,7 +664,7 @@
 }
 
 .visitor-banner-login {
-    color: $theme_color;
+    color: var(--amber);
     font-weight: 600;
     text-decoration: none;
 }
@@ -666,7 +672,7 @@
 .visitor-banner-signup {
     display: inline-block;
     padding: 0.4em 1em;
-    background: $theme_color;
+    background: var(--amber);
     color: $text-on-primary;
     border-radius: $radius-md;
     font-weight: 600;

@@ -32,23 +32,17 @@ $(function() {
     $('.mode-option').removeClass('active');
     $(this).addClass('active');
 
-    // Send AJAX request to set dark mode
-    $.ajax({
-      url: toggleDarkmodeUrl,
-      type: 'POST',
-      data: {
-        csrfmiddlewaretoken: csrfToken,
-        mode: mode
-      },
-      success: function() {
-        // Reload to apply dark mode CSS
-        location.reload();
-      },
-      error: function() {
-        alert('Failed to toggle dark mode. Please try again.');
-        location.reload();
-      }
-    });
+    // Apply instantly via the Compile data-theme system (no reload).
+    // setTheme also persists server-side through TOGGLE_DARKMODE_URL.
+    if (window.setTheme) {
+      window.setTheme(mode === 'dark' ? 'dark' : 'light');
+    } else {
+      $.ajax({
+        url: toggleDarkmodeUrl,
+        type: 'POST',
+        data: { csrfmiddlewaretoken: csrfToken, mode: mode },
+      });
+    }
   });
 
   // Superuser: Upload sample background

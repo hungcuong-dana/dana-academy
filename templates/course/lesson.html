@@ -13,93 +13,143 @@
   </div>
 {% endblock %}
 
-{% block two_col_media %}
-  <style>
-    .course-problem-list .quiz-attempts {
-      margin-left: 0.5em;
-    }
-  </style>
-{% endblock %}
+{% from "course/_section_badge.html" import section_badge %}
+
+{% macro problem_item(item) %}
+  {% set problem = item.problem %}
+  <a href="{{ url('problem_detail', problem.code) }}" target="_blank">
+    <li>
+      {% if problem.id in completed_problem_ids %}
+        <i class="solved-problem-color fa fa-check-circle"></i>
+      {% elif problem.id in attempted_problems %}
+        <i class="attempted-problem-color fa fa-minus-circle"></i>
+      {% else %}
+        <i class="unsolved-problem-color fa fa-minus-circle"></i>
+      {% endif %}
+      <span class="problem-name">{{ problem.name }}</span>
+      {% set pp = problem_points[problem.id] %}
+      <span class="score">
+        {% if pp and pp.case_total %}
+          {{ (pp.case_points / pp.case_total * item.score)|floatformat(1) }} / {{ item.score|floatformat(0) }}
+        {% else %}0 / {{ item.score|floatformat(0) }}{% endif %}
+      </span>
+    </li>
+  </a>
+{% endmacro %}
 
 {% block middle_content %}
-  <center>
-    <h2>{{title}}</h2>
-  </center>
-  <h3 class="course-content-title">{{_("Content")}}</h3>
-  <div>
-    {{ lesson.content|markdown|reference|str|safe }}
-  </div>
-  {% if lesson_quizzes %}
-    <h3 class="course-content-title">{{_("Quizzes")}}</h3>
-    <ul class="course-problem-list">
-      {% for quiz_item in lesson_quizzes %}
-        {% set quiz = quiz_item.quiz %}
-        <a href="{{url('lesson_quiz_detail', course.slug, lesson.id, quiz.code)}}" target="_blank">
-          <li>
-            {% if quiz_item.best_score is not none and quiz_item.max_score and quiz_item.best_score >= quiz_item.max_score %}
-              <i class="solved-problem-color fa fa-check-circle"></i>
-            {% elif quiz_item.best_score is not none %}
-              <i class="attempted-problem-color fa fa-minus-circle"></i>
-            {% else %}
-              <i class="unsolved-problem-color fa fa-minus-circle"></i>
-            {% endif %}
-            <span class="problem-name">{{quiz.title}}</span>
-            <span class="score">
-              {% if quiz_item.best_score is not none %}
-                {{quiz_item.best_score|floatformat(1)}} / {{quiz_item.max_score|floatformat(0)}}
-              {% else %}
-                0 / {{quiz_item.max_score|floatformat(0)}}
-              {% endif %}
-            </span>
-            <span class="quiz-attempts">
-              ({{ quiz_item.attempts_count }}{% if quiz_item.max_attempts > 0 %}/{{ quiz_item.max_attempts }}{% endif %} {{
-              _('attempts') }})
-            </span>
-            {% if not quiz_item.can_attempt %}
-              <span class="quiz-locked"><i class="fa fa-lock"></i></span>
-            {% endif %}
-          </li>
-        </a>
-      {% endfor %}
-      <br>
-    </ul>
-  {% endif %}
-  <h3 class="course-content-title">{{_("Problems")}}</h3>
-  <ul class="course-problem-list">
-    {% for lesson_problem in lesson_problems %}
-      {% set problem = lesson_problem.problem %}
-      <a href="{{url('problem_detail', problem.code)}}" target="_blank">
-        <li>
-          {% if problem.id in completed_problem_ids %}
-            <i class="solved-problem-color fa fa-check-circle"></i>
-          {% elif problem.id in attempted_problems %}
-            <i class="attempted-problem-color fa fa-minus-circle"></i>
-          {% else %}
-            <i class="unsolved-problem-color fa fa-minus-circle"></i>
-          {% endif %}
-          <span class="problem-name">{{problem.name}}</span>
-          {% set pp = problem_points[problem.id] %}
-          <span class="score">
-            {% if pp and pp.case_total %}
-              {{(pp.case_points / pp.case_total * lesson_problem.score) |floatformat(1)}} /
-              {{lesson_problem.score|floatformat(0)}}
-            {% else %}
-              0 / {{lesson_problem.score|floatformat(0)}}
-            {% endif %}
-          </span>
-        </li>
-      </a>
-    {% endfor %}
-    <br>
-  </ul>
-  {% if is_editable %}
-    <div>
-      <a href="{{ url('edit_course_lessons_new', course.slug, lesson.id) }}" class="action-btn" style="margin-right: 10px;">
-        <i class="fa fa-edit"></i> {{ _('Edit') }}
-      </a>
-      <a href="{{ url('clone_course_lesson', course.slug, lesson.id) }}" class="action-btn">
-        <i class="fa fa-copy"></i> {{ _('Clone') }}
-      </a>
+  <div class="course-detail-page">
+    <div class="c-page-head">
+      <span class="c-eyebrow"><a href="{{ course.get_absolute_url() }}" class="c-back-link">{{ course.name }}</a></span>
+      <h1>{{ title }}</h1>
     </div>
-  {% endif %}
+
+    {% if lesson.content %}
+      <p class="c-lesson-intro">{{ lesson.content }}</p>
+    {% endif %}
+
+    {# ---- Sections list — click a section to open its theory + exercises ---- #}
+    <div class="c-rm-headrow">
+      <h3 class="c-rm-heading">
+        <i class="fa fa-layer-group"></i> {{ _('Các phần (section)') }}
+        {% if section_blocks %}<span class="c-sec-count">{{ sections_done }}/{{ section_blocks|length }} {{ _('đã học') }}</span>{% endif %}
+      </h3>
+      {% if is_editable %}
+        <form method="post" action="{{ url('course_section_add', course.slug, lesson.id) }}">
+          {% csrf_token %}
+          <button type="submit" class="c-btn primary"><i class="fa fa-plus"></i> {{ _('Thêm phần') }}</button>
+        </form>
+      {% endif %}
+    </div>
+
+    {% if section_blocks %}
+      <div class="c-seclist">
+        {% for blk in section_blocks %}
+          {% set sec = blk.section %}
+          {% set st = section_status.get(sec.id) %}
+          <div class="c-seccard {{ 'is-done' if st and st.done }}">
+            <a class="c-seccard-main" href="{{ url('course_section_detail', course.slug, lesson.id, sec.id) }}">
+              <span class="c-sec-idx">{% if st and st.done %}<i class="fa fa-check"></i>{% else %}{{ loop.index }}{% endif %}</span>
+              <span class="c-seccard-body">
+                <span class="c-seccard-title">{{ sec.title }}</span>
+                <span class="c-seccard-meta">
+                  {{ section_badge(st) }}
+                  <span><i class="fa fa-dumbbell"></i> {{ blk.problems|length }} {{ _('bài tập') }}</span>
+                </span>
+              </span>
+              <i class="fa fa-arrow-right c-seccard-go"></i>
+            </a>
+            {% if is_editable %}
+              <div class="c-seccard-admin">
+                <a class="c-btn ghost" href="{{ url('course_section_edit', course.slug, lesson.id, sec.id) }}"
+                   title="{{ _('Chỉnh sửa') }}"><i class="fa fa-edit"></i></a>
+              </div>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="c-sec-empty-block">
+        <i class="fa fa-layer-group"></i>
+        <p>{{ _('Module này chưa có phần nào.') }}{% if is_editable %} {{ _('Bấm “Thêm phần” để tạo phần đầu tiên.') }}{% endif %}</p>
+      </div>
+    {% endif %}
+
+    {% if ungrouped_problems %}
+      <div class="c-sec-block">
+        <div class="c-sec-head"><span class="c-sec-name">{{ _('Bài tập chung (chưa gán phần)') }}</span></div>
+        <div class="c-sec-body">
+          <ul class="course-problem-list">
+            {% for item in ungrouped_problems %}{{ problem_item(item) }}{% endfor %}
+          </ul>
+        </div>
+      </div>
+    {% endif %}
+
+    {# ---- Quizzes ---- #}
+    {% if lesson_quizzes %}
+      <div class="c-sec-block">
+        <div class="c-sec-head"><span class="c-sec-name"><i class="fa fa-file-lines"></i> {{ _('Quiz') }}</span></div>
+        <div class="c-sec-body">
+          <ul class="course-problem-list">
+            {% for quiz_item in lesson_quizzes %}
+              {% set quiz = quiz_item.quiz %}
+              <a href="{{ url('lesson_quiz_detail', course.slug, lesson.id, quiz.code) }}" target="_blank">
+                <li>
+                  {% if quiz_item.best_score is not none and quiz_item.max_score and quiz_item.best_score >= quiz_item.max_score %}
+                    <i class="solved-problem-color fa fa-check-circle"></i>
+                  {% elif quiz_item.best_score is not none %}
+                    <i class="attempted-problem-color fa fa-minus-circle"></i>
+                  {% else %}
+                    <i class="unsolved-problem-color fa fa-minus-circle"></i>
+                  {% endif %}
+                  <span class="problem-name">{{ quiz.title }}</span>
+                  <span class="score">
+                    {% if quiz_item.best_score is not none %}
+                      {{ quiz_item.best_score|floatformat(1) }} / {{ quiz_item.max_score|floatformat(0) }}
+                    {% else %}0 / {{ quiz_item.max_score|floatformat(0) }}{% endif %}
+                  </span>
+                  <span class="quiz-attempts">
+                    ({{ quiz_item.attempts_count }}{% if quiz_item.max_attempts > 0 %}/{{ quiz_item.max_attempts }}{% endif %} {{ _('attempts') }})
+                  </span>
+                  {% if not quiz_item.can_attempt %}<span class="quiz-locked"><i class="fa fa-lock"></i></span>{% endif %}
+                </li>
+              </a>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    {% endif %}
+
+    {% if is_editable %}
+      <div class="c-lesson-actions">
+        <a href="{{ url('edit_course_lessons_new', course.slug, lesson.id) }}" class="c-btn primary">
+          <i class="fa fa-edit"></i> {{ _('Chỉnh sửa') }}
+        </a>
+        <a href="{{ url('clone_course_lesson', course.slug, lesson.id) }}" class="c-btn ghost">
+          <i class="fa fa-copy"></i> {{ _('Nhân bản') }}
+        </a>
+      </div>
+    {% endif %}
+  </div>
 {% endblock %}

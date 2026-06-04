@@ -1,14 +1,67 @@
+{% set layout = 'no_wrapper' %}
 {% extends "base.html" %}
+
+{# Card carries its own heading (eyebrow + h1); drop the default page title row. #}
+{% block title_row %}{% endblock %}
+{% block title_ruler %}{% endblock %}
 
 {% block body %}
   {% if request.organization %}
-    {{ request.organization.about|markdown|reference|str|safe }}
+    <div class="c-about-card" style="margin: 0 auto;">
+      <div class="c-about-body content-description">
+        {{ request.organization.about|markdown|reference|str|safe }}
+      </div>
+    </div>
   {% else %}
-    <h4>
-      <a target="_blank" href="https://www.danaoj.online">Dana Academy Online Judge</a> là một trang web chấm bài tự động được phát triển dựa trên nền tảng mã nguồn mở <a target="_blank" href="https://dmoj.ca/">DMOJ</a>. Được xây dựng với mục đích ban đầu là tạo ra một môi trường học tập cho học sinh <strong>Dana Academy thành phố Đà Nẵng</strong>, hiện nay Dana Academy Online Judge đã cho phép đăng ký tự do để trở thành một sân chơi rộng mở cho toàn bộ cộng đồng học sinh yêu Tin học. Trang web cung cấp lượng bài luyện tập đồ sộ từ các kỳ thi HSG Quốc Gia, ACM ICPC, Olympic Duyên Hải Bắc Bộ, etc. cho đến các contest định kỳ để xếp loại khả năng (rating) giúp các bạn có thêm động lực cạnh tranh và khí thế phấn đấu rèn luyện nâng cao trình độ lập trình. Mọi ý kiến đóng góp và thắc mắc xin gửi về:
-      <ul>
-        <li>Thầy <strong>Nguyễn Thanh Hùng Cường</strong>, email: <a href="mailto:hungcuong.dev@gmail.com">hungcuong.dev@gmail.com</a>, Zalo: <a href="https://zalo.me/0354633778">0354633778</a></li>
-      </ul>
-    </h4>
+    <div class="c-about-card" style="margin: 0 auto;">
+      <div class="c-about-head">
+        <span class="dot" style="background: var(--red)"></span>
+        <span class="dot" style="background: var(--yellow)"></span>
+        <span class="dot" style="background: var(--green)"></span>
+        <span class="fn">about — koddy-academy.oj</span>
+      </div>
+      <div class="c-about-body">
+        <div class="c-eyebrow">// giới thiệu</div>
+        <h1>Koddy Academy <span style="color: var(--amber)">Online Judge</span></h1>
+        <p class="lede">
+          <a target="_blank" class="lnk" href="https://oj.koddy.online">Koddy Academy Online Judge</a>
+          là một trang web chấm bài tự động được phát triển dựa trên nền tảng mã nguồn mở
+          <a target="_blank" class="lnk" href="https://dmoj.ca/">DMOJ</a>. Được xây dựng với mục đích
+          ban đầu là tạo ra một môi trường học tập cho học sinh <strong>Koddy Academy thành phố Đà Nẵng</strong>,
+          hiện nay đã cho phép đăng ký tự do để trở thành một sân chơi rộng mở cho toàn bộ cộng đồng học sinh
+          yêu Tin học. Trang web cung cấp lượng bài luyện tập đồ sộ từ các kỳ thi HSG Quốc Gia, ACM ICPC,
+          Olympic Duyên Hải Bắc Bộ… cho đến các contest định kỳ để xếp loại khả năng (rating) giúp các bạn
+          có thêm động lực cạnh tranh và khí thế phấn đấu rèn luyện nâng cao trình độ lập trình.
+        </p>
+
+        <div class="c-about-features">
+          <div class="c-feat">
+            <div class="fi"><i class="fa fa-puzzle-piece"></i></div>
+            <h4>Kho bài tập</h4>
+            <p>Bài luyện tập từ HSG Quốc Gia, ACM ICPC, Olympic Duyên Hải Bắc Bộ và nhiều nguồn khác.</p>
+          </div>
+          <div class="c-feat">
+            <div class="fi"><i class="fa fa-ranking-star"></i></div>
+            <h4>Contest &amp; Rating</h4>
+            <p>Các kỳ thi định kỳ xếp loại khả năng, tạo động lực cạnh tranh và phấn đấu.</p>
+          </div>
+          <div class="c-feat">
+            <div class="fi"><i class="fa fa-graduation-cap"></i></div>
+            <h4>Môi trường học tập</h4>
+            <p>Sân chơi rộng mở cho cộng đồng học sinh yêu Tin học, đăng ký tự do.</p>
+          </div>
+        </div>
+
+        <div class="c-contact">
+          <div class="row">
+            <span><i class="fa fa-user"></i> Thầy <strong>Nguyễn Thanh Hùng Cường</strong></span>
+          </div>
+          <div class="row" style="margin-top: 8px;">
+            <span><i class="fa fa-envelope"></i> <a class="lnk" href="mailto:hungcuong.dev@gmail.com">hungcuong.dev@gmail.com</a></span>
+            <span><i class="fa fa-comment"></i> Zalo: <a class="lnk" href="https://zalo.me/0354633778">0354633778</a></span>
+          </div>
+        </div>
+      </div>
+    </div>
   {% endif %}
 {% endblock %}
